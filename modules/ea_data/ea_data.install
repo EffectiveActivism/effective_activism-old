@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the ea_data module.
+ */
+
+/**
+ * Implements hook_schema().
+ *
+ * Defines the database tables used by this module.
+ *
+ * @see hook_schema()
+ * @ingroup ea_data
+ */
+function ea_data_schema() {
+  $schema['ea_data'] = array(
+    'description' => 'Stores data entries.',
+    'fields' => array(
+      'did' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique data ID.',
+      ),
+      'nickname' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Nickname of the person.',
+      ),
+      'firstname' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'First name of the person.',
+      ),
+      'lastnames' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Surnames of the person.',
+      ),
+    ),
+    'primary key' => array('did'),
+    'indexes' => array(
+      'nickname' => array('nickname'),
+      'firstname' => array('firstname'),
+      'lastnames' => array('lastnames'),
+    ),
+  );
+  return $schema;
+}
