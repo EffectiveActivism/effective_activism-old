@@ -1,0 +1,5 @@
+name: Data
+type: module
+description: Manages and stores data.
+core: 8.x
+package: Effective Activism
