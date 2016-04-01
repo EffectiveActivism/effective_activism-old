@@ -1,0 +1,5 @@
+name: Effective Activism Hub
+type: module
+description: Provides a hub page for management of submodules.
+core: 8.x
+package: Effective Activism
