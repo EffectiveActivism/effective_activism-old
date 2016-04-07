@@ -1,0 +1,119 @@
+<?php
+
+/**
+ * @file
+ * Contains ea_activities.module..
+ */
+
+use Drupal\ea_activities\Entity\ActivityType;
+use Drupal\ea_data\Entity\DataType;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+
+/**
+ * Implements hook_help().
+ */
+function ea_activities_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ea_activities module.
+    case 'help.page.ea_activities':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ea_activities_theme() {
+  $theme = [];
+  $theme['activity'] = [
+    'render element' => 'elements',
+    'file' => 'activity.page.inc',
+    'template' => 'activity',
+  ];
+  $theme['activity_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'activity.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_entity_bundle_create().
+ * 
+ * When a new activity bundle is added, we add an entity reference field that
+ * will contain the Data entities.
+ * We need to add this field dynamically, because the bundle
+ * type is set match the Data Type contained in $data_types.
+ * activity
+ * signature_collection
+ */
+function ea_activities_entity_bundle_create($entity_type_id, $bundle) {
+  if ($entity_type_id == 'activity') {
+    $activity_type = ActivityType::load($bundle);
+    if (!$activity_type->isSyncing()) {
+      if (isset($activity_type->data_types) && !empty($activity_type->data_types)) {
+        foreach ($activity_type->data_types as $data_type) {
+          $field_name = 'field_' . $data_type['target_id'];
+          // Check if field exists and create as necessary.
+          $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
+          if (empty($field_storage)) {
+            $field_storage = FieldStorageConfig::create(array(
+              'field_name' => $field_name,
+              'entity_type' => $entity_type_id,
+              'type' => 'entity_reference',
+              'cardinality' => 1,
+              'module' => 'core',
+              'settings' => array('target_type' => 'data'),
+            ))->save();
+          }
+          // Get label of DataType entity.
+          $data_type_entity = DataType::load($data_type['target_id']);
+          $label = $data_type_entity->label();
+          // Add field instance.
+          $field = FieldConfig::loadByName($entity_type_id, $bundle, $field_name);
+          if (empty($field)) {
+            $field = FieldConfig::create(array(
+              'field_name' => $field_name,
+              'entity_type' => $entity_type_id,
+              'bundle' => $bundle,
+              'label' => $label,
+            ));
+            $field->setRequired(TRUE)
+            ->setSetting('target_type', 'data')
+            ->setSetting('handler', 'default')
+            ->setSetting('handler_settings', array(
+              'target_bundles' =>
+                array(
+                  $data_type['target_id'] => $data_type['target_id']
+                )
+              )
+            )
+            ->save();
+            // Set form and view display settings.
+            dpm('Setting form view settings.');
+            entity_get_form_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
+            ->setComponent($field_name, array(
+              'type' => 'inline_entity_form_simple',
+            ))
+            ->save();
+          }
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_entity_bundle_update().
+ */
+function ea_activities_entity_bundle_update($entity_type_id, $bundle) {
+  
+}

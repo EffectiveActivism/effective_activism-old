@@ -1,0 +1,24 @@
+ea_activities.activity_type.*:
+  type: config_entity
+  label: 'Activity type config'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    description:
+      type: string
+      label: 'Description'
+    data_types:
+      type: sequence
+      label: 'Data types'
+      sequence:
+        type: mapping
+        mapping:
+          data_type:
+            type: string
+            label: 'Data type'
+    uuid:
+      type: string
