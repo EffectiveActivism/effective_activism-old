@@ -1,0 +1,7 @@
+name: Activities
+type: module
+description: Provides a container for data and categorizes events
+core: 8.x
+package: AFA
+dependencies:
+  - ea_data
