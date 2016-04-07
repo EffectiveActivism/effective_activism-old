@@ -1,0 +1,16 @@
+add data entities:
+  title: 'Create new Data entities'
+
+administer data entities:
+  title: 'Administer Data entities'
+  description: 'Allow to access the administration form to configure Data entities.'
+  restrict access: true
+
+delete data entities:
+  title: 'Delete Data entities'
+
+edit data entities:
+  title: 'Edit Data entities'
+
+view data entities:
+  title: 'View Data entities'

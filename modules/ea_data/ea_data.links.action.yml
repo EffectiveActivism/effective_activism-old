@@ -1,0 +1,11 @@
+entity.data.add_form:
+  route_name: 'data.add_page'
+  title: 'Add Data'
+  appears_on:
+    - entity.data.collection
+entity.data_type.add_form:
+  route_name: 'entity.data_type.add_form'
+  title: 'Add Data type'
+  appears_on:
+    - entity.data_type.collection
+
