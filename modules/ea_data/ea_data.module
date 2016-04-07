@@ -1,0 +1,42 @@
+<?php
+
+/**
+ * @file
+ * Contains ea_data.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function ea_data_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ea_data module.
+    case 'help.page.ea_data':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ea_data_theme() {
+  $theme = [];
+  $theme['data'] = [
+    'render element' => 'elements',
+    'file' => 'data.page.inc',
+    'template' => 'data',
+  ];
+  $theme['data_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'data.page.inc',
+  ];
+  return $theme;
+}

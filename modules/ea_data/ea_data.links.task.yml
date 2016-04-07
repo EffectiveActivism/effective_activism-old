@@ -1,0 +1,17 @@
+# Data routing definition
+entity.data.canonical:
+  route_name: entity.data.canonical
+  base_route: entity.data.canonical
+  title: 'View'
+
+entity.data.edit_form:
+  route_name: entity.data.edit_form
+  base_route: entity.data.canonical
+  title: Edit
+
+entity.data.delete_form:
+  route_name:  entity.data.delete_form
+  base_route:  entity.data.canonical
+  title: Delete
+  weight: 10
+

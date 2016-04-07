@@ -1,5 +1,5 @@
 name: Data
 type: module
-description: Manages and stores data.
+description: Provides entity types for storing data.
 core: 8.x
-package: Effective Activism
+package: AFA
