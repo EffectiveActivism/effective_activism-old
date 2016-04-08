@@ -16,6 +16,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup ea_events
  */
 class EventForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */
@@ -23,7 +24,6 @@ class EventForm extends ContentEntityForm {
     /* @var $entity \Drupal\ea_events\Entity\Event */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
-
     return $form;
   }
 
@@ -33,20 +33,13 @@ class EventForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
     $status = parent::save($form, $form_state);
-
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Event.', [
-          '%label' => $entity->label(),
-        ]));
+        drupal_set_message($this->t('Created event.'));
         break;
-
       default:
-        drupal_set_message($this->t('Saved the %label Event.', [
-          '%label' => $entity->label(),
-        ]));
+        drupal_set_message($this->t('Saved the event.'));
     }
     $form_state->setRedirect('entity.event.canonical', ['event' => $entity->id()]);
   }
-
 }

@@ -43,7 +43,6 @@ use Drupal\user\UserInterface;
  *   admin_permission = "administer event entities",
  *   entity_keys = {
  *     "id" = "id",
- *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -60,7 +59,9 @@ use Drupal\user\UserInterface;
  * )
  */
 class Event extends ContentEntityBase implements EventInterface {
+
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -69,21 +70,6 @@ class Event extends ContentEntityBase implements EventInterface {
     $values += array(
       'user_id' => \Drupal::currentUser()->id(),
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getName() {
-    return $this->get('name')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setName($name) {
-    $this->set('name', $name);
-    return $this;
   }
 
   /**
@@ -158,7 +144,18 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setLabel(t('UUID'))
       ->setDescription(t('The UUID of the Event entity.'))
       ->setReadOnly(TRUE);
-
+    $fields['activities'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Activities'))
+      ->setSetting('target_type', 'activity')
+      ->setSetting('handler', 'default')
+      ->setDisplayOptions('view', array(
+        'type' => 'string',
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'inline_entity_form_complex',
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Event entity.'))
@@ -184,32 +181,10 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Event entity.'))
-      ->setSettings(array(
-        'max_length' => 50,
-        'text_processing' => 0,
-      ))
-      ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'string_textfield',
-        'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Event is published.'))
       ->setDefaultValue(TRUE);
-
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Event entity.'))
@@ -218,16 +193,12 @@ class Event extends ContentEntityBase implements EventInterface {
         'weight' => 10,
       ))
       ->setDisplayConfigurable('form', TRUE);
-
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
-
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
-
     return $fields;
   }
-
 }

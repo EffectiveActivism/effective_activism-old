@@ -35,7 +35,7 @@ class EventListBuilder extends EntityListBuilder {
     /* @var $entity \Drupal\ea_events\Entity\Event */
     $row['id'] = $entity->id();
     $row['name'] = $this->l(
-      $entity->label(),
+      $entity->id(),
       new Url(
         'entity.event.edit_form', array(
           'event' => $entity->id(),

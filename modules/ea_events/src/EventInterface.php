@@ -18,24 +18,6 @@ use Drupal\user\EntityOwnerInterface;
  */
 interface EventInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
   // Add get/set methods for your configuration properties here.
-  /**
-   * Gets the Event name.
-   *
-   * @return string
-   *   Name of the Event.
-   */
-  public function getName();
-
-  /**
-   * Sets the Event name.
-   *
-   * @param string $name
-   *   The Event name.
-   *
-   * @return \Drupal\ea_events\EventInterface
-   *   The called Event entity.
-   */
-  public function setName($name);
 
   /**
    * Gets the Event creation timestamp.
