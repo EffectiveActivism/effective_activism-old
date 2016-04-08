@@ -5,3 +5,4 @@ core: 8.x
 package: AFA
 dependencies:
   - ea_data
+  - inline_entity_form
