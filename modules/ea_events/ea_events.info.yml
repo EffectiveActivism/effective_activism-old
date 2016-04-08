@@ -1,0 +1,8 @@
+name: Events
+type: module
+description: Manages and stores events.
+core: 8.x
+package: Effective Activism
+dependencies:
+  - ea_activities
+  - inline_entity_form
