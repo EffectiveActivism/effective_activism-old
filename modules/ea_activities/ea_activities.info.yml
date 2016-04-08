@@ -2,7 +2,7 @@ name: Activities
 type: module
 description: Provides a container for data and categorizes events
 core: 8.x
-package: AFA
+package: Effective Activism
 dependencies:
   - ea_data
   - inline_entity_form
