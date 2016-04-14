@@ -8,6 +8,7 @@
 namespace Drupal\ea_events\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
@@ -148,11 +149,16 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setLabel(t('Activities'))
       ->setSetting('target_type', 'activity')
       ->setSetting('handler', 'default')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
+        'settings' => array(
+          'allow_new' => TRUE,
+          'allow_existing' => FALSE,
+        ),
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
