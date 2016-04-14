@@ -145,6 +145,52 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setLabel(t('UUID'))
       ->setDescription(t('The UUID of the Event entity.'))
       ->setReadOnly(TRUE);
+    $fields['start_date'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('Start date'))
+      ->setDescription(t('The beginning of the event'))
+      ->setSettings(array(
+        'default_value' => '',
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue(array(
+        0 => array(
+          'default_date_type' => 'now',
+          'default_date' => 'tomorrow noon',
+      )))
+      ->setDisplayOptions('view', array(
+        'type' => 'datetime_default',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_default',
+        'weight' => 1,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['end_date'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('End date'))
+      ->setDescription(t('The end of the event'))
+      ->setSettings(array(
+        'default_value' => '',
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue(array(
+        0 => array(
+          'default_date_type' => 'now',
+          'default_date' => 'tomorrow 13:00',
+      )))
+      ->setDisplayOptions('view', array(
+        'type' => 'datetime_default',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_default',
+        'weight' => 1,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['activities'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Activities'))
       ->setSetting('target_type', 'activity')
