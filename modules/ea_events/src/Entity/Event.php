@@ -201,6 +201,10 @@ class Event extends ContentEntityBase implements EventInterface {
           'rows' => 6,
         ),
       ))
+      ->setDisplayOptions('view', array(
+        'type' => 'basic_string',
+        'weight' => 2,
+      ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['activities'] = BaseFieldDefinition::create('entity_reference')
