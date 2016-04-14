@@ -147,7 +147,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setReadOnly(TRUE);
     $fields['start_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Start date'))
-      ->setDescription(t('The beginning of the event'))
+      ->setDescription(t('The beginning of the event.'))
       ->setSettings(array(
         'default_value' => '',
         'max_length' => 50,
@@ -170,7 +170,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['end_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('End date'))
-      ->setDescription(t('The end of the event'))
+      ->setDescription(t('The end of the event.'))
       ->setSettings(array(
         'default_value' => '',
         'max_length' => 50,
@@ -188,6 +188,18 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayOptions('form', array(
         'type' => 'datetime_default',
         'weight' => 1,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['description'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(t('Description'))
+      ->setDescription(t('The description of the event.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'string_textarea',
+        'weight' => 2,
+        'settings' => array(
+          'rows' => 6,
+        ),
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
