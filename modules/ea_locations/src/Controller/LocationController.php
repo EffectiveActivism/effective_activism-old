@@ -50,4 +50,17 @@ class LocationController {
     }
     return new JsonResponse(array($suggestions));
   }
+
+  /**
+   * Validates a location.
+   *
+   * @param String $location
+   *   A location string that needs to be validated against Google Maps API format.
+   *
+   * @return Boolean
+   *   Returns TRUE if string is a valid Google Maps address, FALSE if not.
+   */
+  public function validateLocation($location) {
+    return FALSE;
+  }
 }
