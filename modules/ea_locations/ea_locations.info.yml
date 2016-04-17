@@ -1,0 +1,7 @@
+name: Locations
+type: module
+description: Provides field widgets for storing location data.
+core: 8.x
+package: Effective Activism
+dependencies:
+  - field
