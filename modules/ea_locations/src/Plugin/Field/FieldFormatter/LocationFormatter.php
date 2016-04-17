@@ -12,7 +12,7 @@ use Drupal\Core\Field\FormatterBase;
 use Drupal;
 
 /**
- * Plugin implementation of the 'country' formatter.
+ * Plugin implementation of the 'location' formatter.
  *
  * @FieldFormatter(
  *   id = "location_default",
@@ -23,6 +23,6 @@ use Drupal;
  *   }
  * )
  */
-class CountryDefaultFormatter extends FormatterBase {
+class LocationDefaultFormatter extends FormatterBase {
   
 }

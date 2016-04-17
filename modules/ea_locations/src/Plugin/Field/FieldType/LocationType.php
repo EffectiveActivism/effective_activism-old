@@ -12,7 +12,7 @@ use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
- * Plugin implementation of the 'country' field type.
+ * Plugin implementation of the 'location' field type.
  *
  * @FieldType(
  *   id = "location",
