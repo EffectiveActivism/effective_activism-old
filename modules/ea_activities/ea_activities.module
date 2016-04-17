@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains ea_activities.module..
+ * Contains ea_activities.module.
  */
 
 use Drupal\ea_activities\Entity\ActivityType;
