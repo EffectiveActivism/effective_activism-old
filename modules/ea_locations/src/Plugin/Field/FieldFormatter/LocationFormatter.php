@@ -23,6 +23,18 @@ use Drupal;
  *   }
  * )
  */
-class LocationDefaultFormatter extends FormatterBase {
-  
+class LocationFormatter extends FormatterBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $elements = array();
+    foreach ($items as $delta => $item) {
+      $elements[$delta] = array(
+        '#markup' => $item->value
+      );
+    }
+    return $elements;
+  }
 }
