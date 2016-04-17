@@ -41,7 +41,7 @@ class LocationWidget extends WidgetBase {
         array($this, 'validate'),
       ),
     );
-    return array('value' => $element);
+    return array('address' => $element);
   }
 
   /**
