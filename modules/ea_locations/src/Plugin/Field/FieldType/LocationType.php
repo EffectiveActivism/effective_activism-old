@@ -12,7 +12,7 @@ use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
- * Plugin implementation of the 'country' field type.
+ * Plugin implementation of the 'location' field type.
  *
  * @FieldType(
  *   id = "location",
@@ -63,7 +63,7 @@ class LocationType extends FieldItemBase {
         ),
       ),
       'indexes' => array(
-        'value' => array('value'),
+        'address' => array('address'),
       ),
     );
   }

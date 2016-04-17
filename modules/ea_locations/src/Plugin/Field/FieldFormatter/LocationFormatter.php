@@ -12,7 +12,7 @@ use Drupal\Core\Field\FormatterBase;
 use Drupal;
 
 /**
- * Plugin implementation of the 'country' formatter.
+ * Plugin implementation of the 'location' formatter.
  *
  * @FieldFormatter(
  *   id = "location_default",
@@ -23,6 +23,18 @@ use Drupal;
  *   }
  * )
  */
-class CountryDefaultFormatter extends FormatterBase {
-  
+class LocationFormatter extends FormatterBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $elements = array();
+    foreach ($items as $delta => $item) {
+      $elements[$delta] = array(
+        '#markup' => $item->address,
+      );
+    }
+    return $elements;
+  }
 }
