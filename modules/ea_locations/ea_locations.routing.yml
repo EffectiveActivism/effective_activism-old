@@ -1,0 +1,6 @@
+locations.autocomplete:
+  path: '/effective-activism/locations/autocomplete'
+  defaults:
+    _controller: '\Drupal\ea_locations\Controller\LocationController::autocomplete'
+  requirements:
+    _permission: 'administer content types'
