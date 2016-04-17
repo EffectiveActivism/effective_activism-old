@@ -63,7 +63,7 @@ class LocationType extends FieldItemBase {
         ),
       ),
       'indexes' => array(
-        'value' => array('value'),
+        'address' => array('address'),
       ),
     );
   }
