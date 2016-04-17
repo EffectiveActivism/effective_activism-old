@@ -32,7 +32,7 @@ class LocationFormatter extends FormatterBase {
     $elements = array();
     foreach ($items as $delta => $item) {
       $elements[$delta] = array(
-        '#markup' => $item->value
+        '#markup' => $item->address,
       );
     }
     return $elements;
