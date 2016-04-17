@@ -7,6 +7,7 @@
 
 namespace Drupal\ea_locations\Plugin\Field\FieldWidget;
 
+use Drupal\ea_locations\Controller\LocationController;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -41,7 +42,7 @@ class LocationWidget extends WidgetBase {
         array($this, 'validate'),
       ),
     );
-    return array('value' => $element);
+    return array('address' => $element);
   }
 
   /**
@@ -49,8 +50,8 @@ class LocationWidget extends WidgetBase {
    */
   public function validate($element, FormStateInterface $form_state) {
     $address = $element['#value'];
-    if (!empty($value)) {
-      if (!isValidLocation($address)) {
+    if (!empty($address)) {
+      if (!LocationController::validateLocation($address)) {
         $form_state->setError($element, t('Please select a location from the list of suggestions.'));
       }
     }
