@@ -34,7 +34,7 @@ class LocationWidget extends WidgetBase {
     $element += array(
       '#type' => 'textfield',
       '#default_value' => $address,
-      '#autocomplete_route_name' => 'locations.autocomplete',
+      '#autocomplete_route_name' => 'ea_locations.autocomplete',
       '#autocomplete_route_parameters' => array(),
       '#size' => 30,
       '#maxlength' => 255,
