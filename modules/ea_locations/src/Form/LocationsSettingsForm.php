@@ -46,7 +46,7 @@ class LocationsSettingsForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->config('ea_locations.settings')
-      ->set('key', $form_state['values']['key'])
+      ->set('key', $form_state->getvalue('key'))
       ->save();
     parent::submitForm($form, $form_state);
   }
