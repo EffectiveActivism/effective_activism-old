@@ -5,4 +5,5 @@ core: 8.x
 package: Effective Activism
 dependencies:
   - ea_activities
+  - ea_people
   - inline_entity_form
