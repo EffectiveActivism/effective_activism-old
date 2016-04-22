@@ -66,31 +66,35 @@ class LocationController {
    *   Returns array of suggestions or FALSE if any connection errors occur.
    */
   public function getLocations($input) {
-    $suggestions = array();
+    $suggestions = FALSE;
     if (!empty($input)) {
       $language = Drupal::languageManager()->getCurrentLanguage();
+      $config = Drupal::config('ea_locations.settings');
       $query = array(
         'input' => $input,
         'language' => $language->getName(),
-        'key' => '',
+        'key' => $config->get('key'),
       );
-      try {
-        $request = Drupal::httpClient()->get('https://maps.googleapis.com/maps/api/place/autocomplete/json?' . http_build_query($query));
-        $response = $request->getBody()->getContents();
-        if (!empty($response)) {
-          $json = json_decode($response);
-          if (isset($json->status) && $json->status == 'OK' && !empty($json->predictions)) {
-            foreach ($json->predictions as $prediction) {
-              $suggestions[] = $prediction->description;
+      if (!empty($query['key'])) {
+        try {
+          $request = Drupal::httpClient()->get('https://maps.googleapis.com/maps/api/place/autocomplete/json?' . http_build_query($query));
+          $response = $request->getBody()->getContents();
+          if (!empty($response)) {
+            $json = json_decode($response);
+            if (isset($json->status) && $json->status == 'OK' && !empty($json->predictions)) {
+              $suggestions = array();
+              foreach ($json->predictions as $prediction) {
+                $suggestions[] = $prediction->description;
+              }
             }
           }
         }
-      }
-      catch (BadResponseException $exception) {
-        $suggestions = FALSE;
-      }
-      catch (RequestException $exception) {
-        $suggestions = FALSE;
+        catch (BadResponseException $exception) {
+          $suggestions = FALSE;
+        }
+        catch (RequestException $exception) {
+          $suggestions = FALSE;
+        }
       }
     }
     return $suggestions;
