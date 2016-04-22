@@ -205,6 +205,26 @@ class Event extends ContentEntityBase implements EventInterface {
         'type' => 'basic_string',
         'weight' => 2,
       ))
+<<<<<<< HEAD
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['participants'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Participants'))
+      ->setSetting('target_type', 'person')
+      ->setSetting('handler', 'default')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setDisplayOptions('view', array(
+        'type' => 'string',
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'inline_entity_form_complex',
+        'settings' => array(
+          'allow_new' => TRUE,
+          'allow_existing' => TRUE,
+        ),
+      ))
+=======
+>>>>>>> master
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
@@ -225,7 +245,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['activities'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Activities'))
+      ->setLabel(t('Results'))
       ->setSetting('target_type', 'activity')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
