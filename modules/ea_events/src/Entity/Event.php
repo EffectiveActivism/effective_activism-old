@@ -226,9 +226,10 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['participants'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Participants'))
-      ->setSetting('target_type', 'person')
+    $fields['tasks'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Tasks'))
+      ->setDescription(t('The tasks to do before, under and after the event.'))
+      ->setSetting('target_type', 'task')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
@@ -238,7 +239,7 @@ class Event extends ContentEntityBase implements EventInterface {
         'type' => 'inline_entity_form_complex',
         'settings' => array(
           'allow_new' => TRUE,
-          'allow_existing' => TRUE,
+          'allow_existing' => FALSE,
         ),
       ))
       ->setDisplayConfigurable('form', TRUE)
