@@ -191,6 +191,25 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+    $fields['location'] = BaseFieldDefinition::create('location')
+      ->setLabel(t('Location'))
+      ->setDescription(t('The location of the event.'))
+      ->setSettings(array(
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'location_default',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'location_default',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
       ->setDescription(t('The description of the event.'))
