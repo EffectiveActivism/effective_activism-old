@@ -2,45 +2,46 @@
 
 /**
  * @file
- * Contains \Drupal\ea_people\Entity\Person.
+ * Contains \Drupal\ea_tasks\Entity\Task.
  */
 
-namespace Drupal\ea_people\Entity;
+namespace Drupal\ea_tasks\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\ea_people\PersonInterface;
+use Drupal\ea_tasks\TaskInterface;
 use Drupal\user\UserInterface;
 
 /**
- * Defines the Person entity.
+ * Defines the Task entity.
  *
- * @ingroup ea_people
+ * @ingroup ea_tasks
  *
  * @ContentEntityType(
- *   id = "person",
- *   label = @Translation("Person"),
+ *   id = "task",
+ *   label = @Translation("Task"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\ea_people\PersonListBuilder",
- *     "views_data" = "Drupal\ea_people\Entity\PersonViewsData",
+ *     "list_builder" = "Drupal\ea_tasks\TaskListBuilder",
+ *     "views_data" = "Drupal\ea_tasks\Entity\TaskViewsData",
  *
  *     "form" = {
- *       "default" = "Drupal\ea_people\Form\PersonForm",
- *       "add" = "Drupal\ea_people\Form\PersonForm",
- *       "edit" = "Drupal\ea_people\Form\PersonForm",
- *       "delete" = "Drupal\ea_people\Form\PersonDeleteForm",
+ *       "default" = "Drupal\ea_tasks\Form\TaskForm",
+ *       "add" = "Drupal\ea_tasks\Form\TaskForm",
+ *       "edit" = "Drupal\ea_tasks\Form\TaskForm",
+ *       "delete" = "Drupal\ea_tasks\Form\TaskDeleteForm",
  *     },
- *     "access" = "Drupal\ea_people\PersonAccessControlHandler",
+ *     "access" = "Drupal\ea_tasks\TaskAccessControlHandler",
  *     "route_provider" = {
- *       "html" = "Drupal\ea_people\PersonHtmlRouteProvider",
+ *       "html" = "Drupal\ea_tasks\TaskHtmlRouteProvider",
  *     },
  *   },
- *   base_table = "person",
- *   admin_permission = "administer person entities",
+ *   base_table = "task",
+ *   admin_permission = "administer task entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "label" = "name",
@@ -50,16 +51,16 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effective-activism/people/person/{person}",
- *     "add-form" = "/effective-activism/people/person/add",
- *     "edit-form" = "/effective-activism/people/person/{person}/edit",
- *     "delete-form" = "/effective-activism/people/person/{person}/delete",
- *     "collection" = "/effective-activism/people/person",
+ *     "canonical" = "/effective-activism/tasks/task/{task}",
+ *     "add-form" = "/effective-activism/tasks/task/add",
+ *     "edit-form" = "/effective-activism/tasks/task/{task}/edit",
+ *     "delete-form" = "/effective-activism/tasks/task/{task}/delete",
+ *     "collection" = "/effective-activism/tasks/task",
  *   },
- *   field_ui_base_route = "person.settings"
+ *   field_ui_base_route = "task.settings"
  * )
  */
-class Person extends ContentEntityBase implements PersonInterface {
+class Task extends ContentEntityBase implements TaskInterface {
 
   use EntityChangedTrait;
 
@@ -154,15 +155,15 @@ class Person extends ContentEntityBase implements PersonInterface {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))
-      ->setDescription(t('The ID of the Person entity.'))
+      ->setDescription(t('The ID of the Task entity.'))
       ->setReadOnly(TRUE);
     $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('UUID'))
-      ->setDescription(t('The UUID of the Person entity.'))
+      ->setDescription(t('The UUID of the Task entity.'))
       ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
-      ->setDescription(t('The user ID of author of the Person entity.'))
+      ->setDescription(t('The user ID of author of the Task entity.'))
       ->setRevisionable(TRUE)
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default')
@@ -185,9 +186,9 @@ class Person extends ContentEntityBase implements PersonInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Person entity.'))
+    $fields['type'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Type'))
+      ->setDescription(t('The type of the Task.'))
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -204,51 +205,30 @@ class Person extends ContentEntityBase implements PersonInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['mobile_phone_number'] = BaseFieldDefinition::create('telephone')
-      ->setLabel(t('Mobile phone number'))
-      ->setDescription(t('The mobile phone number of the person, prefixed by country code.'))
-      ->setSettings(array(
-        'max_length' => 50,
-        'text_processing' => 0,
-      ))
-      ->setDefaultValue('')
+    $fields['participants'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Participants'))
+      ->setSetting('target_type', 'person')
+      ->setSetting('handler', 'default')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
-        'label' => 'above',
         'type' => 'string',
-        'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'telephone_default',
-        'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-    $fields['email_address'] = BaseFieldDefinition::create('email')
-      ->setLabel(t('E-mail address'))
-      ->setDescription(t('The e-mail address of the person.'))
-      ->setSettings(array(
-        'max_length' => 50,
-        'text_processing' => 0,
-      ))
-      ->setDefaultValue('')
-      ->setDisplayOptions('view', array(
-        'label' => 'above',
-        'type' => 'string',
-        'weight' => -4,
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'email_default',
-        'weight' => -4,
+        'type' => 'inline_entity_form_complex',
+        'settings' => array(
+          'allow_new' => TRUE,
+          'allow_existing' => TRUE,
+        ),
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Person is published.'))
+      ->setDescription(t('A boolean indicating whether the Task is published.'))
       ->setDefaultValue(TRUE);
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Person entity.'))
+      ->setDescription(t('The language code for the Task entity.'))
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,
