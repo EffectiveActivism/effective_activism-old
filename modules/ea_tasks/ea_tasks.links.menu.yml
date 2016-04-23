@@ -1,0 +1,13 @@
+# Task menu items definition
+entity.task.collection:
+  title: 'Task list'
+  route_name: entity.task.collection
+  description: 'List Task entities'
+  parent: system.admin_structure
+  weight: 100
+
+task.admin.structure.settings:
+  title: Task settings
+  description: 'Configure Task entities'
+  route_name: task.settings
+  parent: system.admin_structure
