@@ -1,0 +1,7 @@
+name: Tasks
+type: module
+description: Manages event tasks
+core: 8.x
+package: Effective Activism
+dependencies:
+  - ea_people
