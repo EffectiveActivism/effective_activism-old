@@ -226,7 +226,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))
-      ->setSetting('target_type', 'people')
+      ->setSetting('target_type', 'person')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
