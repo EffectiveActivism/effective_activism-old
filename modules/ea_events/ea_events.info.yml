@@ -6,4 +6,6 @@ package: Effective Activism
 dependencies:
   - ea_activities
   - ea_people
+  - ea_locations
+  - ea_tasks
   - inline_entity_form
