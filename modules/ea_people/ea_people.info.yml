@@ -1,0 +1,7 @@
+name: People
+type: module
+description: Manages grouping members and event participants.
+core: 8.x
+package: Effective Activism
+dependencies:
+  - telephone
