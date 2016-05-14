@@ -34,12 +34,12 @@ class DataForm extends ContentEntityForm {
     $status = parent::save($form, $form_state);
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Data.', [
+        drupal_set_message($this->t('Created data.', [
           '%label' => $entity->label(),
         ]));
         break;
       default:
-        drupal_set_message($this->t('Saved the %label Data.', [
+        drupal_set_message($this->t('Saved data.', [
           '%label' => $entity->label(),
         ]));
     }
