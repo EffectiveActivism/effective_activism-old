@@ -28,7 +28,7 @@ use Drupal\ea_activities\ActivityTypeInterface;
  *     },
  *   },
  *   config_prefix = "activity_type",
- *   admin_permission = "administer site configuration",
+ *   admin_permission = "administer activity entities",
  *   bundle_of = "activity",
  *   entity_keys = {
  *     "id" = "id",

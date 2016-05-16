@@ -17,8 +17,7 @@ ea_activities.activity_type.*:
       sequence:
         type: mapping
         mapping:
-          data_type:
-            type: string
-            label: 'Data type'
+          target_id:
+           type: string
     uuid:
       type: string
