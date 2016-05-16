@@ -52,8 +52,6 @@ function ea_activities_theme() {
  * will contain the Data entities.
  * We need to add this field dynamically, because the bundle
  * type is set match the Data Type contained in $data_types.
- * activity
- * signature_collection
  */
 function ea_activities_entity_bundle_create($entity_type_id, $bundle) {
   if ($entity_type_id == 'activity') {
