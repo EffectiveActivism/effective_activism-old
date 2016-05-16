@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Test cases for Content Entity Example Module.
+ * Test cases for the ea_data module.
  */
 
 namespace Drupal\ea_data\Tests;
