@@ -17,7 +17,7 @@ use Drupal\field\Entity\FieldConfig;
 /**
  * Function tests for ea_activities.
  *
- * @group ea_activities
+ * @group effective_activism
  */
 class ActivityTest extends WebTestBase {
 
@@ -113,8 +113,6 @@ class ActivityTest extends WebTestBase {
    */
   private function createActivityType() {
     $this->drupalLogin($this->executive);
-    $this->drupalGet('effectiveactivism/data_type/data_type_test/edit/fields/data.data_type_test.field_integer_input');
-    $this->assertResponse(200);
     $this->drupalGet('effectiveactivism/activity_type');
     $this->assertResponse(200);
     $this->drupalGet('effectiveactivism/activity_type/add');
