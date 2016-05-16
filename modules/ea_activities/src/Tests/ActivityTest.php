@@ -17,7 +17,7 @@ use Drupal\field\Entity\FieldConfig;
 /**
  * Function tests for ea_activities.
  *
- * @group ea_activities
+ * @group effective_activism
  */
 class ActivityTest extends WebTestBase {
 
