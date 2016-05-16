@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Test cases for the ea_data module.
+ * Test cases for Content Entity Example Module.
  */
 
 namespace Drupal\ea_data\Tests;
@@ -13,7 +13,7 @@ use Drupal\simpletest\WebTestBase;
 /**
  * Function tests for ea_data.
  *
- * @group ea_data
+ * @group effective_activism
  */
 class DataTest extends WebTestBase {
 
@@ -29,7 +29,7 @@ class DataTest extends WebTestBase {
     parent::setUp();
     $this->statistician = $this->drupalCreateUser(array(
       'administer data entities',
-      'administer data fields'
+      'administer data fields',
     ));
     $this->organizer = $this->drupalCreateUser(array(
       'add data entities',
