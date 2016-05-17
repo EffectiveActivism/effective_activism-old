@@ -1,0 +1,21 @@
+# Grouping routing definition
+grouping.settings_tab:
+  route_name: grouping.settings
+  title: 'Settings'
+  base_route: grouping.settings
+entity.grouping.canonical:
+  route_name: entity.grouping.canonical
+  base_route: entity.grouping.canonical
+  title: 'View'
+
+entity.grouping.edit_form:
+  route_name: entity.grouping.edit_form
+  base_route: entity.grouping.canonical
+  title: Edit
+
+entity.grouping.delete_form:
+  route_name:  entity.grouping.delete_form
+  base_route:  entity.grouping.canonical
+  title: Delete
+  weight: 10
+
