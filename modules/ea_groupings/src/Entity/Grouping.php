@@ -199,6 +199,63 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+    $fields['phone_number'] = BaseFieldDefinition::create('telephone')
+      ->setLabel(t('Phone number'))
+      ->setDescription(t('The phone number of the grouping, prefixed by country code.'))
+      ->setSettings(array(
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'telephone_default',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['email_address'] = BaseFieldDefinition::create('email')
+      ->setLabel(t('E-mail address'))
+      ->setDescription(t('The e-mail address of the grouping.'))
+      ->setSettings(array(
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'email_default',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['location'] = BaseFieldDefinition::create('location')
+      ->setLabel(t('Location'))
+      ->setDescription(t('The location of the grouping.'))
+      ->setSettings(array(
+        'max_length' => 50,
+        'text_processing' => 0,
+      ))
+      ->setDefaultValue('')
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'location_default',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'location_default',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
       ->setDescription(t('The description of the grouping.'))
@@ -212,6 +269,23 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->setDisplayOptions('view', array(
         'type' => 'basic_string',
         'weight' => 2,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['members'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Members'))
+      ->setSetting('target_type', 'person')
+      ->setSetting('handler', 'default')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setDisplayOptions('view', array(
+        'type' => 'string',
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'inline_entity_form_complex',
+        'settings' => array(
+          'allow_new' => TRUE,
+          'allow_existing' => TRUE,
+        ),
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
