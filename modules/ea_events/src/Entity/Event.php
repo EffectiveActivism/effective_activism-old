@@ -50,11 +50,11 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effective_activism/events/event/{event}",
- *     "add-form" = "/effective_activism/events/event/add",
- *     "edit-form" = "/effective_activism/events/event/{event}/edit",
- *     "delete-form" = "/effective_activism/events/event/{event}/delete",
- *     "collection" = "/effective_activism/events/event",
+ *     "canonical" = "/effectiveactivism/events/{event}",
+ *     "add-form" = "/effectiveactivism/events/add",
+ *     "edit-form" = "/effectiveactivism/events/{event}/edit",
+ *     "delete-form" = "/effectiveactivism/events/{event}/delete",
+ *     "collection" = "/effectiveactivism/events",
  *   },
  *   field_ui_base_route = "event.settings"
  * )
@@ -234,6 +234,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
+        'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -241,6 +242,7 @@ class Event extends ContentEntityBase implements EventInterface {
           'allow_new' => TRUE,
           'allow_existing' => FALSE,
         ),
+        'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
@@ -251,6 +253,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
+        'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -258,6 +261,7 @@ class Event extends ContentEntityBase implements EventInterface {
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
+        'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
@@ -268,6 +272,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
+        'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -275,6 +280,29 @@ class Event extends ContentEntityBase implements EventInterface {
           'allow_new' => TRUE,
           'allow_existing' => FALSE,
         ),
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['grouping'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Tasks'))
+      ->setDescription(t('The grouping that this event belongs to.'))
+      ->setSetting('target_type', 'grouping')
+      ->setSetting('handler', 'default')
+      ->setCardinality(1)
+      ->setDisplayOptions('view', array(
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'entity_reference_autocomplete',
+        'settings' => array(
+          'match_operator' => 'CONTAINS',
+          'size' => '60',
+          'autocomplete_type' => 'tags',
+          'placeholder' => '',
+        ),
+        'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
@@ -314,7 +342,9 @@ class Event extends ContentEntityBase implements EventInterface {
         'type' => 'language_select',
         'weight' => 10,
       ))
-      ->setDisplayConfigurable('form', TRUE);
+      ->setDisplayConfigurable('form', array(
+        'weight' => 10,
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
