@@ -29,6 +29,7 @@ env:
     # Configuration variables.
     - DRUPAL_TI_MODULE_NAME="ea_data"
     - DRUPAL_TI_MODULE_NAME="ea_activities"
+    - DRUPAL_TI_MODULE_NAME="ea_events"
     - DRUPAL_TI_SIMPLETEST_GROUP="effective_activism"
 
     # Define runners and environment vars to include before and after the

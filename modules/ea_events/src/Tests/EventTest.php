@@ -20,9 +20,9 @@ define(__NAMESPACE__ . '\ENDDATEFORMATTED', '01/01/2016');
 define(__NAMESPACE__ . '\ENDTIME', '12:00');
 
 /**
- * Function tests for ea_data.
+ * Function tests for ea_events.
  *
- * @group effectiveactivism
+ * @group effective_activism
  */
 class EventTest extends WebTestBase {
 
@@ -51,6 +51,11 @@ class EventTest extends WebTestBase {
       'delete task entities',
       'edit task entities',
       'view published task entities',
+      // People permissions.
+      'add person entities',
+      'delete person entities',
+      'edit person entities',
+      'view published person entities',
       // Data permissions.
       'add data entities',
       'delete data entities',
@@ -69,12 +74,11 @@ class EventTest extends WebTestBase {
   /**
    * Create an event content entity.
    * 
-   * Creates a content entity of type event and adds a location
-   * to the field_location field.
+   * Creates a content entity of type event.
    */
   private function createEventEntity() {
     $this->drupalLogin($this->organizer);
-    // Create a data entity using the data type.
+    // Create an event entity.
     $this->drupalGet('effectiveactivism/events/add');
     $this->assertResponse(200);
     $random_value = rand();
