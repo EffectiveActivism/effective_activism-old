@@ -285,11 +285,12 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['grouping'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Tasks'))
+      ->setLabel(t('Grouping'))
       ->setDescription(t('The grouping that this event belongs to.'))
       ->setSetting('target_type', 'grouping')
       ->setSetting('handler', 'default')
       ->setCardinality(1)
+      ->setRequired(TRUE)
       ->setDisplayOptions('view', array(
         'type' => 'string',
         'weight' => -4,
