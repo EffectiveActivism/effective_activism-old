@@ -89,7 +89,6 @@ class DataTest extends WebTestBase {
     ), t('Save settings'));
     $this->assertResponse(200);
     $this->assertText('Saved Integer input configuration.', 'Saved settings for integer field.');
-    $this->drupalLogout();
   }
 
   /**
@@ -101,7 +100,7 @@ class DataTest extends WebTestBase {
   private function createDataEntity() {
     $this->drupalLogin($this->organizer);
     // Create a data entity using the data type.
-    $this->drupalGet('effectiveactivism/data/add/data_type_test');
+    $this->drupalGet('effectiveactivism/data/add');
     $this->assertResponse(200);
     $random_value = rand();
     $this->drupalPostForm(NULL, array(
