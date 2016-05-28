@@ -26,7 +26,7 @@ define(__NAMESPACE__ . '\ENDTIME', '12:00');
  */
 class EventTest extends WebTestBase {
 
-  public static $modules = array('datetime', 'inline_entity_form', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_events');
+  public static $modules = array('inline_entity_form', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_events');
 
   private $organizer;
 
