@@ -1,0 +1,23 @@
+<?php
+
+/**
+ * @file
+ * Contains ea_groupings.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+/**
+ * Implements hook_help().
+ */
+function ea_groupings_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ea_groupings module.
+    case 'help.page.ea_groupings':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Manages organizations and groups.') . '</p>';
+      return $output;
+    default:
+  }
+}
