@@ -9,3 +9,4 @@ dependencies:
   - ea_locations
   - ea_tasks
   - inline_entity_form
+  - datetime
