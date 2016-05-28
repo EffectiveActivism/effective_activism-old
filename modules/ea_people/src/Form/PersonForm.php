@@ -30,6 +30,18 @@ class PersonForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $mobile_phone_number = $form_state->getValue('mobile_phone_number');
+    $email_address = $form_state->getValue('email_address');
+    if (empty($mobile_phone_number[0]['value']) && empty($email_address[0]['value'])) {
+      $form_state->setErrorByName('', $this->t('Please add at least one contact method.'));
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
     $status = parent::save($form, $form_state);
