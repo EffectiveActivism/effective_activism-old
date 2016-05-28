@@ -28,7 +28,7 @@ use Drupal\ea_data\DataTypeInterface;
  *     },
  *   },
  *   config_prefix = "data_type",
- *   admin_permission = "administer site configuration",
+ *   admin_permission = "administer data entities",
  *   bundle_of = "data",
  *   entity_keys = {
  *     "id" = "id",
