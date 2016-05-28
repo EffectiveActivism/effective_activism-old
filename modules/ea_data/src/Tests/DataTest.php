@@ -89,7 +89,6 @@ class DataTest extends WebTestBase {
     ), t('Save settings'));
     $this->assertResponse(200);
     $this->assertText('Saved Integer input configuration.', 'Saved settings for integer field.');
-    $this->drupalLogout();
   }
 
   /**
