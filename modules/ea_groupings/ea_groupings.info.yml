@@ -3,3 +3,5 @@ type: module
 description: Manages organizations and groups.
 core: 8.x
 package: Effective Activism
+dependencies:
+  - telephone
