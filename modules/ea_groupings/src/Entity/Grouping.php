@@ -46,11 +46,11 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effectiveactivism/grouping/{grouping}",
- *     "add-form" = "/effectiveactivism/grouping/add",
- *     "edit-form" = "/effectiveactivism/grouping/{grouping}/edit",
- *     "delete-form" = "/effectiveactivism/grouping/{grouping}/delete",
- *     "collection" = "/effectiveactivism/grouping",
+ *     "canonical" = "/effectiveactivism/groupings/{grouping}",
+ *     "add-form" = "/effectiveactivism/groupings/add",
+ *     "edit-form" = "/effectiveactivism/groupings/{grouping}/edit",
+ *     "delete-form" = "/effectiveactivism/groupings/{grouping}/delete",
+ *     "collection" = "/effectiveactivism/groupings",
  *   },
  *   field_ui_base_route = "grouping.settings"
  * )
