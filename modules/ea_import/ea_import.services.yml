@@ -1,0 +1,5 @@
+services:
+  ea_import.param_converter:
+    class: Drupal\ea_import\ImportConverter
+    tags:
+      - { name: paramconverter }

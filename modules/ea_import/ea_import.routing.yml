@@ -1,7 +1,7 @@
 ea_import.icalendar:
   path: '/effectiveactivism/groupings/{grouping}/import/icalendar'
   defaults:
-    _title: 'Add ICalendar file'
+    _title: 'List ICalendar imports'
     _form: '\Drupal\ea_import\Controller\ListController'
   requirements:
     _access: 'TRUE'
@@ -9,7 +9,7 @@ ea_import.icalendar:
 ea_import.icalendar.add:
   path: '/effectiveactivism/groupings/{grouping}/import/icalendar/add'
   defaults:
-    _title: 'Add ICalendar file'
+    _title: 'Add ICalendar import'
     _form: '\Drupal\ea_import\Form\AddICalendarForm'
   requirements:
     _access: 'TRUE'
@@ -17,23 +17,33 @@ ea_import.icalendar.add:
 ea_import.icalendar.edit:
   path: '/effectiveactivism/groupings/{grouping}/import/icalendar/{icalendar}/edit'
   defaults:
-    _title: 'Edit ICalendar file'
+    _title: 'Edit ICalendar import'
     _form: '\Drupal\ea_import\Form\EditICalendarForm'
   requirements:
     _access: 'TRUE'
     grouping: ^[0-9]+
+    icalendar: ^[0-9]+
+  options:
+    parameters:
+      icalendar:
+        type: 'ea_icalendar'
 ea_import.icalendar.delete:
   path: '/effectiveactivism/groupings/{grouping}/import/icalendar/{icalendar}/delete'
   defaults:
-    _title: 'Delete ICalendar file'
+    _title: 'Delete ICalendar import'
     _form: '\Drupal\ea_import\Form\DeleteICalendarForm'
   requirements:
     _access: 'TRUE'
     grouping: ^[0-9]+
+    icalendar: ^[0-9]+
+  options:
+    parameters:
+      icalendar:
+        type: 'ea_icalendar'
 ea_import.icalendar.settings:
   path: '/effectiveactivism/settings/import'
   defaults:
+    _title: 'Import settings'
     _form: '\Drupal\ea_import\Form\SettingsForm'
   requirements:
     _permission: 'administer site configuration'
-    grouping: ^[0-9]+
