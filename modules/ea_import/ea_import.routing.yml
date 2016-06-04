@@ -2,7 +2,7 @@ ea_import.icalendar:
   path: '/effectiveactivism/groupings/{grouping}/import/icalendar'
   defaults:
     _title: 'List ICalendar imports'
-    _form: '\Drupal\ea_import\Controller\ListController'
+    _controller: '\Drupal\ea_import\Controller\ListController'
   requirements:
     _access: 'TRUE'
     grouping: ^[0-9]+
