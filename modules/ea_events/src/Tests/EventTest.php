@@ -11,6 +11,7 @@ use Drupal\ea_events\Entity\Event;
 use Drupal\simpletest\WebTestBase;
 use Drupal;
 
+define(__NAMESPACE__ . '\GROUPNAME', 'Test group');
 define(__NAMESPACE__ . '\DESCRIPTION', 'Example text for an event description');
 define(__NAMESPACE__ . '\STARTDATE', '2016-01-01');
 define(__NAMESPACE__ . '\STARTDATEFORMATTED', '01/01/2016');
@@ -26,7 +27,7 @@ define(__NAMESPACE__ . '\ENDTIME', '12:00');
  */
 class EventTest extends WebTestBase {
 
-  public static $modules = array('inline_entity_form', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_events');
+  public static $modules = array('inline_entity_form', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_groupings', 'ea_events');
 
   private $organizer;
 
@@ -41,6 +42,11 @@ class EventTest extends WebTestBase {
       'delete event entities',
       'edit event entities',
       'view published event entities',
+      // Grouping permissions.
+      'add grouping entities',
+      'delete grouping entities',
+      'edit grouping entities',
+      'view published grouping entities',
       // Activity permissions.
       'add activity entities',
       'delete activity entities',
@@ -65,19 +71,33 @@ class EventTest extends WebTestBase {
   }
 
   /**
-   * Create a data entity.
+   * Test event entities.
    */
   public function testEvents() {
+    $this->drupalLogin($this->organizer);
+    $this->createGroupingEntity();
     $this->createEventEntity();
   }
 
   /**
-   * Create an event content entity.
-   * 
-   * Creates a content entity of type event.
+   * Creates a grouping entity.
+   */
+  private function createGroupingEntity() {
+    // Create a grouping entity.
+    $this->drupalGet('effectiveactivism/grouping/add');
+    $this->assertResponse(200);
+    $this->drupalPostForm(NULL, array(
+      'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
+      'name[0][value]' => GROUPNAME,
+    ), t('Save'));
+    $this->assertResponse(200);
+    $this->assertText(sprintf('Created the %s Grouping.', GROUPNAME), 'Added a new grouping entity.');
+  }
+
+  /**
+   * Create an event entity.
    */
   private function createEventEntity() {
-    $this->drupalLogin($this->organizer);
     // Create an event entity.
     $this->drupalGet('effectiveactivism/events/add');
     $this->assertResponse(200);
@@ -89,9 +109,10 @@ class EventTest extends WebTestBase {
       'start_date[0][value][time]' => STARTTIME,
       'end_date[0][value][date]' => ENDDATE,
       'end_date[0][value][time]' => ENDTIME,
+      'grouping[0][target_id]' => sprintf('%s (%d)', GROUPNAME, 1),
     ), t('Save'));
     $this->assertResponse(200);
-    $this->assertText('Created event', 'Added a new event entity.');
+    $this->assertText('Created event.', 'Added a new event entity.');
     $this->assertText(DESCRIPTION, 'Confirmed description was saved.');
     $this->assertText(STARTDATEFORMATTED, 'Confirmed start date was saved.');
     $this->assertText(STARTTIME, 'Confirmed start time was saved.');
