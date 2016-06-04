@@ -101,7 +101,7 @@ class GroupingHtmlRouteProvider extends AdminHtmlRouteProvider {
    */
   protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
     if (!$entity_type->getBundleEntityType()) {
-      $route = new Route("/admin/structure/{$entity_type->id()}/settings");
+      $route = new Route("/effectiveactivism/groupings/settings");
       $route
         ->setDefaults([
           '_form' => 'Drupal\ea_groupings\Form\GroupingSettingsForm',
