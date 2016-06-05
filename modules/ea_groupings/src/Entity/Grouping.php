@@ -280,6 +280,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
+        'weight' => 2,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -287,6 +288,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
+        'weight' => 2,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
