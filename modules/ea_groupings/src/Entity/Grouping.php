@@ -46,11 +46,11 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effectiveactivism/grouping/{grouping}",
- *     "add-form" = "/effectiveactivism/grouping/add",
- *     "edit-form" = "/effectiveactivism/grouping/{grouping}/edit",
- *     "delete-form" = "/effectiveactivism/grouping/{grouping}/delete",
- *     "collection" = "/effectiveactivism/grouping",
+ *     "canonical" = "/effectiveactivism/groupings/{grouping}",
+ *     "add-form" = "/effectiveactivism/groupings/add",
+ *     "edit-form" = "/effectiveactivism/groupings/{grouping}/edit",
+ *     "delete-form" = "/effectiveactivism/groupings/{grouping}/delete",
+ *     "collection" = "/effectiveactivism/groupings",
  *   },
  *   field_ui_base_route = "grouping.settings"
  * )
@@ -280,6 +280,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
+        'weight' => 2,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -287,6 +288,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
+        'weight' => 2,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
