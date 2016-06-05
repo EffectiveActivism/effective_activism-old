@@ -84,7 +84,7 @@ class EventTest extends WebTestBase {
    */
   private function createGroupingEntity() {
     // Create a grouping entity.
-    $this->drupalGet('effectiveactivism/grouping/add');
+    $this->drupalGet('effectiveactivism/groupings/add');
     $this->assertResponse(200);
     $this->drupalPostForm(NULL, array(
       'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
