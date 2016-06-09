@@ -7,6 +7,8 @@
 
 namespace Drupal\ea_import\Form;
 
+use Drupal\ea_import\Storage\ICalendarStorage;
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\ConfirmFormBase;
@@ -54,8 +56,15 @@ class DeleteICalendarForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getCancelUrl() {
-    return new Url('ea_import.icalendar');
+  public function getCancelUrl($gid = NULL) {
+    if (!empty($gid)) {
+      return Url::fromRoute('ea_import.icalendar', array(
+        'grouping' => $gid,
+      ));
+    }
+    else {
+      return '';
+    }
   }
 
   /**
@@ -66,6 +75,10 @@ class DeleteICalendarForm extends ConfirmFormBase {
       '#type' => 'value',
       '#value' => $icalendar->iid,
     );
+    $form['gid'] = array(
+      '#type' => 'value',
+      '#value' => $grouping->id(),
+    );
     return parent::buildForm($form, $form_state);
   }
 
@@ -74,6 +87,7 @@ class DeleteICalendarForm extends ConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $iid = $form_state->getValue('iid');
+    $gid = $form_state->getValue('gid');
     $icalendars = ICalendarStorage::load(array('iid' => $iid));
     if (!empty($icalendars)) {
       $icalendar = $icalendars[0];
@@ -85,6 +99,6 @@ class DeleteICalendarForm extends ConfirmFormBase {
       drupal_set_message(t('ICalendar import not found'));
     }
     // Redirect the user to the list controller when complete.
-    $form_state->setRedirectUrl($this->getCancelUrl());
+    $form_state->setRedirectUrl($this->getCancelUrl($gid));
   }
 }

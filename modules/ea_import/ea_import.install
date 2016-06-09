@@ -27,16 +27,21 @@ function ea_import_schema() {
         'not null' => TRUE,
         'description' => 'Determines if the ICalendar file is enabled or not.',
       ),
+      'uid' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'ID of the user that created the import.',
+      ),
       'url' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => FALSE,
         'description' => 'Url of the source.',
       ),
-      'grouping' => array(
+      'gid' => array(
         'type' => 'int',
         'not null' => FALSE,
-        'description' => 'The grouping that this ICalendar file imports to.',
+        'description' => 'ID of the grouping that this ICalendar file imports to.',
       ),
       'filter_title' => array(
         'type' => 'varchar',

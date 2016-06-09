@@ -38,10 +38,10 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'radios',
       '#title' => $this->t('Enabled'),
       '#description' => $this->t('Enable to continuesly import events from ICalendar files.'),
-      '#default_value' => $config->get('enabled'),
+      '#default_value' => $config->get('enabled') !== NULL ? $config->get('enabled') : 0,
       '#options' => array(
         0 => $this->t('Disabled'),
-        1 => $this->t('Enabled')
+        1 => $this->t('Enabled'),
       ),
       '#required' => TRUE,
     );
@@ -49,7 +49,7 @@ class SettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => $this->t('Interval'),
       '#description' => $this->t('Specify the interval of the import cron task.'),
-      '#default_value' => isset($config->get('interval')) ? $config->get('interval') : '24',
+      '#default_value' => $config->get('interval') !== NULL ? $config->get('interval') : '24',
       '#options' => array(
         '1' => $this->t('1 hour'),
         '2' => $this->t('2 hours'),

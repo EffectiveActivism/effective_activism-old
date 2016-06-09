@@ -35,8 +35,12 @@ class EditICalendarForm extends FormBase {
       '#title' => t('Import'),
       '#description' => t('Import an ICalendar file from Facebook, Google Calendar or any other ICalendar-compatible website.'),
     );
+    $form['import']['iid'] = array(
+      '#type' => 'value',
+      '#value' => $icalendar->iid,
+    );
     $form['import']['url'] = array(
-      '#type' => 'url',
+      '#type' => 'textfield',
       '#title' => $this->t('Url'),
       '#description' => $this->t('The url of the ICalendar file.'),
       '#size' => 20,
@@ -54,10 +58,6 @@ class EditICalendarForm extends FormBase {
       ),
       '#required' => TRUE,
       '#default_value' => $icalendar->enabled,
-    );
-    $form['import']['grouping'] = array(
-      '#type' => 'value',
-      '#value' => $icalendar->grouping,
     );
     $form['import']['filters'] = array(
       '#type' => 'details',
@@ -135,19 +135,29 @@ class EditICalendarForm extends FormBase {
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Save the submitted entry.
-    $entry = array(
-      'url' => $form_state->getValue('url'),
-      'enabled' => $form_state->getValue('enabled'),
-      'grouping' => $form_state->getValue('grouping'),
-      'filter_title' => $form_state->getValue('title'),
-      'filter_description' => $form_state->getValue('description'),
-      'filter_date' => !empty($form_state->getValue('date')) ? $form_state->getValue('date') : 0,
+    // Check that the import doesn't exist already.
+    $existing_icalendar_imports = ICalendarStorage::load(array(
       'iid' => $form_state->getValue('iid'),
-    );
-    $return = ICalendarStorage::update($entry);
-    if ($return) {
-      drupal_set_message(t('Updated ICalendar file.'));
+      'url' => $form_state->getValue('url'),
+      'gid' => $form_state->getValue('gid'),
+    ));
+    if (empty($existing_icalendar_imports)) {
+      // Save the submitted entry.
+      $entry = array(
+        'url' => $form_state->getValue('url'),
+        'enabled' => $form_state->getValue('enabled'),
+        'filter_title' => $form_state->getValue('title'),
+        'filter_description' => $form_state->getValue('description'),
+        'filter_date' => !empty($form_state->getValue('date')) ? $form_state->getValue('date') : 0,
+        'iid' => $form_state->getValue('iid'),
+      );
+      $return = ICalendarStorage::update($entry);
+      if ($return) {
+        drupal_set_message(t('Updated ICalendar file.'));
+      }
+    }
+    else {
+      drupal_set_message(t('The ICalendar import already exists.'), 'warning');
     }
   }
 }
