@@ -81,7 +81,7 @@ class ICalendarForm extends FormBase {
       '#title' => $this->t('Date filter'),
       '#description' => $this->t('Only import events that are newer than this date.'),
       '#required' => FALSE,
-      '#default_value' => $icalendar !== NULL ? $icalendar->filter_date : NULL,
+      '#default_value' => $icalendar !== NULL ? date_format(date_timestamp_set(date_create(), $icalendar->filter_date), 'Y-m-d') : NULL,
     );
     $form['submit'] = array(
       '#type' => 'submit',
@@ -163,6 +163,12 @@ class ICalendarForm extends FormBase {
     ));
     $iid = $form_state->getValue('iid');
     if (empty($existing_icalendar_imports) || $iid === $existing_icalendar_imports[0]->iid) {
+      // Convert date to Unix timestamp.
+      $timestamp = 0;
+      if ($form_state->getValue('date') !== NULL) {
+        $date = date_create_from_format('Y-m-d', $form_state->getValue('date'));
+        $timestamp = date_timestamp_get($date);
+      }
       // Save the submitted entry.
       $entry = array(
         'url' => $form_state->getValue('url'),
@@ -171,7 +177,7 @@ class ICalendarForm extends FormBase {
         'gid' => $form_state->getValue('gid'),
         'filter_title' => $form_state->getValue('title'),
         'filter_description' => $form_state->getValue('description'),
-        'filter_date' => !empty($form_state->getValue('date')) ? strtotime($form_state->getValue('date')) : 0,
+        'filter_date' => $timestamp,
       );
       if ($iid !== NULL) {
         $entry['iid'] = $iid;
