@@ -5,6 +5,7 @@
  * Contains ea_import.module.
  */
 
+use Drupal\ea_import\Storage\ICalendarStorage;
 use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
@@ -36,11 +37,11 @@ function ea_import_cron() {
     $nextExecution = !empty($nextExecution) ? $nextExecution : 0;
     if (REQUEST_TIME >= $nextExecution) {
       // Get ICalendar files.
-      $imports = ICalendarStorage::load(array('enabled' => 1));
+      $icalendars = ICalendarStorage::load(array('enabled' => 1));
       $client = \Drupal::httpClient();
       $events = [];
-      foreach ($imports as $import) {
-        $request = $client->get($import->url);
+      foreach ($icalendars as $icalendar) {
+        $request = $client->get($icalendar->url);
         $file = $request->getBody();
         // Parse file.
         $temporaryArray = [];
@@ -64,7 +65,7 @@ function ea_import_cron() {
               }
             }
           }
-          $event['ea_import_grouping'] = $import->grouping;
+          $event['ea_import_grouping'] = $icalendar->gid;
           $events[] = $event;
         }
       }
