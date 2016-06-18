@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Test cases for Content Entity Example Module.
+ * Test cases for the ea_data module.
  */
 
 namespace Drupal\ea_data\Tests;
@@ -13,7 +13,7 @@ use Drupal\simpletest\WebTestBase;
 /**
  * Function tests for ea_data.
  *
- * @group ea_data
+ * @group effective_activism
  */
 class DataTest extends WebTestBase {
 
@@ -29,7 +29,7 @@ class DataTest extends WebTestBase {
     parent::setUp();
     $this->statistician = $this->drupalCreateUser(array(
       'administer data entities',
-      'administer data fields'
+      'administer data fields',
     ));
     $this->organizer = $this->drupalCreateUser(array(
       'add data entities',
@@ -89,7 +89,6 @@ class DataTest extends WebTestBase {
     ), t('Save settings'));
     $this->assertResponse(200);
     $this->assertText('Saved Integer input configuration.', 'Saved settings for integer field.');
-    $this->drupalLogout();
   }
 
   /**
@@ -101,7 +100,7 @@ class DataTest extends WebTestBase {
   private function createDataEntity() {
     $this->drupalLogin($this->organizer);
     // Create a data entity using the data type.
-    $this->drupalGet('effectiveactivism/data/add/data_type_test');
+    $this->drupalGet('effectiveactivism/data/add');
     $this->assertResponse(200);
     $random_value = rand();
     $this->drupalPostForm(NULL, array(

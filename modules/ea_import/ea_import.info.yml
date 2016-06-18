@@ -1,0 +1,8 @@
+name: Import
+type: module
+description: Provides functionality to import entities from external sources.
+core: 8.x
+package: Effective Activism
+dependencies:
+  - ea_groupings
+  - ea_events

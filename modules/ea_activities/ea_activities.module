@@ -52,8 +52,6 @@ function ea_activities_theme() {
  * will contain the Data entities.
  * We need to add this field dynamically, because the bundle
  * type is set match the Data Type contained in $data_types.
- * activity
- * signature_collection
  */
 function ea_activities_entity_bundle_create($entity_type_id, $bundle) {
   if ($entity_type_id == 'activity') {
@@ -97,10 +95,16 @@ function ea_activities_entity_bundle_create($entity_type_id, $bundle) {
               )
             )
             ->save();
-            // Set form and view display settings.
+            // Set form display settings.
             entity_get_form_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
             ->setComponent($field_name, array(
               'type' => 'inline_entity_form_simple',
+            ))
+            ->save();
+            // Set view display settings.
+            entity_get_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
+            ->setComponent($field_name, array(
+              'type' => 'entity_reference_entity_view',
             ))
             ->save();
           }
