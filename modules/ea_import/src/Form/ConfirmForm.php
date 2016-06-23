@@ -7,8 +7,9 @@
 namespace Drupal\ea_import\Form;
 
 use Drupal\ea_import\Storage\ICalendarStorage;
+use Drupal\ea_events\Entity\Event;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\effectiveactivism\Form\MultistepFormBase;
+use Drupal\ea_import\Form\MultistepFormBase;
 use Drupal;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
@@ -17,7 +18,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 
 /**
- * ICalendar form.
+ * Confirm form.
  */
 class ConfirmForm extends MultistepFormBase {
 
@@ -33,28 +34,48 @@ class ConfirmForm extends MultistepFormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, Grouping $grouping = NULL) {
     $form = parent::buildForm($form, $form_state);
-    $entries = $this->store->get('entries');
-    $entity_type = $this->store->get('entity_type');
+    $groupings = $this->store->get('groupings');
+    $stored_events = $this->store->get('events');
     // Validate entries according to entity type requirements.
-    foreach ($entries as $entry) {
+    $event_rows = array();
+    $max_examples = 10;
+    $counter = 0;
+    foreach ($stored_events as $stored_event) {
+      if ($counter > 10) {
+        break;
+      }
       try {
-        {$entity_type}::create($entry);
+        $event = Event::create($stored_event);
       }
-      catch (Exception $e) {
-        
+      catch (TypeError $e) {
+        drupal_set_message($this->t('An event could not be created.'), 'error');
+        break;
       }
-    }
-    while ($iterator < $count) {
+      if (!$event) {
+        drupal_set_message($this->t('An event could not be created.'), 'error');
+        break;
+      }
       $row = array(
-        'date_start' => $entries[$iterator],
+       'data' => array(),
       );
-      $table['rows'] = $row;
+      $row['data'][] = $event->get('title')->getValue()[0]['value'];
+      $row['data'][] = $event->get('start_date')->getValue()[0]['value'];
+      $row['data'][] = $event->get('end_date')->getValue()[0]['value'];
+      $row['data'][] = $event->get('location')->getValue()[0]['address'];
+      $event_rows[] = $row;
+      $counter++;
     }
-    $form['preview'] = array(
+    $form['event_preview'] = array(
       '#type' => 'table',
-      '#name' => t('Preview'),
-      '#description' => t('This is a preview of the import as it will appear on the site.'),
-      '#value' => $table;
+      '#title' => $this->t('Event preview'),
+      '#description' => $this->t('This is a preview of the import as it will appear on the site.'),
+      '#header' => array(
+        $this->t('Title'),
+        $this->t('Start date'),
+        $this->t('End date'),
+        $this->t('Location'),
+      ),
+      '#rows' => $event_rows,
     );
     $form['submit'] = array(
       '#type' => 'submit',
