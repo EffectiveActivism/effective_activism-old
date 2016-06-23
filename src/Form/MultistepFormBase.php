@@ -1,3 +1,5 @@
+<?php
+
 /**
  * @file
  * Contains \Drupal\effectiveactivism\Form\Multistep\MultistepFormBase.
@@ -35,7 +37,7 @@ abstract class MultistepFormBase extends FormBase {
   protected $store;
 
   /**
-   * Constructs a \Drupal\demo\Form\Multistep\MultistepFormBase.
+   * Constructs a \Drupal\effectiveactivism\Form\MultistepFormBase.
    *
    * @param \Drupal\user\PrivateTempStoreFactory $temp_store_factory
    * @param \Drupal\Core\Session\SessionManagerInterface $session_manager
