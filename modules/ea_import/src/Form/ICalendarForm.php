@@ -6,9 +6,10 @@
 
 namespace Drupal\ea_import\Form;
 
+use Drupal\ea_import\Parser\ICalendarParser;
 use Drupal\ea_import\Storage\ICalendarStorage;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\effectiveactivism\Form\MultistepFormBase;
+use Drupal\ea_import\Form\MultistepFormBase;
 use Drupal;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
@@ -83,14 +84,14 @@ class ICalendarForm extends MultistepFormBase {
     );
     $form['filters']['date']['date_start'] = array(
       '#type' => 'date',
-      '#title' => $this->t('Date filter'),
+      '#title' => $this->t('Start date'),
       '#description' => $this->t('Only import events that are newer than this date.'),
       '#required' => FALSE,
       '#default_value' => ($icalendar !== NULL && $icalendar->filter_date_start > 0) ? date_format(date_timestamp_set(date_create(), $icalendar->filter_date_start), 'Y-m-d') : NULL,
     );
     $form['filters']['date']['date_end'] = array(
       '#type' => 'date',
-      '#title' => $this->t('Date filter'),
+      '#title' => $this->t('End date'),
       '#description' => $this->t('Only import events that are older than this date.'),
       '#required' => FALSE,
       '#default_value' => ($icalendar !== NULL && $icalendar->filter_date_end > 0) ? date_format(date_timestamp_set(date_create(), $icalendar->filter_date_end), 'Y-m-d') : NULL,
@@ -161,35 +162,49 @@ class ICalendarForm extends MultistepFormBase {
       /BEGIN:VCALENDAR.*VERSION:[12]\.0.*END:VCALENDAR/s", $file)) {
       $form_state->setErrorByName('url', $this->t('The ICalendar file format is not recognized.'));
     }
+    // Validate dates.
+    $filter_date_start = $form_state->getValue('filter_date_start');
+    $filter_date_end = $form_state->getValue('filter_date_end');
+    if (!empty($filter_date_start) && !empty($filter_date_end) && $filter_date_start > $filter_date_end) {
+      $form_state->setErrorByName('filter_date_start', $this->t('The start date must be older than the end date.'));
+    }
   }
 
   /**
    * {@inheritdoc}
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $gid = $form_state->getValue('gid');
+    $url = $form_state->getValue('url');
+    $iid = $form_state->getValue('iid');
     // Check that the import doesn't exist already.
     // Uniqueness is determined by url and grouping.
     $existing_icalendar_imports = ICalendarStorage::load(array(
-      'url' => $form_state->getValue('url'),
-      'gid' => $form_state->getValue('gid'),
+      'url' => $url,
+      'gid' => $gid,
     ));
-    $iid = $form_state->getValue('iid');
     if (empty($existing_icalendar_imports) || $iid === $existing_icalendar_imports[0]->iid) {
-      // Convert date to Unix timestamp.
-      $timestamp = 0;
-      if (!empty($form_state->getValue('date'))) {
-        $date = date_create_from_format('Y-m-d', $form_state->getValue('date'));
-        $timestamp = date_timestamp_get($date);
+      // Convert dates to Unix timestamp.
+      $timestamp_start = NULL;
+      if (!empty($form_state->getValue('date_start'))) {
+        $date_start = date_create_from_format('Y-m-d', $form_state->getValue('date_start'));
+        $timestamp_start = date_timestamp_get($date_start);
+      }
+      $timestamp_end = NULL;
+      if (!empty($form_state->getValue('date_end'))) {
+        $date_end = date_create_from_format('Y-m-d', $form_state->getValue('date_end'));
+        $timestamp_end = date_timestamp_get($date_end);
       }
       // Save the submitted entry.
       $entry = array(
-        'url' => $form_state->getValue('url'),
+        'url' => $url,
         'enabled' => $form_state->getValue('enabled'),
         'uid' => $form_state->getValue('uid'),
-        'gid' => $form_state->getValue('gid'),
+        'gid' => $gid,
         'filter_title' => $form_state->getValue('title'),
         'filter_description' => $form_state->getValue('description'),
-        'filter_date' => $timestamp,
+        'filter_date_start' => $timestamp_start,
+        'filter_date_end' => $timestamp_end,
       );
       if ($iid !== NULL) {
         $entry['iid'] = $iid;
@@ -205,14 +220,29 @@ class ICalendarForm extends MultistepFormBase {
       // Proceed to confirm import.
       if ($form_state->getValue('enabled')) {
         // Get events.
+        $url = $form_state->getValue('url');
         $client = \Drupal::httpClient();
         $request = $client->get($url);
         $body = (string) $request->getBody();
-        $ical = new ICal($body);
-        dpm($ical->events());
-        $this->store->set('entries', $entries);
-        $this->store->set('entity_type', 'Drupal\ea_events\Entity\Event');
-        //$form_state->setRedirect('ea_import.confirm');
+        $body = explode("\n", $body);
+        $parsed_icalendar = new ICalendarParser($body);
+        $events = array();
+        if (isset($parsed_icalendar->cal['VEVENT']) && !empty($parsed_icalendar->cal['VEVENT'])) {
+          foreach ($parsed_icalendar->cal['VEVENT'] as $event) {
+            $events[] = array(
+              'title' => isset($event['SUMMARY']) ? $event['SUMMARY'] : NULL,
+              'description' => isset($event['DESCRIPTION']) ? $event['DESCRIPTION'] : NULL,
+              'date_start' => isset($event['DTSTART']) ? $event['DTSTART'] : NULL,
+              'date_end' => isset($event['DTEND']) ? $event['DTEND'] : NULL,
+              'location' => isset($event['LOCATION']) ? $event['LOCATION'] : NULL,
+              'grouping' => $form_state->getValue('gid'),
+              'uid' => \Drupal::currentUser()->id(),
+            );
+          }
+        }
+        // Store multiform variables and proceed to confirmation dialog.
+        $this->store->set('events', $events);
+        $form_state->setRedirect('ea_import.confirm', array('grouping' => $gid));
       }
     }
     else {
