@@ -27,6 +27,14 @@ ea_import.icalendar.edit:
     parameters:
       icalendar:
         type: 'ea_icalendar'
+ea_import.confirm:
+  path: '/effectiveactivism/groupings/{grouping}/import/confirm'
+  defaults:
+    _title: 'Confirm import'
+    _form: '\Drupal\ea_import\Form\ConfirmForm'
+  requirements:
+    _access: 'TRUE'
+    grouping: ^[0-9]+
 ea_import.icalendar.delete:
   path: '/effectiveactivism/groupings/{grouping}/import/icalendar/{icalendar}/delete'
   defaults:
