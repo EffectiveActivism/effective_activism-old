@@ -49,11 +49,11 @@ class ConfirmForm extends MultistepFormBase {
       }
       catch (TypeError $e) {
         drupal_set_message($this->t('An event could not be created.'), 'error');
-        break;
+        continue;
       }
       if (!$event) {
         drupal_set_message($this->t('An event could not be created.'), 'error');
-        break;
+        continue;
       }
       $row = array(
        'data' => array(),
