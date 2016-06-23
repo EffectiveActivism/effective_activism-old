@@ -8,6 +8,7 @@ namespace Drupal\ea_import\Form;
 
 use Drupal\ea_import\Storage\ICalendarStorage;
 use Drupal\ea_groupings\Entity\Grouping;
+use Drupal\effectiveactivism\Form\MultistepFormBase;
 use Drupal;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
@@ -18,7 +19,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * ICalendar form.
  */
-class ICalendarForm extends FormBase {
+class ICalendarForm extends MultistepFormBase {
 
   /**
    * {@inheritdoc}
@@ -31,7 +32,7 @@ class ICalendarForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, Grouping $grouping = NULL, $icalendar = NULL) {
-    $form = array();
+    $form = parent::buildForm($form, $form_state);
     $form['url'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Url'),
@@ -77,11 +78,22 @@ class ICalendarForm extends FormBase {
       '#default_value' => $icalendar !== NULL ? $icalendar->filter_description : NULL,
     );
     $form['filters']['date'] = array(
+      '#type' => 'fieldset',
+      '#title' => t('Date'),
+    );
+    $form['filters']['date']['date_start'] = array(
       '#type' => 'date',
       '#title' => $this->t('Date filter'),
       '#description' => $this->t('Only import events that are newer than this date.'),
       '#required' => FALSE,
-      '#default_value' => ($icalendar !== NULL && $icalendar->filter_date > 0) ? date_format(date_timestamp_set(date_create(), $icalendar->filter_date), 'Y-m-d') : NULL,
+      '#default_value' => ($icalendar !== NULL && $icalendar->filter_date_start > 0) ? date_format(date_timestamp_set(date_create(), $icalendar->filter_date_start), 'Y-m-d') : NULL,
+    );
+    $form['filters']['date']['date_end'] = array(
+      '#type' => 'date',
+      '#title' => $this->t('Date filter'),
+      '#description' => $this->t('Only import events that are older than this date.'),
+      '#required' => FALSE,
+      '#default_value' => ($icalendar !== NULL && $icalendar->filter_date_end > 0) ? date_format(date_timestamp_set(date_create(), $icalendar->filter_date_end), 'Y-m-d') : NULL,
     );
     $form['submit'] = array(
       '#type' => 'submit',
@@ -189,6 +201,18 @@ class ICalendarForm extends FormBase {
         if (ICalendarStorage::insert($entry)) {
           drupal_set_message(t('Added ICalendar file.'));
         }
+      }
+      // Proceed to confirm import.
+      if ($form_state->getValue('enabled')) {
+        // Get events.
+        $client = \Drupal::httpClient();
+        $request = $client->get($url);
+        $body = (string) $request->getBody();
+        $ical = new ICal($body);
+        dpm($ical->events());
+        $this->store->set('entries', $entries);
+        $this->store->set('entity_type', 'Drupal\ea_events\Entity\Event');
+        //$form_state->setRedirect('ea_import.confirm');
       }
     }
     else {
