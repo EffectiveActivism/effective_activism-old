@@ -28,7 +28,7 @@ class LocationController {
   public function autocomplete(Request $request) {
     $autocomplete_suggestions = array();
     $string = $request->query->get('q');
-    $suggestions = LocationController::getLocations($string);
+    $suggestions = $this->getLocations($string);
     foreach ($suggestions as $suggestion) {
       $autocomplete_suggestions[] = array('value' => $suggestion, 'label' => $suggestion);
     }
@@ -47,7 +47,7 @@ class LocationController {
    *   If any connection errors occur, validation returns TRUE.
    */
   public function validateLocation($location) {
-    $valid_locations = LocationController::getLocations($location);
+    $valid_locations = $this->getLocations($location);
     if ($valid_locations) {
       return in_array($location, $valid_locations);
     }

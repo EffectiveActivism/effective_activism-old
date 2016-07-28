@@ -50,8 +50,9 @@ class LocationWidget extends WidgetBase {
    */
   public function validate($element, FormStateInterface $form_state) {
     $address = $element['#value'];
+    $locationController = new LocationController;
     if (!empty($address)) {
-      if (!LocationController::validateLocation($address)) {
+      if (!$locationController->validateLocation($address)) {
         $form_state->setError($element, t('Please select a location from the list of suggestions.'));
       }
     }
