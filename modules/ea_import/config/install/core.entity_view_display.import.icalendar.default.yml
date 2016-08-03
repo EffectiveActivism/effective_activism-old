@@ -1,0 +1,73 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - ea_import.import_type.icalendar
+    - field.field.import.icalendar.field_filter_date_end
+    - field.field.import.icalendar.field_filter_date_start
+    - field.field.import.icalendar.field_filter_description
+    - field.field.import.icalendar.field_filter_title
+    - field.field.import.icalendar.field_url
+  module:
+    - datetime
+    - link
+    - user
+id: import.icalendar.default
+targetEntityType: import
+bundle: icalendar
+mode: default
+content:
+  field_filter_date_end:
+    type: datetime_custom
+    weight: 2
+    label: above
+    settings:
+      date_format: 'Y-m-d\TH:i:s'
+      timezone_override: ''
+    third_party_settings: {  }
+  field_filter_date_start:
+    type: datetime_custom
+    weight: 3
+    label: above
+    settings:
+      date_format: 'Y-m-d\TH:i:s'
+      timezone_override: ''
+    third_party_settings: {  }
+  field_filter_description:
+    type: string
+    weight: 4
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_filter_title:
+    type: string
+    weight: 5
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+  field_url:
+    type: link_separate
+    weight: 6
+    label: above
+    settings:
+      trim_length: 80
+      rel: ''
+      target: ''
+      url_only: false
+      url_plain: false
+    third_party_settings: {  }
+  grouping:
+    type: entity_reference_entity_id
+    weight: 0
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+  user_id:
+    label: hidden
+    type: author
+    weight: 1
+    settings: {  }
+    third_party_settings: {  }
+hidden: {  }

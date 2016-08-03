@@ -1,0 +1,17 @@
+# Import routing definition
+entity.import.canonical:
+  route_name: entity.import.canonical
+  base_route: entity.import.canonical
+  title: 'View'
+
+entity.import.edit_form:
+  route_name: entity.import.edit_form
+  base_route: entity.import.canonical
+  title: Edit
+
+entity.import.delete_form:
+  route_name:  entity.import.delete_form
+  base_route:  entity.import.canonical
+  title: Delete
+  weight: 10
+

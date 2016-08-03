@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains ea_import.module.
+ * Contains ea_import.module..
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -16,7 +16,7 @@ function ea_import_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.ea_import':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Provides functionality to import entities from external sources.') . '</p>';
+      $output .= '<p>' . t('Import content from 3rd party sources.') . '</p>';
       return $output;
 
     default:
@@ -24,51 +24,35 @@ function ea_import_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_cron().
+ * Implements hook_theme().
  */
-function ea_import_cron() {
-  // We access our configuration.
-  $cron_config = Drupal::config('ea_import.settings');
-  if ($cron_config->get('enabled')) {
-    $interval = $cron_config->get('interval');
-    $interval = !empty($interval) ? $interval : 3600;
-    $nextExecution = \Drupal::state()->get('ea_import.next_execution');
-    $nextExecution = !empty($nextExecution) ? $nextExecution : 0;
-    if (REQUEST_TIME >= $nextExecution) {
-      // Get ICalendar files.
-      $imports = ICalendarStorage::load(array('enabled' => 1));
-      $client = \Drupal::httpClient();
-      $events = [];
-      foreach ($imports as $import) {
-        $request = $client->get($import->url);
-        $file = $request->getBody();
-        // Parse file.
-        $temporaryArray = [];
-        foreach(explode("BEGIN:", $file) as $key => $value) {
-          $temporaryArray[$key] = explode("\n", $value);
-        }
-        foreach($temporaryArray as $key => $value) {
-          $event = [];
-          foreach($value as $subKey => $subValue) {
-            if (!empty($subValue)) {
-              // Skip non-events.
-              if ($subKey === 0 && $subValue !== 'VEVENT') {
-                continue(2);
-              }
-              if ($key != 0 && $subKey === 0) {
-                  $event["BEGIN"] = $subValue;
-              }
-              else {
-                $subValueArr = explode(":", $subValue, 2);
-                $event[$subValueArr[0]] = $subValueArr[1];
-              }
-            }
-          }
-          $event['ea_import_grouping'] = $import->grouping;
-          $events[] = $event;
-        }
-      }
-      \Drupal::logger('ea_import')->notice('ea_import result: <pre>' . print_r($events, TRUE) . '</pre>');
-    }
-  }
+function ea_import_theme() {
+  $theme = [];
+  $theme['import'] = array(
+    'render element' => 'elements',
+    'file' => 'import.page.inc',
+    'template' => 'import',
+  );
+  $theme['import_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'import.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+* Implements hook_theme_suggestions_HOOK().
+*/
+function ea_import_theme_suggestions_import(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#import'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+
+  $suggestions[] = 'import__' . $sanitized_view_mode;
+  $suggestions[] = 'import__' . $entity->bundle();
+  $suggestions[] = 'import__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'import__' . $entity->id();
+  $suggestions[] = 'import__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
 }
