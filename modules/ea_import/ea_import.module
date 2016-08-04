@@ -5,7 +5,13 @@
  * Contains ea_import.module..
  */
 
+use Drupal\ea_events\Entity\Event;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\file\Entity\File;
+
+const EA_IMPORT_BUNDLE_CSV = 'csv';
+const EA_IMPORT_BUNDLE_ICALENDAR = 'icalendar';
 
 /**
  * Implements hook_help().
@@ -18,7 +24,6 @@ function ea_import_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Import content from 3rd party sources.') . '</p>';
       return $output;
-
     default:
   }
 }
@@ -48,11 +53,60 @@ function ea_import_theme_suggestions_import(array $variables) {
   $suggestions = array();
   $entity = $variables['elements']['#import'];
   $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
-
   $suggestions[] = 'import__' . $sanitized_view_mode;
   $suggestions[] = 'import__' . $entity->bundle();
   $suggestions[] = 'import__' . $entity->bundle() . '__' . $sanitized_view_mode;
   $suggestions[] = 'import__' . $entity->id();
   $suggestions[] = 'import__' . $entity->id() . '__' . $sanitized_view_mode;
   return $suggestions;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function ea_import_import_insert(EntityInterface $entity) {
+  // If the import is a CSV file, import the content of it.
+  if ($entity->bundle() === EA_IMPORT_BUNDLE_CSV) {
+    $field_file_csv = $entity->get('field_file_csv')->getValue();
+    if (!empty($field_file_csv[0]['target_id'])) {
+      // Load file entity.
+      $csv_file = File::load($field_file_csv[0]['target_id']);
+      if ($csv_file) {
+        // Iterate file.
+        $row = 0;
+        if (($handle = fopen($csv_file->getFileUri(), "r")) !== FALSE) {
+          while (($data = fgetcsv($handle)) !== FALSE) {
+            $row++;
+            // Skip headers.
+            if ($row === 1) {
+              continue;
+            }
+            $event = Event::create(array(
+              'title' => $data[0],
+              'description' => $data[1],
+              'start_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, $data[2]),
+              'end_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, $data[3]),
+              'location' => $data[4],
+              'grouping' => $data[6],
+              'user_id' => Drupal::currentUser()->id(),
+            ));
+            $event->save();
+          }
+          fclose($handle);
+        }
+        if ($row > 2) {
+          drupal_set_message(t('@count events imported', array('@count' => $row)));
+        } elseif ($row === 2) {
+          drupal_set_message(t('One event imported'));
+        }
+        else {
+          drupal_set_message(t('No events imported'), 'warning');
+        }
+      }
+    }
+  }
+  // If the import is an ICalendar file, import the content of it.
+  if ($entity->bundle() === EA_IMPORT_BUNDLE_ICALENDAR) {
+    drupal_set_message('ICalendar file added');
+  }
 }
