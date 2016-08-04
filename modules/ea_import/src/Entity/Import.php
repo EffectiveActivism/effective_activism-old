@@ -3,6 +3,7 @@
 namespace Drupal\ea_import\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
@@ -42,7 +43,7 @@ use Drupal\user\UserInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
- *     "label" = "name",
+ *     "label" = "id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -190,6 +191,23 @@ class Import extends ContentEntityBase implements ImportInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['events'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Events'))
+      ->setDescription(t('The events that belongs to this import.'))
+      ->setSetting('target_type', 'event')
+      ->setSetting('handler', 'default')
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setRequired(FALSE)
+      ->setDisplayOptions('view', array(
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'hidden',
+        'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
