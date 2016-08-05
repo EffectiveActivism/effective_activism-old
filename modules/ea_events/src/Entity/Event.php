@@ -149,7 +149,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setLabel(t('Title'))
       ->setDescription(t('The title of the event.'))
       ->setSettings(array(
-        'max_length' => 50,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')
@@ -169,7 +168,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDescription(t('The beginning of the event.'))
       ->setSettings(array(
         'default_value' => '',
-        'max_length' => 50,
         'text_processing' => 0,
       ))
       ->setDefaultValue(array(
@@ -192,7 +190,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDescription(t('The end of the event.'))
       ->setSettings(array(
         'default_value' => '',
-        'max_length' => 50,
         'text_processing' => 0,
       ))
       ->setDefaultValue(array(
@@ -214,7 +211,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setLabel(t('Location'))
       ->setDescription(t('The location of the event.'))
       ->setSettings(array(
-        'max_length' => 50,
         'text_processing' => 0,
       ))
       ->setDefaultValue('')
