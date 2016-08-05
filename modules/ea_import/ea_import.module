@@ -6,6 +6,7 @@
  */
 
 use Drupal\ea_import\CSVFileException;
+use Drupal\ea_import\Parser\ICalendarParser;
 use Drupal\ea_events\Entity\Event;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -70,6 +71,8 @@ function ea_import_entity_presave(EntityInterface $entity) {
   // If the import is a CSV file, import the content of it.
   if ($entity->bundle() === EA_IMPORT_BUNDLE_CSV) {
     $field_file_csv = $entity->get('field_file_csv')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $gid = $grouping[0]['target_id'];
     if (!empty($field_file_csv[0]['target_id'])) {
       // Load file entity.
       $csv_file = File::load($field_file_csv[0]['target_id']);
@@ -105,14 +108,14 @@ function ea_import_entity_presave(EntityInterface $entity) {
               'start_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, (int) $data[2]),
               'end_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, (int) $data[3]),
               'location' => $data[4],
-              'grouping' => $data[6],
+              'grouping' => $gid,
               'user_id' => Drupal::currentUser()->id(),
             ));
             $errors = $event->validate();
             if ($errors->count() > 0) {
               $error_list = [];
               foreach ($errors as $error) {
-                $error_list[] = $error->getMessage();
+                $error_list[] = strip_tags($error->getMessage());
               }
               fclose($handle);
               throw new Exception(t('Errors found in row @row: @errors', array('@row' => $row, '@errors' => implode('</br>', $error_list))));
@@ -120,6 +123,76 @@ function ea_import_entity_presave(EntityInterface $entity) {
           }
           fclose($handle);
         }
+      }
+    }
+  }
+  if ($entity->bundle() === EA_IMPORT_BUNDLE_ICALENDAR) {
+    $field_url = $entity->get('field_url')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $gid = $grouping[0]['target_id'];
+    if (!empty($field_url[0]['uri'])) {
+      $url = $field_url[0]['uri'];
+      // Convert webcal scheme to http, as Guzzler may not support webcal.
+      $url = _ea_import_transform_url($url);
+      // Validation of the ICalendar file url.
+      if (!preg_match("
+        /^                                                      # Start at the beginning of the text
+        (?:https?):\/\/                                         # Look for http or https schemes
+        (?:
+          (?:[a-z0-9\-\.]|%[0-9a-f]{2})+                        # A domain name or a IPv4 address
+          |(?:\[(?:[0-9a-f]{0,4}:)*(?:[0-9a-f]{0,4})\])         # or a well formed IPv6 address
+        )
+        (?::[0-9]+)?                                            # Server port number (optional)
+        (?:[\/|\?]
+          (?:[\w#!:\.\?\+=&@$'~*,;\/\(\)\[\]\-]|%[0-9a-f]{2})   # The path and query (optional)
+        *)?
+        $/xi", $url)) {
+        throw new Exception(t('Please type in a correct ICalendar url.'));
+      }
+      // Basic validation of the ICalendar file.
+      $client = \Drupal::httpClient();
+      $request = $client->get($url);
+      $body = (string) $request->getBody();
+      if (!preg_match("
+        /BEGIN:VCALENDAR.*VERSION:[12]\.0.*END:VCALENDAR/s", $body)) {
+        throw new Exception(t('The ICalendar file format is not recognized.'));
+      }
+      // Validate ICalendar events.
+      $body = explode("\n", $body);
+      $parsed_icalendar = new ICalendarParser($body);
+      $row = 0;
+      if (isset($parsed_icalendar->cal['VEVENT']) && !empty($parsed_icalendar->cal['VEVENT'])) {
+        foreach ($parsed_icalendar->cal['VEVENT'] as $data) {
+          $row++;
+          $event = Event::create(array(
+            'title' => isset($data['SUMMARY']) ? $data['SUMMARY'] : NULL,
+            'description' => isset($data['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $data['DESCRIPTION']) : NULL,
+            'start_date' => isset($data['DTSTART']) ? date(DATETIME_DATETIME_STORAGE_FORMAT, (int) strtotime($data['DTSTART'])) : NULL,
+            'end_date' => isset($data['DTEND']) ? date(DATETIME_DATETIME_STORAGE_FORMAT, (int) strtotime($data['DTEND'])) : NULL,
+            'location' => isset($data['LOCATION']) ? $data['LOCATION'] : NULL,
+            'grouping' => $gid,
+            'user_id' => \Drupal::currentUser()->id(),
+            'uuid' => isset($data['UID']) ? $data['UID'] : NULL,
+          ));
+          $errors = $event->validate();
+          if ($errors->count() > 0) {
+            $error_list = [];
+            foreach ($errors as $error) {
+              $error_list[] = strip_tags($error->getMessage());
+            }
+            throw new Exception(t('Errors found in row @row: @errors', array('@row' => $row, '@errors' => implode('</br>', $error_list))));
+          }
+        }
+      }
+      // Validate dates.
+      $filter_date_start = $entity->get('field_filter_date_start')->getValue();
+      $filter_date_end = $entity->get('field_filter_date_end')->getValue();
+      if (
+        !empty($filter_date_start[0]['value']) &&
+        !empty($filter_date_end[0]['value']) &&
+        $filter_date_start[0]['value'] > $filter_date_end[0]['value']
+      ) {
+        throw new Exception(t('The start date must be before the end date.'));
       }
     }
   }
@@ -132,6 +205,8 @@ function ea_import_import_insert(EntityInterface $entity) {
   // If the import is a CSV file, import the content of it.
   if ($entity->bundle() === EA_IMPORT_BUNDLE_CSV) {
     $field_file_csv = $entity->get('field_file_csv')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $gid = $grouping[0]['target_id'];
     if (!empty($field_file_csv[0]['target_id'])) {
       // Load file entity.
       $csv_file = File::load($field_file_csv[0]['target_id']);
@@ -151,7 +226,7 @@ function ea_import_import_insert(EntityInterface $entity) {
               'start_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, $data[2]),
               'end_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, $data[3]),
               'location' => $data[4],
-              'grouping' => $data[6],
+              'grouping' => $gid,
               'user_id' => Drupal::currentUser()->id(),
             ));
             $event->save();
@@ -171,6 +246,59 @@ function ea_import_import_insert(EntityInterface $entity) {
   }
   // If the import is an ICalendar file, import the content of it.
   if ($entity->bundle() === EA_IMPORT_BUNDLE_ICALENDAR) {
-    drupal_set_message('ICalendar file added');
+    $field_url = $entity->get('field_url')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $gid = $grouping[0]['target_id'];
+    if (!empty($field_url[0]['uri'])) {
+      $url = $field_url[0]['uri'];
+      // Convert webcal scheme to http, as Guzzler may not support webcal.
+      $url = _ea_import_transform_url($url);
+      // Get events.
+      $client = \Drupal::httpClient();
+      $request = $client->get($url);
+      $body = (string) $request->getBody();
+      $body = explode("\n", $body);
+      $parsed_icalendar = new ICalendarParser($body);
+      if (isset($parsed_icalendar->cal['VEVENT']) && !empty($parsed_icalendar->cal['VEVENT'])) {
+        foreach ($parsed_icalendar->cal['VEVENT'] as $event) {
+          $event = Event::create(array(
+            'title' => isset($event['SUMMARY']) ? $event['SUMMARY'] : NULL,
+            'description' => isset($event['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $event['DESCRIPTION']) : NULL,
+            'start_date' => isset($event['DTSTART']) ? date(DATETIME_DATETIME_STORAGE_FORMAT, (int) strtotime($event['DTSTART'])) : NULL,
+            'end_date' => isset($event['DTEND']) ? date(DATETIME_DATETIME_STORAGE_FORMAT, (int)  strtotime($event['DTEND'])) : NULL,
+            'location' => isset($event['LOCATION']) ? $event['LOCATION'] : NULL,
+            'grouping' => $gid,
+            'user_id' => \Drupal::currentUser()->id(),
+          ));
+          $event->save();
+        }
+      }
+    }
   }
+}
+
+/**
+ * Transform url scheme to http.
+ * 
+ * @params string $url
+ *   The url to transform.
+ */
+function _ea_import_transform_url(string $url) {
+  // Convert webcal scheme to http, as Guzzler may not support webcal.
+  if (strpos($url, 'webcal://') === 0) {
+    $parsed_url = parse_url($url);
+    $parsed_url['scheme'] = 'http';
+    $url = 
+      (isset($parsed_url['scheme']) ? "{$parsed_url['scheme']}:" : '') . 
+      ((isset($parsed_url['user']) || isset($parsed_url['host'])) ? '//' : '') . 
+      (isset($parsed_url['user']) ? "{$parsed_url['user']}" : '') . 
+      (isset($parsed_url['pass']) ? ":{$parsed_url['pass']}" : '') . 
+      (isset($parsed_url['user']) ? '@' : '') . 
+      (isset($parsed_url['host']) ? "{$parsed_url['host']}" : '') . 
+      (isset($parsed_url['port']) ? ":{$parsed_url['port']}" : '') . 
+      (isset($parsed_url['path']) ? "{$parsed_url['path']}" : '') . 
+      (isset($parsed_url['query']) ? "?{$parsed_url['query']}" : '') . 
+      (isset($parsed_url['fragment']) ? "#{$parsed_url['fragment']}" : '');
+  }
+  return $url;
 }
