@@ -2,12 +2,14 @@
 
 /**
  * @file
- * Contains ea_import.module..
+ * Contains ea_import.module.
  */
 
+use Drupal\ea_import\CSVFileException;
 use Drupal\ea_events\Entity\Event;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\file\Entity\File;
 
 const EA_IMPORT_BUNDLE_CSV = 'csv';
@@ -59,6 +61,68 @@ function ea_import_theme_suggestions_import(array $variables) {
   $suggestions[] = 'import__' . $entity->id();
   $suggestions[] = 'import__' . $entity->id() . '__' . $sanitized_view_mode;
   return $suggestions;
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function ea_import_entity_presave(EntityInterface $entity) {
+  // If the import is a CSV file, import the content of it.
+  if ($entity->bundle() === EA_IMPORT_BUNDLE_CSV) {
+    $field_file_csv = $entity->get('field_file_csv')->getValue();
+    if (!empty($field_file_csv[0]['target_id'])) {
+      // Load file entity.
+      $csv_file = File::load($field_file_csv[0]['target_id']);
+      if ($csv_file) {
+        // Iterate file.
+        $row = 0;
+        if (($handle = fopen($csv_file->getFileUri(), "r")) !== FALSE) {
+          $error_count = 0;
+          while (($data = fgetcsv($handle)) !== FALSE) {
+            $row++;
+            // Validate headers.
+            if ($row === 1) {
+              if (
+                count($data) !== 7 ||
+                $data[0] !== 'title' ||
+                $data[1] !== 'description' ||
+                $data[2] !== 'date_start' ||
+                $data[3] !== 'date_end' ||
+                $data[4] !== 'location' ||
+                $data[5] !== 'location_title' ||
+                $data[6] !== 'grouping'
+              ) {
+                drupal_set_message('count: ' . count($data));
+                fclose($handle);
+                throw new Exception(t('CSV header not formatted properly'));
+              }
+              continue;
+            }
+            // Attempt to create event.
+            $event = Event::create(array(
+              'title' => $data[0],
+              'description' => $data[1],
+              'start_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, (int) $data[2]),
+              'end_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, (int) $data[3]),
+              'location' => $data[4],
+              'grouping' => $data[6],
+              'user_id' => Drupal::currentUser()->id(),
+            ));
+            $errors = $event->validate();
+            if ($errors->count() > 0) {
+              $error_list = [];
+              foreach ($errors as $error) {
+                $error_list[] = $error->getMessage();
+              }
+              fclose($handle);
+              throw new Exception(t('Errors found in row @row: @errors', array('@row' => $row, '@errors' => implode('</br>', $error_list))));
+            }
+          }
+          fclose($handle);
+        }
+      }
+    }
+  }
 }
 
 /**
