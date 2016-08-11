@@ -3,6 +3,7 @@ status: true
 dependencies:
   config:
     - ea_import.import_type.icalendar
+    - field.field.import.icalendar.field_continuous_import
     - field.field.import.icalendar.field_filter_date_end
     - field.field.import.icalendar.field_filter_date_start
     - field.field.import.icalendar.field_filter_description
@@ -16,6 +17,11 @@ targetEntityType: import
 bundle: icalendar
 mode: default
 content:
+  field_continuous_import:
+    type: options_buttons
+    weight: 7
+    settings: {  }
+    third_party_settings: {  }
   field_filter_date_end:
     type: datetime_default
     weight: 2
@@ -63,4 +69,5 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-hidden: {  }
+hidden:
+  events: true
