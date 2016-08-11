@@ -1,0 +1,11 @@
+entity.import.add_form:
+  route_name: 'entity.import.add_page'
+  title: 'Add Import'
+  appears_on:
+    - entity.import.collection
+entity.import_type.add_form:
+  route_name: 'entity.import_type.add_form'
+  title: 'Add Import type'
+  appears_on:
+    - entity.import_type.collection
+

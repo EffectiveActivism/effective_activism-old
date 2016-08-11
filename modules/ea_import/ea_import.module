@@ -5,7 +5,17 @@
  * Contains ea_import.module.
  */
 
+use Drupal\ea_import\Entity\Import;
+use Drupal\ea_import\CSVFileException;
+use Drupal\ea_import\Parser\ICalendarParser;
+use Drupal\ea_events\Entity\Event;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+const EA_IMPORT_BUNDLE_CSV = 'csv';
+const EA_IMPORT_BUNDLE_ICALENDAR = 'icalendar';
 
 /**
  * Implements hook_help().
@@ -16,10 +26,202 @@ function ea_import_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.ea_import':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('Provides functionality to import entities from external sources.') . '</p>';
+      $output .= '<p>' . t('Import content from 3rd party sources.') . '</p>';
       return $output;
-
     default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ea_import_theme() {
+  $theme = [];
+  $theme['import'] = array(
+    'render element' => 'elements',
+    'file' => 'import.page.inc',
+    'template' => 'import',
+  );
+  $theme['import_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'import.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+* Implements hook_theme_suggestions_HOOK().
+*/
+function ea_import_theme_suggestions_import(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#import'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+  $suggestions[] = 'import__' . $sanitized_view_mode;
+  $suggestions[] = 'import__' . $entity->bundle();
+  $suggestions[] = 'import__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'import__' . $entity->id();
+  $suggestions[] = 'import__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}
+
+/**
+ * Implements hook_entity_presave().
+ */
+function ea_import_entity_presave(EntityInterface $entity) {
+  // If the import is a CSV file, import the content of it.
+  if ($entity->bundle() === EA_IMPORT_BUNDLE_CSV) {
+    $field_file_csv = $entity->get('field_file_csv')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $gid = $grouping[0]['target_id'];
+    if (!empty($field_file_csv[0]['target_id'])) {
+      // Get CSV file.
+      $parsed_csv = new CSVParser($field_file_csv[0]['target_id']);
+      // Validate CSV headers.
+      if (!$parsed_csv->validateHeaders()) {
+        throw new Exception(t('The CSV header not formatted properly'));
+      }
+      // Iterate events.
+      $count = 0;
+      foreach ($parsed_csv->getEvents() as $parsed_event) {
+        // Validate event.
+        $count++;
+        $parsed_event['grouping'] = $gid;
+        $parsed_event['user_id'] = \Drupal::currentUser()->id();
+        $event = Event::create($parsed_event);
+        $errors = $event->validate();
+        if ($errors->count() > 0) {
+          $error_list = [];
+          foreach ($errors as $error) {
+            $error_list[] = strip_tags($error->getMessage());
+          }
+          throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode('</br>', $error_list))));
+        }
+      }
+    }
+  }
+  elseif ($entity->bundle() === EA_IMPORT_BUNDLE_ICALENDAR) {
+    $field_url = $entity->get('field_url')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $filter_title = $entity->get('field_filter_title')->getValue();
+    $filter_description = $entity->get('field_filter_title')->getValue();
+    $filter_date_start = $entity->get('field_filter_date_start')->getValue();
+    $filter_date_end = $entity->get('field_filter_date_end')->getValue();
+    $gid = $grouping[0]['target_id'];
+    // Validate filter fields.
+    if (
+      !empty($filter_date_start[0]['value']) &&
+      !empty($filter_date_end[0]['value']) &&
+      $filter_date_start[0]['value'] > $filter_date_end[0]['value']
+    ) {
+      throw new Exception(t('The start date must be before the end date.'));
+    }
+    // Add filters.
+    $filters = [];
+    $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
+    $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
+    $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
+    $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
+    // Get ICalendar file.
+    $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters);
+    // Validate ICalendar headers.
+    if (!$parsed_icalendar->validateHeaders()) {
+      throw new Exception(t('The ICalendar header not formatted properly.'));
+    }
+    // Iterate events.
+    $count = 0;
+    foreach ($parsed_icalendar->getEvents() as $parsed_event) {
+      $count++;
+      // Create event.
+      $parsed_event['grouping'] = $gid;
+      $parsed_event['user_id'] = \Drupal::currentUser()->id();
+      $event = Event::create($parsed_event);
+      $errors = $event->validate();
+      if ($errors->count() > 0) {
+        $error_list = [];
+        foreach ($errors as $error) {
+          $error_list[] = strip_tags($error->getMessage());
+        }
+        throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode('</br>', $error_list))));
+      }
+    }
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function ea_import_import_insert(EntityInterface $entity) {
+  // If the import is a CSV file, import the content of it.
+  if ($entity->bundle() === EA_IMPORT_BUNDLE_CSV) {
+    $field_file_csv = $entity->get('field_file_csv')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $gid = $grouping[0]['target_id'];
+    // Get CSV file.
+    $parsed_csv = new CSVParser($field_file_csv[0]['target_id']);
+    // Iterate events.
+    $count = 0;
+    foreach ($parsed_csv->getEvents() as $parsed_event) {
+      $count++;
+      // Create event.
+      $parsed_event['grouping'] = $gid;
+      $parsed_event['user_id'] = \Drupal::currentUser()->id();
+      $event = Event::create($parsed_event);
+      $event->save();
+    }
+    if ($count > 1) {
+      drupal_set_message(t('@count events imported', array('@count' => $count)));
+    } elseif ($count === 1) {
+      drupal_set_message(t('One event imported'));
+    } else {
+      drupal_set_message(t('No events imported'), 'warning');
+    }
+  }
+  // If the import is an ICalendar file, import the content of it.
+  elseif ($entity->bundle() === EA_IMPORT_BUNDLE_ICALENDAR) {
+    $field_url = $entity->get('field_url')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $filter_title = $entity->get('field_filter_title')->getValue();
+    $filter_description = $entity->get('field_filter_title')->getValue();
+    $filter_date_start = $entity->get('field_filter_date_start')->getValue();
+    $filter_date_end = $entity->get('field_filter_date_end')->getValue();
+    $gid = $grouping[0]['target_id'];
+    // Add filters.
+    $filters = [];
+    $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
+    $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
+    $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
+    $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
+    // Get ICalendar file.
+    $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters);
+    // Iterate events.
+    $count = 0;
+    foreach ($parsed_icalendar->getEvents() as $parsed_event) {
+      // Get UID.
+      $uid = $parsed_event['uid'];
+      unset($parsed_event['uid']);
+      // Save event if UID is not found within grouping scope. 
+      if (!_ea_import_uid_exists($gid, $uid)) {
+        $count++;
+        // Insert UID/gid pair.
+        _ea_import_uid_exists($gid, $uid);
+        // Create event.
+        $parsed_event['grouping'] = $gid;
+        $parsed_event['user_id'] = \Drupal::currentUser()->id();
+        $event = Event::create($parsed_event);
+        $event->save();
+        // Add event to import entity reference field.
+        $entity->events->appendItem($event->id());
+        $entity->save();
+      }
+    }
+    if ($count > 1) {
+      drupal_set_message(t('@count events imported', array('@count' => $count)));
+    } elseif ($count === 1) {
+      drupal_set_message(t('One event imported'));
+    } else {
+      drupal_set_message(t('No events imported'), 'warning');
+    }
   }
 }
 
@@ -27,7 +229,7 @@ function ea_import_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_cron().
  */
 function ea_import_cron() {
-  // We access our configuration.
+  // Get import configuration.
   $cron_config = Drupal::config('ea_import.settings');
   if ($cron_config->get('enabled')) {
     $interval = $cron_config->get('interval');
@@ -35,40 +237,111 @@ function ea_import_cron() {
     $nextExecution = \Drupal::state()->get('ea_import.next_execution');
     $nextExecution = !empty($nextExecution) ? $nextExecution : 0;
     if (REQUEST_TIME >= $nextExecution) {
-      // Get ICalendar files.
-      $imports = ICalendarStorage::load(array('enabled' => 1));
-      $client = \Drupal::httpClient();
-      $events = [];
+      // Get ICalendar import entities.
+      $iids = \Drupal::entityQuery('import')
+        ->condition('bundle', 'icalendar')
+        ->condition('field_continuous_import', 'On')
+        ->execute();
+      $imports = \Drupal::entityManager()->getStorage('import')->loadMultiple($iids);
       foreach ($imports as $import) {
-        $request = $client->get($import->url);
-        $file = $request->getBody();
-        // Parse file.
-        $temporaryArray = [];
-        foreach(explode("BEGIN:", $file) as $key => $value) {
-          $temporaryArray[$key] = explode("\n", $value);
-        }
-        foreach($temporaryArray as $key => $value) {
-          $event = [];
-          foreach($value as $subKey => $subValue) {
-            if (!empty($subValue)) {
-              // Skip non-events.
-              if ($subKey === 0 && $subValue !== 'VEVENT') {
-                continue(2);
-              }
-              if ($key != 0 && $subKey === 0) {
-                  $event["BEGIN"] = $subValue;
-              }
-              else {
-                $subValueArr = explode(":", $subValue, 2);
-                $event[$subValueArr[0]] = $subValueArr[1];
-              }
-            }
+        $field_url = $import->get('field_url')->getValue();
+        $grouping = $import->get('grouping')->getValue();
+        $filter_title = $import->get('field_filter_title')->getValue();
+        $filter_description = $import->get('field_filter_title')->getValue();
+        $filter_date_start = $import->get('field_filter_date_start')->getValue();
+        $filter_date_end = $import->get('field_filter_date_end')->getValue();
+        $gid = $grouping[0]['target_id'];
+        // Add filters.
+        $filters = [];
+        $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
+        $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
+        $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
+        $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
+        // Get ICalendar file.
+        $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters);
+        // Iterate events.
+        foreach ($parsed_icalendar->getEvents() as $parsed_event) {
+          // Get UID.
+          $uid = $parsed_event['uid'];
+          unset($parsed_event['uid']);
+          // Save event if UID is not found within grouping scope.
+          // This does not take changes to an existing event into account.
+          if (!_ea_import_uid_exists($gid, $uid)) {
+            // Insert UID/gid pair.
+            _ea_import_uid_insert($gid, $uid, $eid);
+            // Create event.
+            $parsed_event['grouping'] = $gid;
+            $parsed_event['user_id'] = \Drupal::currentUser()->id();
+            $event = Event::create($parsed_event);
+            $event->save();
+            // Add event to import entity reference field.
+            $import->events->appendItem($event->id());
+            $import->save();
           }
-          $event['ea_import_grouping'] = $import->grouping;
-          $events[] = $event;
         }
       }
-      \Drupal::logger('ea_import')->notice('ea_import result: <pre>' . print_r($events, TRUE) . '</pre>');
     }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ * 
+ * Disallow changes to the source file of existing import entities.
+ */
+function ea_import_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'import_icalendar_edit_form') {
+    dpm($form);
+    $form['field_url']['#access'] = 0;
+  }
+}
+
+/**
+ * Check for matching gid/uid pair.
+ * 
+ * @param int $gid The grouping id.
+ * @param string $uid The unique id.
+ * 
+ * @return boolean Returns TRUE if gid/uid match found.
+ */
+function _ea_import_uid_exists(int $gid, string $uid) {
+  $count = NULL;
+  try {
+    $count = (boolean) db_select('ea_import_uids', 'id')
+     ->fields('id')
+     ->condition('gid', $gid)
+     ->condition('uid', $uid)
+     ->countQuery()
+     ->execute()
+     ->fetchField();
+  }
+  catch (Exception $exception) {
+    \Drupal::logger('ea_import')->notice(t('Database operation failed. Message = %message', array(
+      '%message' => $exception->getMessage(),
+    )));
+  }
+  return $count;
+}
+
+/**
+ * Insert gid/uid pair.
+ * 
+ * @param int $gid The grouping id.
+ * @param string $uid The unique id.
+ */
+function _ea_import_uid_insert(string $uid, int $gid, int $eid) {
+  try {
+    $result = db_insert('ea_import_uids')
+      ->fields(array(
+        'uid' => $uid,
+        'gid' => $gid,
+        'eid' => $eid,
+      ))
+      ->execute();
+  }
+  catch (Exception $exception) {
+    \Drupal::logger('ea_import')->notice(t('Database operation failed. Message = %message', array(
+      '%message' => $exception->getMessage(),
+    )));
   }
 }

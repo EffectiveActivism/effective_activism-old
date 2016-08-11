@@ -37,7 +37,7 @@ class SettingsForm extends ConfigFormBase {
     $form['enabled'] = array(
       '#type' => 'radios',
       '#title' => $this->t('Enabled'),
-      '#description' => $this->t('Enable to continuesly import events from ICalendar files.'),
+      '#description' => $this->t('Enable to continuously import events from ICalendar files.'),
       '#default_value' => $config->get('enabled') !== NULL ? $config->get('enabled') : 0,
       '#options' => array(
         0 => $this->t('Disabled'),

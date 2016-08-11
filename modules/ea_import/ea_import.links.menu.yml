@@ -1,0 +1,16 @@
+# Import menu items definition
+entity.import.collection:
+  title: 'Import list'
+  route_name: entity.import.collection
+  description: 'List Import entities'
+  parent: system.admin_structure
+  weight: 100
+
+# Import type menu items definition
+entity.import_type.collection:
+  title: 'Import type'
+  route_name: entity.import_type.collection
+  description: 'List Import type (bundles)'
+  parent: system.admin_structure
+  weight: 99
+
