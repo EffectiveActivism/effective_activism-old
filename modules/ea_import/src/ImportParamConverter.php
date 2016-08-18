@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Contains \Drupal\ea_import\ImportConverter.
+ * Contains \Drupal\ea_import\ImportParamConverter.
  */
 
 namespace Drupal\ea_import;
@@ -11,7 +11,7 @@ use \Drupal\ea_import\Storage\ICalendarStorage;
 use \Drupal\Core\ParamConverter\ParamConverterInterface;
 use \Symfony\Component\Routing\Route;
 
-class ImportConverter implements ParamConverterInterface {
+class ImportParamConverter implements ParamConverterInterface {
 
   /**
    * {@inheritdoc}

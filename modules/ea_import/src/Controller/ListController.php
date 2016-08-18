@@ -71,7 +71,12 @@ class ListController extends ControllerBase {
         '#empty' => t('No ICalendar imports available.'),
       );
       $content['pager'] = array('#type' => 'pager');
-      $content['add_import'] = $this->formBuilder()->getForm('Drupal\ea_import\Form\AddICalendarForm', $grouping_object);
+      $content['import'] = array(
+        '#type' => 'details',
+        '#title' => t('Import'),
+        '#description' => t('Import an ICalendar file from Facebook, Google Calendar or any other ICalendar-compatible website.'),
+      );
+      $content['import']['add_import'] = $this->formBuilder()->getForm('Drupal\ea_import\Form\ICalendarForm', $grouping_object);
     }
     return $content;
   }

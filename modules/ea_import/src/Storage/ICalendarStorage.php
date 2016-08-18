@@ -35,6 +35,7 @@ class ICalendarStorage {
    * Update an entry in the database.
    */
   public static function update($entry) {
+    $count = NULL;
     try {
       $count = db_update('ea_import_icalendar')
         ->fields($entry)
@@ -44,7 +45,7 @@ class ICalendarStorage {
     catch (\Exception $e) {
       \Drupal::logger('ea_import')->notice(t('db_update failed. Message = %message, query= %query', array(
         '%message' => $e->getMessage(),
-        '%query' => $e->query_string,
+        '%query' => isset($e->query_string) ? $e->query_string : NULL,
       )));
       drupal_set_message(t('Failed to update ICalendar file.'), 'error');
     }

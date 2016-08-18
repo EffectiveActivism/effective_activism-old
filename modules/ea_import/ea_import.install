@@ -55,10 +55,15 @@ function ea_import_schema() {
         'not null' => FALSE,
         'description' => 'Description filter.',
       ),
-      'filter_date' => array(
+      'filter_date_start' => array(
         'type' => 'int',
         'not null' => FALSE,
-        'description' => 'Date filter.',
+        'description' => 'Start date filter.',
+      ),
+      'filter_date_end' => array(
+        'type' => 'int',
+        'not null' => FALSE,
+        'description' => 'End date filter.',
       ),
     ),
     'primary key' => array('iid'),
