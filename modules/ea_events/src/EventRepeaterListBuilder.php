@@ -32,7 +32,7 @@ class EventRepeaterListBuilder extends EntityListBuilder {
     /* @var $entity \Drupal\ea_events\Entity\EventRepeater */
     $row['id'] = $entity->id();
     $row['name'] = $this->l(
-      $entity->label(),
+      $entity->id(),
       new Url(
         'entity.event_repeater.edit_form', array(
           'event_repeater' => $entity->id(),

@@ -33,13 +33,13 @@ class EventRepeaterForm extends ContentEntityForm {
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Event repeater.', [
-          '%label' => $entity->label(),
+          '%label' => $entity->id(),
         ]));
         break;
 
       default:
         drupal_set_message($this->t('Saved the %label Event repeater.', [
-          '%label' => $entity->label(),
+          '%label' => $entity->id(),
         ]));
     }
     $form_state->setRedirect('entity.event_repeater.canonical', ['event_repeater' => $entity->id()]);
