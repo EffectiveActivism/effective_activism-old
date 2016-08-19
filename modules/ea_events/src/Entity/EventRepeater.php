@@ -3,6 +3,7 @@
 namespace Drupal\ea_events\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
@@ -40,11 +41,10 @@ use Drupal\user\UserInterface;
   *   admin_permission = "administer event repeater entities",
  *   entity_keys = {
  *     "id" = "id",
- *     "label" = "name",
+ *     "label" = "id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
- *     "status" = "status",
  *   },
  *   links = {
  *     "canonical" = "/effective-activism/event_repeater/{event_repeater}",
@@ -68,21 +68,6 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
     $values += array(
       'user_id' => \Drupal::currentUser()->id(),
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getName() {
-    return $this->get('name')->value;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setName($name) {
-    $this->set('name', $name);
-    return $this;
   }
 
   /**
@@ -133,24 +118,8 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
   /**
    * {@inheritdoc}
    */
-  public function isPublished() {
-    return (bool) $this->getEntityKey('status');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setPublished($published) {
-    $this->set('status', $published ? NODE_PUBLISHED : NODE_NOT_PUBLISHED);
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
-
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Event repeater entity.'))
@@ -175,40 +144,189 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Event repeater entity.'))
+    $fields['repeats'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Repeats'))
+      ->setDefaultValue('none')
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
       ->setSettings(array(
-        'max_length' => 50,
-        'text_processing' => 0,
+        'allowed_values' => array(
+          'none' => 'Do not repeat',
+          'daily' => 'Daily',
+          'weekly' => 'Weekly',
+          'monthly' => 'Monthly',
+          'yearly' => 'Yearly',
+        ),
       ))
-      ->setDefaultValue('')
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
         'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'string_textfield',
+        'type' => 'options_select',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-
-    $fields['status'] = BaseFieldDefinition::create('boolean')
-      ->setLabel(t('Publishing status'))
-      ->setDescription(t('A boolean indicating whether the Event repeater is published.'))
-      ->setDefaultValue(TRUE);
-
+    $fields['repeat_every'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Repeat every'))
+      ->setDefaultValue('1')
+      ->setRequired(TRUE)
+      ->setSettings(array(
+        'allowed_values' => array(
+          '1' => '1',
+          '2' => '2',
+          '3' => '3',
+          '4' => '4',
+          '5' => '5',
+          '6' => '6',
+          '7' => '7',
+          '8' => '8',
+          '9' => '9',
+          '10' => '10',
+          '11' => '11',
+          '12' => '12',
+          '13' => '13',
+          '14' => '14',
+          '15' => '15',
+          '16' => '16',
+          '17' => '17',
+          '18' => '18',
+          '19' => '19',
+          '20' => '20',
+          '21' => '21',
+          '22' => '22',
+          '23' => '23',
+          '24' => '24',
+          '25' => '25',
+          '26' => '26',
+          '27' => '27',
+          '28' => '28',
+          '29' => '29',
+          '30' => '30',
+        ),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_select',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['repeat_by'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Repeat by'))
+      ->setTranslatable(TRUE)
+      ->setRequired(TRUE)
+      ->setDefaultValue('day_of_the_month')
+      ->setSettings(array(
+        'allowed_values' => array(
+          'day_of_the_month' => 'day of the month',
+          'day_of_the_week' => 'day of the week',
+        ),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_buttons',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['repeat_on'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Repeat on'))
+      ->setTranslatable(TRUE)
+      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setSettings(array(
+        'allowed_values' => array(
+          'monday' => 'M',
+          'tuesday' => 'T',
+          'wednesday' => 'W',
+          'thursday' => 'T',
+          'friday' => 'F',
+          'saturday' => 'S',
+          'sunday' => 'S',
+        ),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_buttons',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['ends'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Ends'))
+      ->setTranslatable(TRUE)
+      ->setDefaultValue('never')
+      ->setRequired(TRUE)
+      ->setSettings(array(
+        'allowed_values' => array(
+          'never' => 'Never',
+          'after' => 'After',
+          'on' => 'On',
+        ),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_select',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['occurences'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Occurences'))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['on'] = BaseFieldDefinition::create('datetime')
+      ->setLabel(t('On'))
+      ->setDefaultValue('')
+      ->setSettings(array(
+        'default_value' => '',
+        'text_processing' => 0,
+        'datetime_type' => 'date',
+      ))
+      ->setDefaultValue(array(
+        0 => array(
+          'default_date_type' => 'now',
+          'default_date' => 'tomorrow noon',
+      )))
+      ->setDisplayOptions('view', array(
+        'type' => 'datetime_default',
+        'weight' => 0,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'datetime_default',
+        'weight' => 1,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
-
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
-
     return $fields;
   }
 
