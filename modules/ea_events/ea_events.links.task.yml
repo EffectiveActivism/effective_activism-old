@@ -19,3 +19,24 @@ entity.event.delete_form:
   title: Delete
   weight: 10
 
+# Event repeater routing definition
+event_repeater.settings_tab:
+  route_name: event_repeater.settings
+  title: 'Settings'
+  base_route: event_repeater.settings
+entity.event_repeater.canonical:
+  route_name: entity.event_repeater.canonical
+  base_route: entity.event_repeater.canonical
+  title: 'View'
+
+entity.event_repeater.edit_form:
+  route_name: entity.event_repeater.edit_form
+  base_route: entity.event_repeater.canonical
+  title: Edit
+
+entity.event_repeater.delete_form:
+  route_name:  entity.event_repeater.delete_form
+  base_route:  entity.event_repeater.canonical
+  title: Delete
+  weight: 10
+
