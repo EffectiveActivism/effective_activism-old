@@ -49,7 +49,7 @@ class EventRepeaterHtmlRouteProvider extends AdminHtmlRouteProvider {
       $route
         ->setDefaults([
           '_entity_list' => $entity_type_id,
-          '_title' => "{$entity_type->getLabel()} list",
+          '_title' => "{$entity_type->id()} list",
         ])
         ->setRequirement('_permission', 'access event repeater overview')
         ->setOption('_admin_route', TRUE);
@@ -73,7 +73,7 @@ class EventRepeaterHtmlRouteProvider extends AdminHtmlRouteProvider {
       $route
         ->setDefaults([
           '_form' => 'Drupal\ea_events\Form\EventRepeaterSettingsForm',
-          '_title' => "{$entity_type->getLabel()} settings",
+          '_title' => "{$entity_type->id()} settings",
         ])
         ->setRequirement('_permission', $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);
