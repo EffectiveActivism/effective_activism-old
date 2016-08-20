@@ -293,13 +293,15 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setLabel(t('Occurences'))
       ->setDefaultValue(1)
       ->setRequired(TRUE)
+      ->setSettings(array(
+        'min' => 1,
+      ))
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
         'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'integer',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
