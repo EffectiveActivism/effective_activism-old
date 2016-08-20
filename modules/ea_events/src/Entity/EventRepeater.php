@@ -144,7 +144,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['repeats'] = BaseFieldDefinition::create('list_string')
+    $fields['event_repeats'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeats'))
       ->setDefaultValue('none')
       ->setRequired(TRUE)
@@ -169,7 +169,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['repeat_every'] = BaseFieldDefinition::create('list_string')
+    $fields['event_repeat_every'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat every'))
       ->setDefaultValue('1')
       ->setRequired(TRUE)
@@ -218,7 +218,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['repeat_by'] = BaseFieldDefinition::create('list_string')
+    $fields['event_repeat_by'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat by'))
       ->setTranslatable(TRUE)
       ->setRequired(TRUE)
@@ -240,7 +240,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['repeat_on'] = BaseFieldDefinition::create('list_string')
+    $fields['event_repeat_on'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat on'))
       ->setTranslatable(TRUE)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -266,7 +266,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['ends'] = BaseFieldDefinition::create('list_string')
+    $fields['event_ends'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Ends'))
       ->setTranslatable(TRUE)
       ->setDefaultValue('never')
@@ -289,7 +289,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['occurences'] = BaseFieldDefinition::create('integer')
+    $fields['event_occurences'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Occurences'))
       ->setDefaultValue(1)
       ->setRequired(TRUE)
@@ -304,7 +304,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['on'] = BaseFieldDefinition::create('datetime')
+    $fields['event_on'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('On'))
       ->setRequired(TRUE)
       ->setDefaultValue('')

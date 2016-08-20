@@ -13,60 +13,60 @@ use Drupal\Core\Form\FormStateInterface;
 function ea_events_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id == 'event_repeater_edit_form' || $form_id == 'event_repeater_add_form') {
     // Hide fields when no repeat is chosen.
-    $form['repeat_every']['#states'] = array(
+    $form['event_repeat_every']['#states'] = array(
       'invisible' => array(
-        ':input[name="repeats"]' => array('value' => 'none'),
+        ':input[name="event_repeats"]' => array('value' => 'none'),
       ),
     );
-    $form['ends']['#states'] = array(
+    $form['event_ends']['#states'] = array(
       'invisible' => array(
-        ':input[name="repeats"]' => array('value' => 'none'),
+        ':input[name="event_repeats"]' => array('value' => 'none'),
       ),
     );
-    $form['repeat_on']['#states'] = array(
+    $form['event_repeat_on']['#states'] = array(
       'invisible' => array(
-        ':input[name="repeats"]' => array('value' => 'none'),
+        ':input[name="event_repeats"]' => array('value' => 'none'),
       ),
     );
-    $form['repeat_by']['#states'] = array(
+    $form['event_repeat_by']['#states'] = array(
       'invisible' => array(
-        ':input[name="repeats"]' => array('value' => 'none'),
+        ':input[name="event_repeats"]' => array('value' => 'none'),
       ),
     );
-    $form['occurences']['#states'] = array(
+    $form['event_occurences']['#states'] = array(
       'invisible' => array(
-        ':input[name="repeats"]' => array('value' => 'none'),
+        ':input[name="event_repeats"]' => array('value' => 'none'),
       ),
     );
-    $form['on']['#states'] = array(
+    $form['event_on']['#states'] = array(
       'invisible' => array(
-        ':input[name="repeats"]' => array('value' => 'none'),
+        ':input[name="event_repeats"]' => array('value' => 'none'),
       ),
     );
     // Only show field repeat_on when field repeats is 'weekly'.
-    $form['repeat_on']['#states'] = array(
+    $form['event_repeat_on']['#states'] = array(
       'visible' => array(
-        ':input[name="repeats"]' => array('value' => 'weekly'),
+        ':input[name="event_repeats"]' => array('value' => 'weekly'),
       ),
     );
     // Only show field repeat_by when field repeats is 'monthly'.
-    $form['repeat_by']['#states'] = array(
+    $form['event_repeat_by']['#states'] = array(
       'visible' => array(
-        ':input[name="repeats"]' => array('value' => 'monthly'),
+        ':input[name="event_repeats"]' => array('value' => 'monthly'),
       ),
     );
     // Only show field occurences when field ends is 'after'.
-    $form['occurences']['#states'] = array(
+    $form['event_occurences']['#states'] = array(
       'visible' => array(
-        ':input[name="ends"]' => array('value' => 'after'),
-        ':input[name="repeats"]' => array('!value' => 'none'),
+        ':input[name="event_ends"]' => array('value' => 'after'),
+        ':input[name="event_repeats"]' => array('!value' => 'none'),
       ),
     );
     // Only show field on when field ends is 'on'.
-    $form['on']['#states'] = array(
+    $form['event_on']['#states'] = array(
       'visible' => array(
-        ':input[name="ends"]' => array('value' => 'on'),
-        ':input[name="repeats"]' => array('!value' => 'none'),
+        ':input[name="event_ends"]' => array('value' => 'on'),
+        ':input[name="event_repeats"]' => array('!value' => 'none'),
       ),
     );
   }
