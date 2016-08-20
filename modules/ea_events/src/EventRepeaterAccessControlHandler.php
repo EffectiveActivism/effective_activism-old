@@ -21,9 +21,6 @@ class EventRepeaterAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\ea_events\Entity\EventRepeaterInterface $entity */
     switch ($operation) {
       case 'view':
-        if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished event repeater entities');
-        }
         return AccessResult::allowedIfHasPermission($account, 'view published event repeater entities');
 
       case 'update':
