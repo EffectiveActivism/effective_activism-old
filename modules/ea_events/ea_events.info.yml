@@ -11,3 +11,4 @@ dependencies:
   - ea_tasks
   - inline_entity_form
   - datetime
+  - text
