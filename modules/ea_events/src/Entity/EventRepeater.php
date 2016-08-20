@@ -291,15 +291,22 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['occurences'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Occurences'))
+      ->setDefaultValue(1)
+      ->setRequired(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'integer',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['on'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('On'))
+      ->setRequired(TRUE)
       ->setDefaultValue('')
       ->setSettings(array(
         'default_value' => '',
