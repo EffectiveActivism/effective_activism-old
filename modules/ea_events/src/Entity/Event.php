@@ -261,6 +261,24 @@ class Event extends ContentEntityBase implements EventInterface {
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
+    $fields['event_repeater'] = BaseFieldDefinition::create('entity_reference')
+      ->setLabel(t('Repeat'))
+      ->setDescription(t('Repeat this event.'))
+      ->setSetting('target_type', 'event_repeater')
+      ->setSetting('handler_settings', ['target_bundles' => ['event_repeater' => 'event_repeater']])
+      ->setSetting('handler', 'default')
+      ->setCardinality(1)
+      ->setRequired(TRUE)
+      ->setDisplayOptions('view', array(
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'inline_entity_form_simple',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))
       ->setSetting('target_type', 'person')
