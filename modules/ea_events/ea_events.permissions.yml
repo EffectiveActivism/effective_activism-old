@@ -17,6 +17,7 @@ view published event entities:
 
 view unpublished event entities:
   title: 'View unpublished Event entities'
+
 add event repeater entities:
   title: 'Create new Event repeater entities'
 
@@ -34,8 +35,5 @@ edit event repeater entities:
 access event repeater overview:
   title: 'Access the Event repeater overview page'
 
-view published event repeater entities:
-  title: 'View published Event repeater entities'
-
-view unpublished event repeater entities:
-  title: 'View unpublished Event repeater entities'
+view event repeater entities:
+  title: 'View Event repeater entities'
