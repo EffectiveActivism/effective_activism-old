@@ -9,6 +9,7 @@ use Drupal\ea_import\Entity\Import;
 use Drupal\ea_import\CSVFileException;
 use Drupal\ea_import\Parser\ICalendarParser;
 use Drupal\ea_events\Entity\Event;
+use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -132,6 +133,10 @@ function ea_import_entity_presave(EntityInterface $entity) {
     $count = 0;
     foreach ($parsed_icalendar->getEvents() as $parsed_event) {
       $count++;
+      // Validate rrule.
+      if (EventRepeater::isValidRRule($parsed_event['rrule'])) {
+        throw new Exception(t('Errors found in row @row: The rrule is not formatted properly.', array('@row' => $count)));
+      }
       // Create event.
       $parsed_event['grouping'] = $gid;
       $parsed_event['user_id'] = \Drupal::currentUser()->id();
@@ -200,9 +205,18 @@ function ea_import_import_insert(EntityInterface $entity) {
       // Get UID.
       $uid = $parsed_event['uid'];
       unset($parsed_event['uid']);
+      // Get rrule.
+      $rrule = $parsed_event['rrule'];
+      unset($parsed_event['rrule'];
       // Save event if UID is not found within grouping scope. 
       if (!_ea_import_uid_exists($gid, $uid)) {
         $count++;
+        // If rrule exists, create event repeater entity.
+        if (!empty($rrule)) {
+          $event_repeater = EventRepeater::createFromRRule($rrule);
+          $event_repeater->save();
+          $parsed_event['event_repeater'] = $event_repeater->id();
+        }
         // Insert UID/gid pair.
         _ea_import_uid_exists($gid, $uid);
         // Create event.
@@ -264,9 +278,18 @@ function ea_import_cron() {
           // Get UID.
           $uid = $parsed_event['uid'];
           unset($parsed_event['uid']);
+          // Get rrule.
+          $rrule = $parsed_event['rrule'];
+          unset($parsed_event['rrule'];
           // Save event if UID is not found within grouping scope.
           // This does not take changes to an existing event into account.
           if (!_ea_import_uid_exists($gid, $uid)) {
+            // If rrule exists, create event repeater entity.
+            if (!empty($rrule)) {
+              $event_repeater = EventRepeater::createFromRRule($rrule);
+              $event_repeater->save();
+              $parsed_event['event_repeater'] = $event_repeater->id();
+            }
             // Insert UID/gid pair.
             _ea_import_uid_insert($gid, $uid, $eid);
             // Create event.
