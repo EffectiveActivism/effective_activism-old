@@ -11,3 +11,16 @@ event.admin.structure.settings:
   description: 'Configure Event entities'
   route_name: event.settings
   parent: system.admin_structure
+# Event repeater menu items definition
+entity.event_repeater.collection:
+  title: 'Event repeater list'
+  route_name: entity.event_repeater.collection
+  description: 'List Event repeater entities'
+  parent: system.admin_structure
+  weight: 100
+
+event_repeater.admin.structure.settings:
+  title: Event repeater settings
+  description: 'Configure Event repeater entities'
+  route_name: event_repeater.settings
+  parent: system.admin_structure

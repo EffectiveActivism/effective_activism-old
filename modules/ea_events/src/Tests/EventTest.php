@@ -67,6 +67,11 @@ class EventTest extends WebTestBase {
       'delete data entities',
       'edit data entities',
       'view data entities',
+      // Event repeater permissions.
+      'add event repeater entities',
+      'delete event repeater entities',
+      'edit event repeater entities',
+      'view event repeater entities',
     ));
   }
 
