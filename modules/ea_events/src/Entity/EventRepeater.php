@@ -159,8 +159,8 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeats'] = BaseFieldDefinition::create('list_string')
-      ->setLabel(t('Repeats'))
+    $fields['event_freq'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Frequency'))
       ->setDefaultValue('none')
       ->setRequired(TRUE)
       ->setTranslatable(TRUE)
@@ -184,7 +184,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_every'] = BaseFieldDefinition::create('integer')
+    $fields['event_interval'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Repeat every'))
       ->setDefaultValue(1)
       ->setRequired(TRUE)
@@ -224,8 +224,8 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_by_day'] = BaseFieldDefinition::create('list_string')
-      ->setLabel(t('Repeat every'))
+    $fields['event_bymonthday'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Every'))
       ->setDefaultValue('1')
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -274,7 +274,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_by_weekday'] = BaseFieldDefinition::create('list_string')
+    $fields['event_bysetpos'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('On'))
       ->setDefaultValue('1')
       ->setRequired(TRUE)
@@ -298,7 +298,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_by_weekday_name'] = BaseFieldDefinition::create('list_string')
+    $fields['event_byday'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Weekday'))
       ->setDefaultValue('MO')
       ->setRequired(TRUE)
@@ -324,7 +324,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_by_month'] = BaseFieldDefinition::create('list_string')
+    $fields['event_bymonth'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Month'))
       ->setDefaultValue('1')
       ->setRequired(TRUE)
@@ -404,7 +404,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_occurences'] = BaseFieldDefinition::create('integer')
+    $fields['event_count'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Occurences'))
       ->setDefaultValue(1)
       ->setRequired(TRUE)
@@ -421,7 +421,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_on'] = BaseFieldDefinition::create('datetime')
+    $fields['event_until'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('On'))
       ->setRequired(TRUE)
       ->setDefaultValue('')

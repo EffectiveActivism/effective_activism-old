@@ -38,100 +38,88 @@ function ea_events_inline_entity_form_entity_form_alter(&$entity_form, FormState
 function _ea_events_get_states(array &$form, string $extra_identifier = NULL) {
   $startBracket = strlen($extra_identifier) > 0 ? '[' : '';
   $endBracket = strlen($extra_identifier) > 0 ? ']' : '';
-  $form['event_repeat_every']['#states'] = array(
+  $form['event_interval']['#states'] = array(
     'invisible' => array(
-      ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'none'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'none'),
     ),
   );
   $form['event_ends']['#states'] = array(
     'invisible' => array(
-      ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'none'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'none'),
     ),
   );
   $form['event_repeat_on']['#states'] = array(
     'visible' => array(
-      ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'WEEKLY'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'WEEKLY'),
     ),
   );
   $form['event_repeat_by']['#states'] = array(
     'visible' => array(
       array(
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'MONTHLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'MONTHLY'),
       ),
       array(
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'YEARLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'YEARLY'),
       ),
     ),
   );
-  $form['event_occurences']['#states'] = array(
+  $form['event_count']['#states'] = array(
     'invisible' => array(
-      ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'none'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'none'),
     ),
   );
-  $form['event_repeat_by_weekday_name']['#states'] = array(
-    'invisible' => array(
-      array(
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('!value' => 'day_of_the_week'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('!value' => 'MONTHLY'),
-      ),
-      array(
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('!value' => 'day_of_the_week'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('!value' => 'YEARLY'),
-      ),
-    ),
-  );
-  $form['event_repeat_by_day']['#states'] = array(
+  $form['event_bymonthday']['#states'] = array(
     'visible' => array(
       array(
         ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('value' => 'day_of_the_month'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'MONTHLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'MONTHLY'),
       ),
       array(
         ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('value' => 'day_of_the_month'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'YEARLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'YEARLY'),
       ),
     ),
   );
-  $form['event_repeat_by_weekday']['#states'] = array(
+  $form['event_bysetpos']['#states'] = array(
     'visible' => array(
       array(
         ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('value' => 'day_of_the_week'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'MONTHLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'MONTHLY'),
       ),
       array(
         ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('value' => 'day_of_the_week'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'YEARLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'YEARLY'),
       ),
     ),
   );
-  $form['event_repeat_by_weekday_name']['#states'] = array(
+  $form['event_byday']['#states'] = array(
     'visible' => array(
       array(
         ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('value' => 'day_of_the_week'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'MONTHLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'MONTHLY'),
       ),
       array(
         ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('value' => 'day_of_the_week'),
-        ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'YEARLY'),
+        ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'YEARLY'),
       ),
     ),
   );
-  $form['event_repeat_by_month']['#states'] = array(
+  $form['event_bymonth']['#states'] = array(
     'visible' => array(
       ':input[name="' . $extra_identifier . $startBracket . 'event_repeat_by' . $endBracket . '"]' => array('value' => 'day_of_the_week'),
-      ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('value' => 'YEARLY'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'YEARLY'),
     ),
   );
-  $form['event_occurences']['#states'] = array(
+  $form['event_count']['#states'] = array(
     'visible' => array(
       ':input[name="' . $extra_identifier . $startBracket . 'event_ends' . $endBracket . '"]' => array('value' => 'after'),
-      ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('!value' => 'none'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('!value' => 'none'),
     ),
   );
-  $form['event_on']['#states'] = array(
+  $form['event_until']['#states'] = array(
     'visible' => array(
       ':input[name="' . $extra_identifier . $startBracket . 'event_ends' . $endBracket . '"]' => array('value' => 'on'),
-      ':input[name="' . $extra_identifier . $startBracket . 'event_repeats' . $endBracket . '"]' => array('!value' => 'none'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('!value' => 'none'),
     ),
   );
   return $form;
