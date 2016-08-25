@@ -73,6 +73,21 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
   /**
    * {@inheritdoc}
    */
+  public static function createFromRRule($rrule) {
+    $values = somefunction($rrule);
+    return parent::create($values);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function isValidRRule($rrule) {
+    return TRUE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getCreatedTime() {
     return $this->get('created')->value;
   }
@@ -152,10 +167,10 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setSettings(array(
         'allowed_values' => array(
           'none' => 'Do not repeat',
-          'daily' => 'Daily',
-          'weekly' => 'Weekly',
-          'monthly' => 'Monthly',
-          'yearly' => 'Yearly',
+          'DAILY' => 'Daily',
+          'WEEKLY' => 'Weekly',
+          'MONTHLY' => 'Monthly',
+          'YEARLY' => 'Yearly',
         ),
       ))
       ->setDisplayOptions('view', array(
@@ -169,7 +184,47 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_every'] = BaseFieldDefinition::create('list_string')
+    $fields['event_repeat_every'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Repeat every'))
+      ->setDefaultValue(1)
+      ->setRequired(TRUE)
+      ->setSettings(array(
+        'min' => 1,
+        'max' => 999,
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['event_repeat_by'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Repeat by'))
+      ->setTranslatable(TRUE)
+      ->setRequired(TRUE)
+      ->setDefaultValue('day_of_the_month')
+      ->setSettings(array(
+        'allowed_values' => array(
+          'day_of_the_month' => 'day of the month',
+          'day_of_the_week' => 'day of the week',
+        ),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_buttons',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['event_repeat_by_day'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat every'))
       ->setDefaultValue('1')
       ->setRequired(TRUE)
@@ -205,6 +260,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
           '28' => '28',
           '29' => '29',
           '30' => '30',
+          '31' => '31',
         ),
       ))
       ->setDisplayOptions('view', array(
@@ -218,15 +274,17 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_by'] = BaseFieldDefinition::create('list_string')
-      ->setLabel(t('Repeat by'))
-      ->setTranslatable(TRUE)
+    $fields['event_repeat_by_weekday'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('On'))
+      ->setDefaultValue('1')
       ->setRequired(TRUE)
-      ->setDefaultValue('day_of_the_month')
       ->setSettings(array(
         'allowed_values' => array(
-          'day_of_the_month' => 'day of the month',
-          'day_of_the_week' => 'day of the week',
+          '1' => 'First',
+          '2' => 'Second',
+          '3' => 'Third',
+          '4' => 'Fourth',
+          '-1' => 'Last',
         ),
       ))
       ->setDisplayOptions('view', array(
@@ -235,7 +293,64 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
         'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'options_buttons',
+        'type' => 'options_select',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['event_repeat_by_weekday_name'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Weekday'))
+      ->setDefaultValue('MO')
+      ->setRequired(TRUE)
+      ->setSettings(array(
+        'allowed_values' => array(
+          'MO' => 'Monday',
+          'TU' => 'Tuesday',
+          'WE' => 'Wednesday',
+          'TH' => 'Thursday',
+          'FR' => 'Friday',
+          'SA' => 'Saturday',
+          'SU' => 'Sunday',
+        ),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_select',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['event_repeat_by_month'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Month'))
+      ->setDefaultValue('1')
+      ->setRequired(TRUE)
+      ->setSettings(array(
+        'allowed_values' => array(
+          '1' => 'January',
+          '2' => 'February',
+          '3' => 'March',
+          '4' => 'April',
+          '5' => 'May',
+          '6' => 'June',
+          '7' => 'July',
+          '8' => 'August',
+          '9' => 'September',
+          '10' => 'October',
+          '11' => 'November',
+          '12' => 'December',
+        ),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_select',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
@@ -246,13 +361,13 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setSettings(array(
         'allowed_values' => array(
-          'monday' => 'M',
-          'tuesday' => 'T',
-          'wednesday' => 'W',
-          'thursday' => 'T',
-          'friday' => 'F',
-          'saturday' => 'S',
-          'sunday' => 'S',
+          'MO' => 'M',
+          'TU' => 'T',
+          'WE' => 'W',
+          'TH' => 'T',
+          'FR' => 'F',
+          'SA' => 'S',
+          'SU' => 'S',
         ),
       ))
       ->setDisplayOptions('view', array(
