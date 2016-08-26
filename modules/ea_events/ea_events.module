@@ -48,7 +48,7 @@ function _ea_events_get_states(array &$form, string $extra_identifier = NULL) {
       ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'none'),
     ),
   );
-  $form['event_repeat_on']['#states'] = array(
+  $form['event_byday_multiple']['#states'] = array(
     'visible' => array(
       ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('value' => 'WEEKLY'),
     ),
@@ -112,13 +112,13 @@ function _ea_events_get_states(array &$form, string $extra_identifier = NULL) {
   );
   $form['event_count']['#states'] = array(
     'visible' => array(
-      ':input[name="' . $extra_identifier . $startBracket . 'event_ends' . $endBracket . '"]' => array('value' => 'after'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_ends' . $endBracket . '"]' => array('value' => 'COUNT'),
       ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('!value' => 'none'),
     ),
   );
   $form['event_until']['#states'] = array(
     'visible' => array(
-      ':input[name="' . $extra_identifier . $startBracket . 'event_ends' . $endBracket . '"]' => array('value' => 'on'),
+      ':input[name="' . $extra_identifier . $startBracket . 'event_ends' . $endBracket . '"]' => array('value' => 'UNTIL'),
       ':input[name="' . $extra_identifier . $startBracket . 'event_freq' . $endBracket . '"]' => array('!value' => 'none'),
     ),
   );

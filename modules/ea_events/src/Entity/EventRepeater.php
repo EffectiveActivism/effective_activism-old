@@ -355,10 +355,11 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ))
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
-    $fields['event_repeat_on'] = BaseFieldDefinition::create('list_string')
+    $fields['event_byday_multiple'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat on'))
       ->setTranslatable(TRUE)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
+      ->setRequired(FALSE)
       ->setSettings(array(
         'allowed_values' => array(
           'MO' => 'M',
@@ -389,8 +390,8 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setSettings(array(
         'allowed_values' => array(
           'never' => 'Never',
-          'after' => 'After',
-          'on' => 'On',
+          'COUNT' => 'After',
+          'UNTIL' => 'Until',
         ),
       ))
       ->setDisplayOptions('view', array(
