@@ -7,7 +7,9 @@
 
 use Drupal\ea_import\Entity\Import;
 use Drupal\ea_import\CSVFileException;
+use Drupal\ea_import\Parser\CSVParser;
 use Drupal\ea_import\Parser\ICalendarParser;
+use Drupal\ea_import\Parser\RruleParser;
 use Drupal\ea_events\Entity\Event;
 use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -17,6 +19,7 @@ use Drupal\Core\Form\FormStateInterface;
 
 const EA_IMPORT_BUNDLE_CSV = 'csv';
 const EA_IMPORT_BUNDLE_ICALENDAR = 'icalendar';
+const EA_IMPORT_MAX_ERRORS = 15;
 
 /**
  * Implements hook_help().
@@ -133,21 +136,49 @@ function ea_import_entity_presave(EntityInterface $entity) {
     $count = 0;
     foreach ($parsed_icalendar->getEvents() as $parsed_event) {
       $count++;
-      // Validate rrule.
-      if (EventRepeater::isValidRRule($parsed_event['rrule'])) {
-        throw new Exception(t('Errors found in row @row: The rrule is not formatted properly.', array('@row' => $count)));
+      // Get UID.
+      $uid = $parsed_event['uid'];
+      unset($parsed_event['uid']);
+      // Get RRULE.
+      $rrule = $parsed_event['rrule'];
+      unset($parsed_event['rrule']);
+      // Validate RRULE.
+      if (!empty($rrule)) {
+        $rruleParser = new RruleParser($rrule);
+        $event_repeater = EventRepeater::create($rruleParser->getEventRepeaterValues());
+        // Raise error on validation failure.
+        $event_repeater_errors = $event_repeater->validate();
+        if ($event_repeater_errors->count() > 0) {
+          $event_repeater_error_list = [];
+          foreach ($event_repeater_errors as $error) {
+            $event_repeater_error_list[] = strip_tags($error->getMessage());
+          }
+          throw new Exception(t('Errors found in row @row: The RRULE is not formatted properly. @errors', array('@row' => $count, '@errors' => implode(', ', $event_repeater_error_list))));
+        }
       }
       // Create event.
       $parsed_event['grouping'] = $gid;
       $parsed_event['user_id'] = \Drupal::currentUser()->id();
       $event = Event::create($parsed_event);
+      // Raise error on validation failure.
       $errors = $event->validate();
       if ($errors->count() > 0) {
         $error_list = [];
+        $error_count = 0;
         foreach ($errors as $error) {
-          $error_list[] = strip_tags($error->getMessage());
+          $error_message = strip_tags($error->getMessage());
+          // Skip missing EventRepeater entity error.
+          if ($error_message !== (string) t('This value should not be null.')) {
+            $error_list[] = $error_message;
+            $error_count++;
+          }
+          if ($error_count > EA_IMPORT_MAX_ERRORS) {
+            break;
+          }
         }
-        throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode('</br>', $error_list))));
+        if ($error_count > 0) {
+          throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode(', ', $error_list))));
+        }
       }
     }
   }
@@ -201,24 +232,24 @@ function ea_import_import_insert(EntityInterface $entity) {
     $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters);
     // Iterate events.
     $count = 0;
+    $duplicate_count = 0;
     foreach ($parsed_icalendar->getEvents() as $parsed_event) {
       // Get UID.
       $uid = $parsed_event['uid'];
       unset($parsed_event['uid']);
-      // Get rrule.
+      // Get RRULE.
       $rrule = $parsed_event['rrule'];
-      unset($parsed_event['rrule'];
+      unset($parsed_event['rrule']);
       // Save event if UID is not found within grouping scope. 
       if (!_ea_import_uid_exists($gid, $uid)) {
         $count++;
-        // If rrule exists, create event repeater entity.
+        // If RRULE exists, create event repeater entity.
         if (!empty($rrule)) {
-          $event_repeater = EventRepeater::createFromRRule($rrule);
+          $rruleParser = new RruleParser($rrule);
+          $event_repeater = EventRepeater::create($rruleParser->getEventRepeaterValues());
           $event_repeater->save();
           $parsed_event['event_repeater'] = $event_repeater->id();
         }
-        // Insert UID/gid pair.
-        _ea_import_uid_exists($gid, $uid);
         // Create event.
         $parsed_event['grouping'] = $gid;
         $parsed_event['user_id'] = \Drupal::currentUser()->id();
@@ -227,6 +258,11 @@ function ea_import_import_insert(EntityInterface $entity) {
         // Add event to import entity reference field.
         $entity->events->appendItem($event->id());
         $entity->save();
+        // Insert UID/gid pair.
+        _ea_import_uid_insert($uid, $gid, $event->id());
+      }
+      else {
+        $duplicate_count++;
       }
     }
     if ($count > 1) {
@@ -236,6 +272,12 @@ function ea_import_import_insert(EntityInterface $entity) {
     } else {
       drupal_set_message(t('No events imported'), 'warning');
     }
+    if ($duplicate_count > 1) {
+      drupal_set_message(t('@count duplicate events skipped', array('@count' => $duplicate_count)), 'warning');
+    }
+    elseif ($duplicate_count === 1) {
+      drupal_set_message(t('One duplicate event skipped'));
+    }
   }
 }
 
@@ -244,17 +286,23 @@ function ea_import_import_insert(EntityInterface $entity) {
  */
 function ea_import_cron() {
   // Get import configuration.
-  $cron_config = Drupal::config('ea_import.settings');
+  $cron_config = \Drupal::config('ea_import.settings');
   if ($cron_config->get('enabled')) {
     $interval = $cron_config->get('interval');
     $interval = !empty($interval) ? $interval : 3600;
     $nextExecution = \Drupal::state()->get('ea_import.next_execution');
     $nextExecution = !empty($nextExecution) ? $nextExecution : 0;
+    $nextExecution += $interval;
+    \Drupal::logger('ea_import')->notice('debug: interval:' . $interval . ' nextExecution: ' . $nextExecution . ' request_time: ' . REQUEST_TIME);
     if (REQUEST_TIME >= $nextExecution) {
+      $count = 0;
+      $duplicate_count = 0;
+      // Reset counter.
+      \Drupal::state()->set('ea_import.next_execution', REQUEST_TIME);
       // Get ICalendar import entities.
       $iids = \Drupal::entityQuery('import')
-        ->condition('bundle', 'icalendar')
-        ->condition('field_continuous_import', 'On')
+        ->condition('type', 'icalendar')
+        ->condition('field_continuous_import', '1')
         ->execute();
       $imports = \Drupal::entityManager()->getStorage('import')->loadMultiple($iids);
       foreach ($imports as $import) {
@@ -278,20 +326,18 @@ function ea_import_cron() {
           // Get UID.
           $uid = $parsed_event['uid'];
           unset($parsed_event['uid']);
-          // Get rrule.
+          // Get RRULE.
           $rrule = $parsed_event['rrule'];
-          unset($parsed_event['rrule'];
+          unset($parsed_event['rrule']);
           // Save event if UID is not found within grouping scope.
           // This does not take changes to an existing event into account.
           if (!_ea_import_uid_exists($gid, $uid)) {
-            // If rrule exists, create event repeater entity.
+            // If RRULE exists, create event repeater entity.
             if (!empty($rrule)) {
               $event_repeater = EventRepeater::createFromRRule($rrule);
               $event_repeater->save();
               $parsed_event['event_repeater'] = $event_repeater->id();
             }
-            // Insert UID/gid pair.
-            _ea_import_uid_insert($gid, $uid, $eid);
             // Create event.
             $parsed_event['grouping'] = $gid;
             $parsed_event['user_id'] = \Drupal::currentUser()->id();
@@ -300,9 +346,18 @@ function ea_import_cron() {
             // Add event to import entity reference field.
             $import->events->appendItem($event->id());
             $import->save();
+            // Insert UID/gid pair.
+            _ea_import_uid_insert($uid, $gid, $event->id());
+            // Increment event import count.
+            $count++;
+          }
+          else {
+            $duplicate_count++;
           }
         }
       }
+      \Drupal::logger('ea_import')->notice(t('Cron: @count events imported', array('@count' => $count)));
+      \Drupal::logger('ea_import')->notice(t('Cron: @count duplicate events skipped', array('@count' => $duplicate_count)));
     }
   }
 }
@@ -314,7 +369,6 @@ function ea_import_cron() {
  */
 function ea_import_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id === 'import_icalendar_edit_form') {
-    dpm($form);
     $form['field_url']['#access'] = 0;
   }
 }

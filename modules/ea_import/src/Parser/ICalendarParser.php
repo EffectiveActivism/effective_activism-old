@@ -31,7 +31,8 @@ class ICalendarParser {
   /**
    * Creates the ICalendarParser Object.
    *
-   * @param {mixed} $lines An array of lines from an iCal file.
+   * @param {string} $url An ICalendar URL.
+   * @param {array} $filters Filters to apply.
    *
    * @return Object The iCal Object.
    */
@@ -97,6 +98,7 @@ class ICalendarParser {
           'end_date' => !empty($event['DTEND']) ? date(DATETIME_DATETIME_STORAGE_FORMAT, (int)  strtotime($event['DTEND'])) : NULL,
           'location' => !empty($event['LOCATION']) ? $event['LOCATION'] : NULL,
           'uid' => !empty($event['UID']) ? $event['UID'] : NULL,
+          'rrule' => !empty($event['RRULE']) ? $event['RRULE'] : NULL,
         );
       }
     }
