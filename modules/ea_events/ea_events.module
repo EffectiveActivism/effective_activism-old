@@ -35,7 +35,7 @@ function ea_events_inline_entity_form_entity_form_alter(&$entity_form, FormState
  * @param {array} $form the form array to add states to.
  * @param {string} $extra_identifier an optional string to identify inputs.
  */
-function _ea_events_get_states(array &$form, string $extra_identifier = NULL) {
+function _ea_events_get_states(&$form, $extra_identifier = NULL) {
   $startBracket = strlen($extra_identifier) > 0 ? '[' : '';
   $endBracket = strlen($extra_identifier) > 0 ? ']' : '';
   $form['event_interval']['#states'] = array(
