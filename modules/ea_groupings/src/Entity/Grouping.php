@@ -185,6 +185,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
       ->setDescription(t('The name of the Grouping entity.'))
+      ->setRequired(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
