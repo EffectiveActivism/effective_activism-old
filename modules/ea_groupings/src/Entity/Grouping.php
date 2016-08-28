@@ -264,7 +264,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->setTranslatable(TRUE)
       ->setSettings(array(
         'allowed_values' => array_map(function($timezone) {
-            return str_replace('_', ' ', $timezone);
+            return t(str_replace('_', ' ', $timezone));
           }, DateTimeZone::listIdentifiers(DateTimeZone::ALL)),
       ))
       ->setDisplayOptions('view', array(
