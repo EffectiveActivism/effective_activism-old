@@ -94,6 +94,7 @@ class EventTest extends WebTestBase {
     $this->drupalPostForm(NULL, array(
       'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
       'name[0][value]' => GROUPNAME,
+      'timezone' => \Drupal::config('system.date')->get('timezone.default'),
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText(sprintf('Created the %s Grouping.', GROUPNAME), 'Added a new grouping entity.');

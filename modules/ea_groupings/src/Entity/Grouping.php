@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\ea_groupings\GroupingInterface;
 use Drupal\user\UserInterface;
+use DateTimeZone;
 
 /**
  * Defines the Grouping entity.
@@ -253,6 +254,24 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ))
       ->setDisplayOptions('form', array(
         'type' => 'location_default',
+        'weight' => -4,
+      ))
+      ->setDisplayConfigurable('form', TRUE)
+      ->setDisplayConfigurable('view', TRUE);
+    $fields['timezone'] = BaseFieldDefinition::create('list_string')
+      ->setLabel(t('Timezone'))
+      ->setRequired(TRUE)
+      ->setTranslatable(TRUE)
+      ->setSettings(array(
+        'allowed_values' => system_time_zones(),
+      ))
+      ->setDisplayOptions('view', array(
+        'label' => 'above',
+        'type' => 'string',
+        'weight' => -4,
+      ))
+      ->setDisplayOptions('form', array(
+        'type' => 'options_select',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
