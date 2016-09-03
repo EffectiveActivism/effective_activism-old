@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * @file
+ * Contains \Drupal\ea_events\Entity\EventRepeater.
+ */
+
 namespace Drupal\ea_events\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -38,10 +43,9 @@ use Drupal\user\UserInterface;
  *   base_table = "event_repeater",
  *   data_table = "event_repeater_field_data",
  *   translatable = TRUE,
-  *   admin_permission = "administer event repeater entities",
+ *   admin_permission = "administer event repeater entities",
  *   entity_keys = {
  *     "id" = "id",
- *     "label" = "id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -68,21 +72,6 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
     $values += array(
       'user_id' => \Drupal::currentUser()->id(),
     );
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function createFromRRule($rrule) {
-    $values = somefunction($rrule);
-    return parent::create($values);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function isValidRRule($rrule) {
-    return TRUE;
   }
 
   /**
