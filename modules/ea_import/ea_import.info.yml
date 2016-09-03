@@ -6,3 +6,5 @@ package: Effective Activism
 dependencies:
   - ea_events
   - ea_groupings
+  - file
+  - link
