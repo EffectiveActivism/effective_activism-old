@@ -44,7 +44,7 @@ use Drupal\user\UserInterface;
  *   admin_permission = "administer task entities",
  *   entity_keys = {
  *     "id" = "id",
- *     "label" = "name",
+ *     "label" = "type",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -77,15 +77,15 @@ class Task extends ContentEntityBase implements TaskInterface {
   /**
    * {@inheritdoc}
    */
-  public function getName() {
-    return $this->get('name')->value;
+  public function getType() {
+    return $this->get('type')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
-    $this->set('name', $name);
+  public function setType($type) {
+    $this->set('type', $type);
     return $this;
   }
 
@@ -212,9 +212,11 @@ class Task extends ContentEntityBase implements TaskInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
+        'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
+        'weight' => -4,
         'settings' => array(
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
