@@ -16,4 +16,5 @@ cd "$DRUPAL_TI_DRUPAL_DIR/$DRUPAL_TI_MODULES_PATH"
 # Manually download inline entity form and apply patch from https://www.drupal.org/node/2569193.
 git clone --branch 8.x-1.x https://git.drupal.org/project/inline_entity_form.git
 cd inline_entity_form
-wget -q -O - https://www.drupal.org/files/2569193-23.patch | git apply -
+wget -q https://www.drupal.org/files/issues/2569193-23.patch
+git apply -v 2569193-23.patch
