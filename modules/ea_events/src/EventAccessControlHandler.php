@@ -12,6 +12,7 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultAllowed;
 
 /**
  * Access controller for the Event entity.
@@ -27,14 +28,14 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\ea_events\EventInterface $entity */
     switch ($operation) {
       case 'view':
-        if (!$entity->isPublished())
+        if (!$entity->isPublished()) {
           if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
             Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
             return new AccessResultAllowed();
           }
         }
         else {
-          return AccessResult::allowedIfHasPermission($account, 'view event repeater entities');
+          return AccessResult::allowedIfHasPermission($account, 'view published event entities');
         }
         break;
       case 'update':
