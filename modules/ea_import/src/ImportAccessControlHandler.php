@@ -21,16 +21,27 @@ class ImportAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\ea_import\Entity\ImportInterface $entity */
     switch ($operation) {
       case 'view':
-        if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished import entities');
+        if (!$entity->isPublished() &&
+          (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
+          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity))) {
+          return new AccessResultAllowed();
         }
-        return AccessResult::allowedIfHasPermission($account, 'view published import entities');
-
+        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
+          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
+          return new AccessResultAllowed();
+        }
+        break;
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit import entities');
-
+        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
+          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
+          return new AccessResultAllowed();
+        }
+        break;
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete import entities');
+        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
+          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
+          return new AccessResultAllowed();
+        }
     }
 
     // Unknown operation, no opinion.
