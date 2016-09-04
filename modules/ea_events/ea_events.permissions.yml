@@ -7,7 +7,7 @@ administer event entities:
   restrict access: true
 
 view published event entities:
-  title: 'View published Grouping entities'
+  title: 'View published Event entities'
 
 add event repeater entities:
   title: 'Create new Event repeater entities'
