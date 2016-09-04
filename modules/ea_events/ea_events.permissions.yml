@@ -6,7 +6,14 @@ administer event entities:
   description: 'Allow to access the administration form to configure Event entities.'
   restrict access: true
 
+view published event entities:
+  title: 'View published Grouping entities'
+
 administer event repeater entities:
   title: 'Administer Event repeater entities'
   description: 'Allow to access the administration form to configure Event repeater entities.'
   restrict access: true
+
+view event repeater entities:
+  title: 'View published Grouping entities'
+  
