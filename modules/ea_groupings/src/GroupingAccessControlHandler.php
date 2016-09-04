@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_groupings;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
