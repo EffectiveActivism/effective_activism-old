@@ -9,11 +9,5 @@ administer grouping entities:
 delete grouping entities:
   title: 'Delete Grouping entities'
 
-edit grouping entities:
-  title: 'Edit Grouping entities'
-
 view published grouping entities:
   title: 'View published Grouping entities'
-
-view unpublished grouping entities:
-  title: 'View unpublished Grouping entities'

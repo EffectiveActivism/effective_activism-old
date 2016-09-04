@@ -66,9 +66,7 @@ class Roles {
     'view published person entities',
     // Grouping permissions.
     'add grouping entities',
-    'edit grouping entities',
     'view published grouping entities',
-    'view unpublished grouping entities',
     // Activity permissions.
     'administer activity entities',
     'add activity entities',
