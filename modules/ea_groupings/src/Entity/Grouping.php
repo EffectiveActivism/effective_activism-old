@@ -324,7 +324,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
         'settings' => array(
-          'allow_new' => FALSE,
+          'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
         'weight' => -4,
@@ -343,7 +343,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
         'settings' => array(
-          'allow_new' => FALSE,
+          'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
         'weight' => -4,
