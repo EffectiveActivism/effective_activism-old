@@ -20,14 +20,12 @@ class Roles {
   const ORGANIZER_PERMISSIONS = array(
     // People permissions.
     'add person entities',
-    'delete person entities',
     'edit person entities',
     'view published person entities',
     // Grouping permissions.
     'view published grouping entities',
     // Activity permissions.
     'add activity entities',
-    'delete activity entities',
     'edit activity entities',
     'view published activity entities',
     // Data permissions.
@@ -36,18 +34,18 @@ class Roles {
     'view data entities',
     // Event permissions.
     'add event entities',
+    'view published event entities',
+    // Event repeater permissions.
+    'view event repeater entities',
+    'edit event repeater entities',
+    'add event repeater entities',
     // Task permissions.
     'add task entities',
-    'delete task entities',
     'edit task entities',
     'view published task entities',
     'view unpublished task entities',
     // Import permissions.
-    'access import overview',
     'add import entities',
-    'edit import entities',
-    'view published task entities',
-    'view unpublished task entities',
   );
 
   /**
@@ -61,7 +59,6 @@ class Roles {
   const MANAGER_PERMISSIONS = array(
     // People permissions.
     'add person entities',
-    'delete person entities',
     'edit person entities',
     'view published person entities',
     // Grouping permissions.
@@ -70,7 +67,6 @@ class Roles {
     // Activity permissions.
     'administer activity entities',
     'add activity entities',
-    'delete activity entities',
     'edit activity entities',
     'view published activity entities',
     // Data permissions.
@@ -79,17 +75,17 @@ class Roles {
     'administer data display',
     // Event permissions.
     'add event entities',
+    'view published event entities',
+    // Event repeater permissions.
+    'view event repeater entities',
+    'edit event repeater entities',
+    'add event repeater entities',
     // Task permissions.
     'add task entities',
-    'delete task entities',
     'edit task entities',
     'view published task entities',
     'view unpublished task entities',
     // Import permissions.
-    'access import overview',
     'add import entities',
-    'edit import entities',
-    'view published task entities',
-    'view unpublished task entities',
   );
 }
