@@ -6,17 +6,8 @@ administer event entities:
   description: 'Allow to access the administration form to configure Event entities.'
   restrict access: true
 
-delete event entities:
-  title: 'Delete Event entities'
-
-edit event entities:
-  title: 'Edit Event entities'
-
 view published event entities:
   title: 'View published Event entities'
-
-view unpublished event entities:
-  title: 'View unpublished Event entities'
 
 add event repeater entities:
   title: 'Create new Event repeater entities'

@@ -19,7 +19,6 @@ class EventRepeaterForm extends ContentEntityForm {
     /* @var $entity \Drupal\ea_events\Entity\EventRepeater */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
-
     return $form;
   }
 
@@ -29,18 +28,12 @@ class EventRepeaterForm extends ContentEntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
     $status = parent::save($form, $form_state);
-
     switch ($status) {
       case SAVED_NEW:
-        drupal_set_message($this->t('Created the %label Event repeater.', [
-          '%label' => $entity->id(),
-        ]));
+        drupal_set_message($this->t('Created Event repeater.'));
         break;
-
       default:
-        drupal_set_message($this->t('Saved the %label Event repeater.', [
-          '%label' => $entity->id(),
-        ]));
+        drupal_set_message($this->t('Saved the Event repeater.'));
     }
     $form_state->setRedirect('entity.event_repeater.canonical', ['event_repeater' => $entity->id()]);
   }

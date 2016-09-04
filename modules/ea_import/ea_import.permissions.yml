@@ -5,18 +5,3 @@ administer import entities:
   title: 'Administer Import entities'
   description: 'Allow to access the administration form to configure Import entities.'
   restrict access: true
-
-delete import entities:
-  title: 'Delete Import entities'
-
-edit import entities:
-  title: 'Edit Import entities'
-
-access import overview:
-  title: 'Access the Import overview page'
-
-view published import entities:
-  title: 'View published Import entities'
-
-view unpublished import entities:
-  title: 'View unpublished Import entities'

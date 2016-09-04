@@ -36,12 +36,12 @@ class TaskForm extends ContentEntityForm {
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Task.', [
-          '%label' => $entity->label(),
+          '%label' => $entity->getType(),
         ]));
         break;
       default:
         drupal_set_message($this->t('Saved the %label Task.', [
-          '%label' => $entity->label(),
+          '%label' => $entity->getType(),
         ]));
     }
     $form_state->setRedirect('entity.task.canonical', ['task' => $entity->id()]);

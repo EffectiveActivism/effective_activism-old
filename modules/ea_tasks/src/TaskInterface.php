@@ -20,23 +20,23 @@ interface TaskInterface extends ContentEntityInterface, EntityChangedInterface, 
   // Add get/set methods for your configuration properties here.
 
   /**
-   * Gets the Task name.
+   * Gets the Task type.
    *
    * @return string
-   *   Name of the Task.
+   *   Type of the Task.
    */
-  public function getName();
+  public function getType();
 
   /**
-   * Sets the Task name.
+   * Sets the Task type.
    *
-   * @param string $name
-   *   The Task name.
+   * @param string $type
+   *   The Task type.
    *
    * @return \Drupal\ea_tasks\TaskInterface
    *   The called Task entity.
    */
-  public function setName($name);
+  public function setType($type);
 
   /**
    * Gets the Task creation timestamp.

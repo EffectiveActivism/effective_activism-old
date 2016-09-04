@@ -7,6 +7,7 @@
 
 namespace Drupal\ea_activities\Tests;
 
+use Drupal\ea_permissions\Roles;
 use Drupal\ea_activities\Entity\Activity;
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_data\Entity\Data;
@@ -21,10 +22,12 @@ use Drupal\field\Entity\FieldConfig;
  */
 class ActivityTest extends WebTestBase {
 
-  public static $modules = array('ea_activities', 'ea_data', 'inline_entity_form', 'field_ui');
+  public static $modules = array('ea_permissions', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_groupings', 'ea_events', 'ea_import');
 
-  private $executive;
+  private $manager;
+
   private $organizer;
+
   private $data_type;
 
   /**
@@ -32,22 +35,8 @@ class ActivityTest extends WebTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->executive = $this->drupalCreateUser(array(
-      'administer activity entities',
-      'administer data entities',
-      'administer data fields',
-      'administer data display',
-    ));
-    $this->organizer = $this->drupalCreateUser(array(
-      'add activity entities',
-      'delete activity entities',
-      'edit activity entities',
-      'view published activity entities',
-      'add data entities',
-      'delete data entities',
-      'edit data entities',
-      'view data entities',
-    ));
+    $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
+    $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
     // Create data type.
     $this->data_type = DataType::create(array(
       'id' => 'data_type_test',
@@ -112,7 +101,7 @@ class ActivityTest extends WebTestBase {
    * field field_integer_input to it.
    */
   private function createActivityType() {
-    $this->drupalLogin($this->executive);
+    $this->drupalLogin($this->manager);
     $this->drupalGet('effectiveactivism/activity_type');
     $this->assertResponse(200);
     $this->drupalGet('effectiveactivism/activity_type/add');

@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_groupings;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -22,12 +23,13 @@ class GroupingAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished grouping entities');
+          return Permission::allowedIfIsManager($account, $entity);
         }
-        return AccessResult::allowedIfHasPermission($account, 'view published grouping entities');
+        else {
+          return AccessResult::allowedIfHasPermission($account, 'view published grouping entities');
+        }
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit grouping entities');
-
+        return Permission::allowedIfIsManager($account, $entity);
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete grouping entities');
     }

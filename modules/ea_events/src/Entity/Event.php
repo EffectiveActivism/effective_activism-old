@@ -265,7 +265,6 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setLabel(t('Repeat'))
       ->setDescription(t('Repeat this event.'))
       ->setSetting('target_type', 'event_repeater')
-      ->setSetting('handler_settings', ['target_bundles' => ['event_repeater' => 'event_repeater']])
       ->setSetting('handler', 'default')
       ->setCardinality(1)
       ->setRequired(TRUE)
