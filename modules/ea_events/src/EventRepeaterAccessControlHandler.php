@@ -21,28 +21,15 @@ class EventRepeaterAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\ea_events\Entity\EventRepeaterInterface $entity */
     switch ($operation) {
       case 'view':
-        if (!$entity->isPublished() &&
-          (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity))) {
-          return new AccessResultAllowed();
-        }
-        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
-          return new AccessResultAllowed();
-        }
-        break;
+        return AccessResult::allowedIfHasPermission($account, 'view event repeater entities');
+
       case 'update':
-        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
-          return new AccessResultAllowed();
-        }
-        break;
+        return AccessResult::allowedIfHasPermission($account, 'edit event repeater entities');
+
       case 'delete':
-        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
-          return new AccessResultAllowed();
-        }
+        return AccessResult::allowedIfHasPermission($account, 'delete event repeater entities');
     }
+
     // Unknown operation, no opinion.
     return AccessResult::neutral();
   }
@@ -51,7 +38,7 @@ class EventRepeaterAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add event entities');
+    return AccessResult::allowedIfHasPermission($account, 'add event repeater entities');
   }
 
 }
