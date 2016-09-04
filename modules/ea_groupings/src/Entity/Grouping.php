@@ -322,12 +322,10 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
         'weight' => 2,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
+        'type' => 'inline_entity_form_complex',
         'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
+          'allow_new' => FALSE,
+          'allow_existing' => TRUE,
         ),
         'weight' => -4,
       ))
@@ -343,12 +341,10 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
         'weight' => 2,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
+        'type' => 'inline_entity_form_complex',
         'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
+          'allow_new' => FALSE,
+          'allow_existing' => TRUE,
         ),
         'weight' => -4,
       ))
