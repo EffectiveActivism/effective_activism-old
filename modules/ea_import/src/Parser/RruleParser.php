@@ -9,6 +9,7 @@ namespace Drupal\ea_import\Parser;
 
 use Recurr\Rule;
 use Recurr\Exception\InvalidRRule;
+use Drupal\ea_events\Entity\EventRepeater;
 
 /**
  * Parses RRULEs.
@@ -29,6 +30,9 @@ class RruleParser {
 
   /* end date */
   private /** @type {DateTime} */ $endDate;
+
+  /* array of values */
+  private /** @type {Array} */$eventRepeaterValues;
 
   /**
    * Creates an RRULE Object.
@@ -51,55 +55,44 @@ class RruleParser {
    * @return string Values for an EventRepeater entity.
    */
   public function getEventRepeaterValues() {
-    $eventRepeaterValues = array(
-      'event_freq' => 'none',
-      'event_count' => '1',
-      'event_until' => date('Y-m-d'),
-      'event_interval' => '1',
-      'event_bymonth' => '1',
-      'event_bymonthday' => '1',
-      'event_byday' => 'MO',
-      'event_bysetpos' => '1',
-      'event_ends' => 'never',
-      'event_byday_multiple' => '',
-    );
+    $this->eventRepeaterValues = EventRepeater::DEFAULT_VALUES;
     $components = explode(';', $this->rrule);
     foreach ($components as $component) {
       $componentArray = explode('=', $component);
       switch ($componentArray[0]) {
         case 'FREQ' :
-          $eventRepeaterValues['event_freq'] = $componentArray[1];
+          $this->eventRepeaterValues['event_freq'] = $componentArray[1];
           break;
         case 'COUNT' :
-          $eventRepeaterValues['event_count'] = $componentArray[1];
+          $this->eventRepeaterValues['event_count'] = $componentArray[1];
           break;
         case 'UNTIL' :
-          $eventRepeaterValues['event_until'] = $this->getDate($componentArray[1]);
+          $this->eventRepeaterValues['event_until'] = $this->getDate($componentArray[1]);
           break;
         case 'INTERVAL' :
-          $eventRepeaterValues['event_interval'] = $componentArray[1];
+          $this->eventRepeaterValues['event_interval'] = $componentArray[1];
           break;
         case 'BYMONTH' :
-          $eventRepeaterValues['event_bymonth'] = $componentArray[1];
+          $this->eventRepeaterValues['event_bymonth'] = $componentArray[1];
           break;
         case 'BYMONTHDAY' :
-          $eventRepeaterValues['event_bymonthday'] = $componentArray[1];
+          $this->eventRepeaterValues['event_bymonthday'] = $componentArray[1];
           break;
         case 'BYDAY' :
           // Assuming FREQ comes before BYDAY.
-          if ($eventRepeaterValues['event_freq'] !== 'WEEKLY') {
-            $eventRepeaterValues['event_byday'] = $componentArray[1];
+          if ($this->eventRepeaterValues['event_freq'] !== 'WEEKLY') {
+            $this->eventRepeaterValues['event_byday'] = $componentArray[1];
           }
           else {
-            $eventRepeaterValues['event_byday_multiple'] = $componentArray[1];
+            $this->eventRepeaterValues['event_byday_multiple'] = $componentArray[1];
           }
           break;
         case 'BYSETPOS' :
-          $eventRepeaterValues['event_bysetpos'] = $componentArray[1];
+          $this->eventRepeaterValues['event_bysetpos'] = $componentArray[1];
           break;
       }
     }
-    return $eventRepeaterValues;
+    return $this->eventRepeaterValues;
   }
 
   /**
