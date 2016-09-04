@@ -30,23 +30,23 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
         if (!$entity->isPublished() &&
           (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity))) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished event entities');
+          return new AccessResultAllowed();
         }
         if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
-          return AccessResult::allowedIfHasPermission($account, 'view published event entities');
+          return new AccessResultAllowed();
         }
         break;
       case 'update':
         if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
-          return AccessResult::allowedIfHasPermission($account, 'edit event entities');
+          return new AccessResultAllowed();
         }
         break;
       case 'delete':
         if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity) ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)) {
-          return AccessResult::allowedIfHasPermission($account, 'delete event entities');
+          return new AccessResultAllowed();
         }
     }
     // Unknown operation, no opinion.
