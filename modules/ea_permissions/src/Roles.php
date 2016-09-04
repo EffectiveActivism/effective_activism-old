@@ -36,15 +36,6 @@ class Roles {
     'view data entities',
     // Event permissions.
     'add event entities',
-    'delete event entities',
-    'edit event entities',
-    'view published event entities',
-    'view unpublished event entities',
-    // Event repeater permissions.
-    'add event repeater entities',
-    'delete event repeater entities',
-    'edit event repeater entities',
-    'view event repeater entities',
     // Task permissions.
     'add task entities',
     'delete task entities',
@@ -90,15 +81,6 @@ class Roles {
     'administer data display',
     // Event permissions.
     'add event entities',
-    'delete event entities',
-    'edit event entities',
-    'view published event entities',
-    'view unpublished event entities',
-    // Event repeater permissions.
-    'add event repeater entities',
-    'delete event repeater entities',
-    'edit event repeater entities',
-    'view event repeater entities',
     // Task permissions.
     'add task entities',
     'delete task entities',

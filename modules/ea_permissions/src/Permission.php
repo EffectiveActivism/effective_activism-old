@@ -74,12 +74,21 @@ class Permission {
     // Determine access based on role.
     switch ($role) {
       case Roles::ORGANIZER_ROLE :
+        // Check if user is organizer of grouping.
         if (in_array($account->id(), $grouping->get('organizers')->getValue())) {
           $access = new AccessResultAllowed();
+          break;
         }
       case Roles::MANAGER_ROLE :
+        // Check if user is manager of grouping.
         if (in_array($account->id(), $grouping->get('managers')->getValue())) {
           $access = new AccessResultAllowed();
+          break;
+        }
+        // Check if user is manager of parent grouping, if any.
+        if (in_array($account->id(), $grouping->get('parent')->entity->get('managers')->getValue())) {
+          $access = new AccessResultAllowed();
+          break;
         }
     }
     return $access;
