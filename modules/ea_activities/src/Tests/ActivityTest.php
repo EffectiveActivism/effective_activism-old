@@ -102,9 +102,9 @@ class ActivityTest extends WebTestBase {
    */
   private function createActivityType() {
     $this->drupalLogin($this->manager);
-    $this->drupalGet('effectiveactivism/activity_type');
+    $this->drupalGet('effectiveactivism/activity-types');
     $this->assertResponse(200);
-    $this->drupalGet('effectiveactivism/activity_type/add');
+    $this->drupalGet('effectiveactivism/activity-types/add');
     $this->assertResponse(200);
     // Create a data type.
     $this->drupalPostForm(NULL, array(
@@ -126,7 +126,7 @@ class ActivityTest extends WebTestBase {
   private function createActivityEntity() {
     $this->drupalLogin($this->organizer);
     // Create an activity entity using the activity type.
-    $this->drupalGet('effectiveactivism/activity/add');
+    $this->drupalGet('effectiveactivism/activities/add/activity_type_test');
     $this->assertResponse(200);
     $random_value = rand();
     $this->drupalPostForm(NULL, array(

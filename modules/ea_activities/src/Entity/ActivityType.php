@@ -36,11 +36,11 @@ use Drupal\ea_activities\ActivityTypeInterface;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/effectiveactivism/activity_type/{activity_type}",
- *     "add-form" = "/effectiveactivism/activity_type/add",
- *     "edit-form" = "/effectiveactivism/activity_type/{activity_type}/edit",
- *     "delete-form" = "/effectiveactivism/activity_type/{activity_type}/delete",
- *     "collection" = "/effectiveactivism/activity_type"
+ *     "canonical" = "/effectiveactivism/activity-types/{activity_type}",
+ *     "add-form" = "/effectiveactivism/activity-types/add",
+ *     "edit-form" = "/effectiveactivism/activity-types/{activity_type}/edit",
+ *     "delete-form" = "/effectiveactivism/activity-types/{activity_type}/delete",
+ *     "collection" = "/effectiveactivism/activity-types"
  *   }
  * )
  */

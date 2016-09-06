@@ -51,11 +51,11 @@ use Drupal\user\UserInterface;
  *     "langcode" = "langcode",
  *   },
  *   links = {
- *     "canonical" = "/effective-activism/event_repeater/{event_repeater}",
- *     "add-form" = "/effective-activism/event_repeater/add",
- *     "edit-form" = "/effective-activism/event_repeater/{event_repeater}/edit",
- *     "delete-form" = "/effective-activism/event_repeater/{event_repeater}/delete",
- *     "collection" = "/effective-activism/event_repeater",
+ *     "canonical" = "/effectiveactivism/event_repeaters/{event_repeater}",
+ *     "add-form" = "/effectiveactivism/event_repeaters/add",
+ *     "edit-form" = "/effectiveactivism/event_repeaters/{event_repeater}/edit",
+ *     "delete-form" = "/effectiveactivism/event_repeaters/{event_repeater}/delete",
+ *     "collection" = "/effectiveactivism/event_repeaters",
  *   },
  *   field_ui_base_route = "event_repeater.settings"
  * )

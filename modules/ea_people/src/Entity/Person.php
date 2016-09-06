@@ -50,11 +50,11 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effective-activism/people/person/{person}",
- *     "add-form" = "/effective-activism/people/person/add",
- *     "edit-form" = "/effective-activism/people/person/{person}/edit",
- *     "delete-form" = "/effective-activism/people/person/{person}/delete",
- *     "collection" = "/effective-activism/people/person",
+ *     "canonical" = "/effectiveactivism/people/{person}",
+ *     "add-form" = "/effectiveactivism/people/add",
+ *     "edit-form" = "/effectiveactivism/people/{person}/edit",
+ *     "delete-form" = "/effectiveactivism/people/{person}/delete",
+ *     "collection" = "/effectiveactivism/people",
  *   },
  *   field_ui_base_route = "person.settings"
  * )
