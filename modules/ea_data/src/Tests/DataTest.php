@@ -55,9 +55,9 @@ class DataTest extends WebTestBase {
    */
   private function createDataType() {
     $this->drupalLogin($this->statistician);
-    $this->drupalGet('effectiveactivism/data_type');
+    $this->drupalGet('effectiveactivism/data-types');
     $this->assertResponse(200);
-    $this->drupalGet('effectiveactivism/data_type/add');
+    $this->drupalGet('effectiveactivism/data-types/add');
     $this->assertResponse(200);
     // Create a data type.
     $this->drupalPostForm(NULL, array(
@@ -67,7 +67,7 @@ class DataTest extends WebTestBase {
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created the Test Data type.', 'Added a new data type.');
-    $this->drupalGet('effectiveactivism/data_type/data_type_test/edit/fields/add-field');
+    $this->drupalGet('effectiveactivism/data-types/data_type_test/edit/fields/add-field');
     // Create a field for the data type.
     $this->drupalPostForm(NULL, array(
       'new_storage_type' => 'integer',
