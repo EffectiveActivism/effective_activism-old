@@ -126,7 +126,7 @@ class ActivityTest extends WebTestBase {
   private function createActivityEntity() {
     $this->drupalLogin($this->organizer);
     // Create an activity entity using the activity type.
-    $this->drupalGet('effectiveactivism/activities/add');
+    $this->drupalGet('effectiveactivism/activities/add/activity_type_test');
     $this->assertResponse(200);
     $random_value = rand();
     $this->drupalPostForm(NULL, array(
