@@ -52,11 +52,11 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effectiveactivism/activity/{activity}",
- *     "add-form" = "/effectiveactivism/activity/add/{activity_type}",
- *     "edit-form" = "/effectiveactivism/activity/{activity}/edit",
- *     "delete-form" = "/effectiveactivism/activity/{activity}/delete",
- *     "collection" = "/effectiveactivism/activity",
+ *     "canonical" = "/effectiveactivism/activities/{activity}",
+ *     "add-form" = "/effectiveactivism/activities/add/{activity_type}",
+ *     "edit-form" = "/effectiveactivism/activities/{activity}/edit",
+ *     "delete-form" = "/effectiveactivism/activities/{activity}/delete",
+ *     "collection" = "/effectiveactivism/activities",
  *   },
  *   bundle_entity_type = "activity_type",
  *   field_ui_base_route = "entity.activity_type.edit_form"

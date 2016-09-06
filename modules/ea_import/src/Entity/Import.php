@@ -50,12 +50,12 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effectiveactivism/import/{import}",
- *     "add-page" = "/effectiveactivism/import/add",
- *     "add-form" = "/effectiveactivism/import/add/{import_type}",
- *     "edit-form" = "/effectiveactivism/import/{import}/edit",
- *     "delete-form" = "/effectiveactivism/import/{import}/delete",
- *     "collection" = "/effectiveactivism/import",
+ *     "canonical" = "/effectiveactivism/imports/{import}",
+ *     "add-page" = "/effectiveactivism/imports/add",
+ *     "add-form" = "/effectiveactivism/imports/add/{import_type}",
+ *     "edit-form" = "/effectiveactivism/imports/{import}/edit",
+ *     "delete-form" = "/effectiveactivism/imports/{import}/delete",
+ *     "collection" = "/effectiveactivism/imports",
  *   },
  *   bundle_entity_type = "import_type",
  *   field_ui_base_route = "entity.import_type.edit_form"

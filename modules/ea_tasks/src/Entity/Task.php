@@ -51,11 +51,11 @@ use Drupal\user\UserInterface;
  *     "status" = "status",
  *   },
  *   links = {
- *     "canonical" = "/effective-activism/tasks/task/{task}",
- *     "add-form" = "/effective-activism/tasks/task/add",
- *     "edit-form" = "/effective-activism/tasks/task/{task}/edit",
- *     "delete-form" = "/effective-activism/tasks/task/{task}/delete",
- *     "collection" = "/effective-activism/tasks/task",
+ *     "canonical" = "/effectiveactivism/tasks/{task}",
+ *     "add-form" = "/effectiveactivism/tasks/add",
+ *     "edit-form" = "/effectiveactivism/tasks/{task}/edit",
+ *     "delete-form" = "/effectiveactivism/tasks/{task}/delete",
+ *     "collection" = "/effectiveactivism/tasks",
  *   },
  *   field_ui_base_route = "task.settings"
  * )

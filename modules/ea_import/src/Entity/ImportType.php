@@ -30,11 +30,11 @@ use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/effectiveactivism/import_type/{import_type}",
- *     "add-form" = "/effectiveactivism/import_type/add",
- *     "edit-form" = "/effectiveactivism/import_type/{import_type}/edit",
- *     "delete-form" = "/effectiveactivism/import_type/{import_type}/delete",
- *     "collection" = "/effectiveactivism/import_type"
+ *     "canonical" = "/effectiveactivism/import-types/{import_type}",
+ *     "add-form" = "/effectiveactivism/import-types/add",
+ *     "edit-form" = "/effectiveactivism/import-types/{import_type}/edit",
+ *     "delete-form" = "/effectiveactivism/import-types/{import_type}/delete",
+ *     "collection" = "/effectiveactivism/import-types"
  *   }
  * )
  */
