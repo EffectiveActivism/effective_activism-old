@@ -20,6 +20,11 @@ class ImportForm extends ContentEntityForm {
     /* @var $entity \Drupal\ea_import\Entity\Import */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
+    $form['timezone_notice'] = [
+      '#type' => 'item',
+      '#title' => $this->t('Timezones and dates'),
+      '#description' => $this->t('The dates of imported events will be imported relative to the selected grouping timezone. For example, if the imported event has a start time of 11:00 am, and the grouping selected for the import has the timezone "Europe/Copenhagen (UTC +1)", the start time will be 11:00 am (UTC +1)'),
+    ];
     return $form;
   }
 
