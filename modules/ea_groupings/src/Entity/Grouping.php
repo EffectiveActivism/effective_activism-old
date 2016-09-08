@@ -148,6 +148,29 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
   /**
    * {@inheritdoc}
    */
+  public function getRelatives($include_parent = TRUE) {
+    $groupings = [];
+    // If grouping has parent, get parents children.
+    if (isset($this->get('parent')->entity)) {
+      $parent = $this->get('parent')->entity;
+    }
+    // Otherwise, get this groupings children.
+    else {
+      $parent = $this;
+    }
+    if ($include_parent) {
+      $groupings[] = $parent;
+    }
+    $query = \Drupal::entityQuery('grouping')
+      ->condition('parent', $parent->id());
+    $result = $query->execute();
+    $groupings += Grouping::loadMultiple($result);
+    return $groupings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields['id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('ID'))

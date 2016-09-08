@@ -34,8 +34,27 @@ class PersonForm extends ContentEntityForm {
     parent::validateForm($form, $form_state);
     $mobile_phone_number = $form_state->getValue('mobile_phone_number');
     $email_address = $form_state->getValue('email_address');
+    // Check if e-mail or phone number exists.
     if (empty($mobile_phone_number[0]['value']) && empty($email_address[0]['value'])) {
       $form_state->setErrorByName('', $this->t('Please add at least one contact method.'));
+    }
+    // Check if phone number exists.
+    if (!empty($mobile_phone_number[0]['value'])) {
+      $query = \Drupal::entityQuery('person')
+        ->condition('mobile_phone_number', $mobile_phone_number[0]['value']);
+      $result = $query->execute();
+      if (!empty($result) && !in_array($this->entity->id(), $result)) {
+        $form_state->setErrorByName('mobile_phone_number', $this->t('This mobile phone number already exists.'));
+      }
+    }
+    // Check if email address exists.
+    if (!empty($email_address[0]['value'])) {
+      $query = \Drupal::entityQuery('person')
+        ->condition('email_address', $email_address[0]['value']);
+      $result = $query->execute();
+      if (!empty($result) && !in_array($this->entity->id(), $result)) {
+        $form_state->setErrorByName('email_address', $this->t('This email address already exists.'));
+      }
     }
   }
 
