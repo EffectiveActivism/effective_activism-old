@@ -165,7 +165,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->condition('parent', $parent->id());
     $result = $query->execute();
     $groupings += Grouping::loadMultiple($result);
-    return $groupins;
+    return $groupings;
   }
 
   /**
