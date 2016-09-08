@@ -74,4 +74,13 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
    */
   public function setPublished($published);
 
+  /**
+   * Get relatives of the grouping.
+   *
+   * @param bool $include_parent
+   *   Whether to include the parent grouping.
+   * @return array
+   *   An array of groupings related to this entity, including itself.
+   */
+  public function getRelatives($include_parent);
 }
