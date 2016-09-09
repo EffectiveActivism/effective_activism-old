@@ -11,7 +11,7 @@ set -e $DRUPAL_TI_DEBUG
 drupal_ti_ensure_drupal
 
 # Change to the Drupal module directory
-cd "$DRUPAL_TI_DRUPAL_DIR/$DRUPAL_TI_MODULES_PATH"
+cd "$DRUPAL_TI_DRUPAL_DIR/modules"
 
 # Manually download inline entity form and apply patch from https://www.drupal.org/node/2569193.
 git clone --branch 8.x-1.x https://git.drupal.org/project/inline_entity_form.git
