@@ -13,6 +13,9 @@ use Drupal\simpletest\WebTestBase;
 use Drupal\ea_events\Entity\EventRepeater;
 use Drupal;
 
+/**
+ * Test values.
+ */
 define(__NAMESPACE__ . '\GROUPNAME', 'Test group');
 define(__NAMESPACE__ . '\DESCRIPTION', 'Example text for an event description');
 define(__NAMESPACE__ . '\STARTDATE', '2016-01-01');
