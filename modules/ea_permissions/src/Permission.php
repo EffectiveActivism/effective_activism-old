@@ -86,9 +86,12 @@ class Permission {
           break;
         }
         // Check if user is manager of parent grouping, if any.
-        if (in_array($account->id(), $grouping->get('parent')->entity->get('managers')->getValue())) {
-          $access = new AccessResultAllowed();
-          break;
+        if (isset($grouping->get('parent')->entity)) {
+          $parent = $grouping->get('parent')->entity;
+          if (in_array($account->id(), $parent->get('managers')->referencedEntities())) {
+            $access = new AccessResultAllowed();
+            break;
+          }
         }
     }
     return $access;
