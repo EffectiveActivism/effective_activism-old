@@ -37,12 +37,12 @@ class ImportForm extends ContentEntityForm {
       $status = parent::save($form, $form_state);
       switch ($status) {
         case SAVED_NEW:
-          drupal_set_message($this->t('Created the %label Import.', [
+          drupal_set_message($this->t('Created the import.', [
             '%label' => $entity->label(),
           ]));
           break;
         default:
-          drupal_set_message($this->t('Saved the %label Import.', [
+          drupal_set_message($this->t('Saved the import.', [
             '%label' => $entity->label(),
           ]));
       }
