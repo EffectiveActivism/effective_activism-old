@@ -63,19 +63,6 @@ class ICalendarImportTest extends WebTestBase {
       'organizers' => $this->organizer->id(),
     ));
     $this->grouping->save();
-    // Create event repeater.
-    $this->eventRepeater = EventRepeater::create(EventRepeater::DEFAULT_VALUES);
-    // Create event.
-    $this->event = Event::create(array(
-      'user_id' => $this->organizer->id(),
-      'description' => DESCRIPTION,
-      'start_date[' => STARTDATE,
-      'start_date' => STARTTIME,
-      'end_date' => ENDDATE,
-      'end_date' => ENDTIME,
-      'grouping' => $this->grouping->id(),
-    ));
-    $this->event->save();
   }
 
   /**
@@ -101,5 +88,6 @@ class ICalendarImportTest extends WebTestBase {
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created the import.', 'Added a new import entity.');
+    $this->assertText('One event imported', 'Successfully imported event');
   }
 }
