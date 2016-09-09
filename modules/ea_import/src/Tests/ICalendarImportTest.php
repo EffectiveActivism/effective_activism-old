@@ -29,7 +29,7 @@ define(__NAMESPACE__ . '\ENDTIME', '12:00');
 define(__NAMESPACE__ . '\GITHUBRAWPATH', 'https://raw.githubusercontent.com/EffectiveActivism/effective_activism/development');
 
 /**
- * Function tests for ea_data.
+ * Function tests for ea_import ICalendar import entity.
  *
  * @group effective_activism
  */

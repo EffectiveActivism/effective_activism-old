@@ -2,10 +2,12 @@
 
 namespace Drupal\ea_import;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultAllowed;
 
 /**
  * Access controller for the Import entity.
@@ -43,7 +45,6 @@ class ImportAccessControlHandler extends EntityAccessControlHandler {
           return new AccessResultAllowed();
         }
     }
-
     // Unknown operation, no opinion.
     return AccessResult::neutral();
   }
