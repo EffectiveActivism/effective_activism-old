@@ -13,17 +13,19 @@ use Drupal\ea_groupings\Entity\Grouping;
 use Drupal;
 
 /**
- * Function tests for ea_import ICalendar import entity type.
+ * Function tests for ea_import CSV import entity type.
  *
  * @group effective_activism
  */
-class ICalendarImportTest extends ImportWebTestBase {
+class CSVImportTest extends ImportWebTestBase {
 
   private $grouping;
 
   private $organizer;
 
   private $manager;
+
+  private $CSVFile;
 
   /**
    * {@inheritdoc}
@@ -41,6 +43,9 @@ class ICalendarImportTest extends ImportWebTestBase {
       'organizers' => $this->organizer->id(),
     ));
     $this->grouping->save();
+    // Create CSV file.
+    $data = file_get_contents($this->container->get('file_system')->realpath(drupal_get_path('module', 'ea_import') . '/src/Tests/sample.csv'));
+    $this->CSVFile = file_save_data($data, 'public://sample.csv', FILE_EXISTS_REPLACE);
   }
 
   /**
@@ -48,20 +53,19 @@ class ICalendarImportTest extends ImportWebTestBase {
    */
   public function testImports() {
     $this->drupalLogin($this->organizer);
-    $this->createICalendarImportEntity();
+    $this->createCSVImportEntity();
   }
 
   /**
-   * Creates an ICalendar Import entity.
+   * Creates a CSV Import entity.
    */
-  private function createICalendarImportEntity() {
-    $this->drupalGet('effectiveactivism/imports/add/icalendar');
+  private function createCSVImportEntity() {
+    $this->drupalGet('effectiveactivism/imports/add/csv');
     $this->assertResponse(200);
     $this->drupalPostForm(NULL, array(
       'grouping[0][target_id]' => sprintf('%s (%d)', ImportWebTestBase::GROUPNAME, $this->grouping->id()),
       'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'field_url[0][uri]' => ImportWebTestBase::GITHUBRAWPATH . '/modules/ea_import/src/Tests/sample.ics',
-      'field_continuous_import' => 1,
+      'files[field_file_csv_0]' => $this->container->get('file_system')->realpath(drupal_get_path('module', 'ea_import') . '/src/Tests/sample.csv'),
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created the import.', 'Added a new import entity.');

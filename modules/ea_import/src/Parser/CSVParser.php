@@ -30,7 +30,7 @@ class CSVParser {
       return false;
     }
     // Load file entity.
-    $csv_file = File::load($field_file_csv[0]['target_id']);
+    $csv_file = File::load($file);
     $this->file = $csv_file;
     return $this;
   }
@@ -50,7 +50,7 @@ class CSVParser {
         if ($row === 1) {
           continue;
         }
-        $event = array(
+        $events[] = array(
           'title' => $data[0],
           'description' => $data[1],
           'start_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, $data[2]),

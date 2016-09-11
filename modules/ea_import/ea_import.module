@@ -73,7 +73,7 @@ function ea_import_theme_suggestions_import(array $variables) {
  * Implements hook_entity_presave().
  */
 function ea_import_entity_presave(EntityInterface $entity) {
-  // If the import is a CSV file, import the content of it.
+  // If the import is a CSV file, validate the content of it.
   if ($entity->bundle() === EA_IMPORT_BUNDLE_CSV) {
     $field_file_csv = $entity->get('field_file_csv')->getValue();
     $grouping = $entity->get('grouping')->getValue();
@@ -96,14 +96,26 @@ function ea_import_entity_presave(EntityInterface $entity) {
         $errors = $event->validate();
         if ($errors->count() > 0) {
           $error_list = [];
+          $error_count = 0;
           foreach ($errors as $error) {
-            $error_list[] = strip_tags($error->getMessage());
+            $error_message = strip_tags($error->getMessage());
+            // Skip missing EventRepeater entity error.
+            if ($error_message !== (string) t('This value should not be null.')) {
+              $error_list[] = $error_message;
+              $error_count++;
+            }
+            if ($error_count > EA_IMPORT_MAX_ERRORS) {
+              break;
+            }
           }
-          throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode('</br>', $error_list))));
+          if ($error_count > 0) {
+            throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode(', ', $error_list))));
+          }
         }
       }
     }
   }
+  // If the import is an ICalendar file, validate the content of it.
   elseif ($entity->bundle() === EA_IMPORT_BUNDLE_ICALENDAR) {
     $field_url = $entity->get('field_url')->getValue();
     $grouping = $entity->get('grouping')->getValue();
