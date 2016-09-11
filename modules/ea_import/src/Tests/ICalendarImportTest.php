@@ -7,41 +7,19 @@
 
 namespace Drupal\ea_import\Tests;
 
-use Drupal\ea_import\Entity\Import;
-use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_events\Entity\Event;
+use Drupal\ea_import\Tests\ImportWebTestBase;
 use Drupal\ea_permissions\Roles;
-use Drupal\simpletest\WebTestBase;
-use Drupal\ea_events\Entity\EventRepeater;
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal;
 
 /**
- * Test values.
- */
-define(__NAMESPACE__ . '\GROUPNAME', 'Test group');
-define(__NAMESPACE__ . '\DESCRIPTION', 'Example text for an event description');
-define(__NAMESPACE__ . '\STARTDATE', '2016-01-01');
-define(__NAMESPACE__ . '\STARTDATEFORMATTED', '01/01/2016');
-define(__NAMESPACE__ . '\STARTTIME', '11:00');
-define(__NAMESPACE__ . '\ENDDATE', '2016-01-01');
-define(__NAMESPACE__ . '\ENDDATEFORMATTED', '01/01/2016');
-define(__NAMESPACE__ . '\ENDTIME', '12:00');
-define(__NAMESPACE__ . '\GITHUBRAWPATH', 'https://raw.githubusercontent.com/EffectiveActivism/effective_activism/development');
-
-/**
- * Function tests for ea_import ICalendar import entity.
+ * Function tests for ea_import ICalendar import entity type.
  *
  * @group effective_activism
  */
-class ICalendarImportTest extends WebTestBase {
-
-  public static $modules = array('ea_permissions', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_groupings', 'ea_events', 'ea_import');
+class ICalendarImportTest extends ImportWebTestBase {
 
   private $grouping;
-
-  private $event;
-
-  private $eventRepeater;
 
   private $organizer;
 
@@ -57,7 +35,7 @@ class ICalendarImportTest extends WebTestBase {
     // Create grouping.
     $this->grouping = Grouping::create(array(
       'user_id' => $this->manager->id(),
-      'name' => GROUPNAME,
+      'name' => ImportWebTestBase::GROUPNAME,
       'timezone' => \Drupal::config('system.date')->get('timezone.default'),
       'managers' => $this->manager->id(),
       'organizers' => $this->organizer->id(),
@@ -74,16 +52,15 @@ class ICalendarImportTest extends WebTestBase {
   }
 
   /**
-   * Creates a grouping entity.
+   * Creates an ICalendar Import entity.
    */
   private function createICalendarImportEntity() {
-    // Create a grouping entity.
     $this->drupalGet('effectiveactivism/imports/add/icalendar');
     $this->assertResponse(200);
     $this->drupalPostForm(NULL, array(
-      'grouping[0][target_id]' => sprintf('%s (%d)', GROUPNAME, $this->grouping->id()),
+      'grouping[0][target_id]' => sprintf('%s (%d)', ImportWebTestBase::GROUPNAME, $this->grouping->id()),
       'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'field_url[0][uri]' => GITHUBRAWPATH . '/modules/ea_import/src/Tests/sample.ics',
+      'field_url[0][uri]' => ImportWebTestBase::GITHUBRAWPATH . '/modules/ea_import/src/Tests/sample.ics',
       'field_continuous_import' => 1,
     ), t('Save'));
     $this->assertResponse(200);
