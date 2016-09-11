@@ -109,7 +109,7 @@ install:
   - drupal-ti install
 
 before_script:
-  - drupal-ti --include travis/inline_entity_form.sh
+  - drupal-ti --include .travis_scripts/inline_entity_form.sh
   - drupal-ti before_script
 
 script:
