@@ -13,7 +13,6 @@ use Drupal;
 /**
  * Function tests for ea_import CSV import entity type.
  *
- * @group effective_activism
  */
 class ImportWebTestBase extends WebTestBase {
 
