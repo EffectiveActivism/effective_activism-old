@@ -1,0 +1,47 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the ea_locations module.
+ */
+
+/**
+ * Implements hook_schema().
+ *
+ * Defines the database tables used by this module.
+ *
+ * @see hook_schema()
+ * @ingroup ea_locations
+ */
+function ea_locations_schema() {
+  $schema['ea_locations_addresses'] = array(
+    'description' => 'Caches valid Google addresses',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique ID.',
+      ),
+      'address' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Google-formatted address.',
+      ),
+      'lat' => array(
+        'type' => 'float',
+        'not null' => TRUE,
+        'description' => 'Latitude of address.',
+      ),
+      'lon' => array(
+        'type' => 'float',
+        'not null' => TRUE,
+        'description' => 'Longitude of address.',
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'address' => array('address'),
+    ),
+  );
+  return $schema;
+}

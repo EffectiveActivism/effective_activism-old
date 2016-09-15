@@ -25,7 +25,7 @@ use Drupal\Core\Field\FieldStorageDefinitionInterface;
  */
 class LocationType extends FieldItemBase {
 
-  const EALOCATION_ADDRESS_MAXLENGTH = 255;
+  const ADDRESS_MAXLENGTH = 255;
 
   /**
    * {@inheritdoc}
@@ -33,10 +33,16 @@ class LocationType extends FieldItemBase {
   public static function propertyDefinitions(FieldStorageDefinitionInterface $field_definition) {
     $properties['address'] = DataDefinition::create('string')
       ->setLabel(t('Address'));
+    $properties['extra_information'] = DataDefinition::create('string')
+      ->setLabel(t('Extra information'));
     $properties['latitude'] = DataDefinition::create('float')
-      ->setLabel(t('Latitude'));
+      ->setLabel(t('Latitude'))
+      ->setComputed(TRUE)
+      ->setClass('\Drupal\ea_locations\Coordinates\Latitude');
     $properties['longitude'] = DataDefinition::create('float')
-      ->setLabel(t('Longitude'));
+      ->setLabel(t('Longitude'))
+      ->setComputed(TRUE)
+      ->setClass('\Drupal\ea_locations\Coordinates\Longitude');
     return $properties;
   }
 
@@ -48,7 +54,12 @@ class LocationType extends FieldItemBase {
       'columns' => array(
         'address' => array(
           'type' => 'char',
-          'length' => static::EALOCATION_ADDRESS_MAXLENGTH,
+          'length' => static::ADDRESS_MAXLENGTH,
+          'not null' => FALSE,
+        ),
+        'extra_information' => array(
+          'type' => 'char',
+          'length' => static::ADDRESS_MAXLENGTH,
           'not null' => FALSE,
         ),
         'latitude' => array(
@@ -73,7 +84,7 @@ class LocationType extends FieldItemBase {
    */
   public function isEmpty() {
     $address = $this->get('address')->getValue();
-    return $address === NULL || $address === '';
+    return empty($address);
   }
 
   /**
@@ -85,8 +96,8 @@ class LocationType extends FieldItemBase {
     $constraints[] = $constraint_manager->create('ComplexData', array(
       'address' => array(
         'Length' => array(
-          'max' => static::EALOCATION_ADDRESS_MAXLENGTH,
-          'maxMessage' => t('%name: the location address may not be longer than @max characters.', array('%name' => $this->getFieldDefinition()->getLabel(), '@max' => static::EALOCATION_ADDRESS_MAXLENGTH)),
+          'max' => static::ADDRESS_MAXLENGTH,
+          'maxMessage' => t('%name: the location address may not be longer than @max characters.', array('%name' => $this->getFieldDefinition()->getLabel(), '@max' => self::ADDRESS_MAXLENGTH)),
         )
       ),
     ));

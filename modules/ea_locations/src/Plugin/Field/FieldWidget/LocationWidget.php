@@ -31,7 +31,9 @@ class LocationWidget extends WidgetBase {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $address = isset($items[$delta]->address) ? $items[$delta]->address : '';
-    $element += array(
+    $extra_information = isset($items[$delta]->extra_information) ? $items[$delta]->extra_information : '';
+    $element['address'] = array(
+      '#title' => $this->t('Address'),
       '#type' => 'textfield',
       '#default_value' => $address,
       '#autocomplete_route_name' => 'ea_locations.autocomplete',
@@ -39,21 +41,31 @@ class LocationWidget extends WidgetBase {
       '#size' => 30,
       '#maxlength' => 255,
       '#element_validate' => array(
-        array($this, 'validate'),
+        array($this, 'validateAddress'),
       ),
+      '#attached' => [
+        'library' => ['ea_locations/autocomplete'],
+      ],
     );
-    return array('address' => $element);
+    $element['extra_information'] = array(
+      '#title' => $this->t('Extra information'),
+      '#type' => 'textfield',
+      '#default_value' => $extra_information,
+      '#size' => 30,
+      '#maxlength' => 255,
+    );
+    return $element;
   }
 
   /**
-   * Validate the location.
+   * Validate the address.
    */
-  public function validate($element, FormStateInterface $form_state) {
+  public function validateAddress($element, FormStateInterface $form_state) {
     $address = $element['#value'];
     $locationController = new LocationController;
     if (!empty($address)) {
-      if (!$locationController->validateLocation($address)) {
-        $form_state->setError($element, t('Please select a location from the list of suggestions.'));
+      if (!$locationController->validateAddress($address)) {
+        $form_state->setError($element, t('Please select an address from the list of suggestions.'));
       }
     }
   }
