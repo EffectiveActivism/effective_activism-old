@@ -2,13 +2,14 @@
 
 namespace Drupal\ea_groupings\Entity;
 
+use Drupal\ea_groupings\GroupingInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\ea_groupings\GroupingInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\user\UserInterface;
 use DateTimeZone;
 
@@ -163,6 +164,24 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
     }
     $query = \Drupal::entityQuery('grouping')
       ->condition('parent', $parent->id());
+    $result = $query->execute();
+    $groupings += Grouping::loadMultiple($result);
+    return $groupings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getManagedGroupings($include_children = TRUE, AccountProxyInterface $user = NULL) {
+    $groupings = [];
+    if (empty($user)) {
+      $user = \Drupal::currentUser();
+    }
+    $query = \Drupal::entityQuery('grouping')
+      ->condition('managers', $user->id());
+    if (!$include_children) {
+      $query->notExists('parent');
+    }
     $result = $query->execute();
     $groupings += Grouping::loadMultiple($result);
     return $groupings;
