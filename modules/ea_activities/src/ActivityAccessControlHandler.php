@@ -7,7 +7,9 @@
 
 namespace Drupal\ea_activities;
 
+use Drupal\ea_activities\Entity\ActivityType;
 use Drupal\ea_permissions\Permission;
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -31,10 +33,12 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
           return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
         }
         else {
-          $groupings = $entity->type->entity->get('organization');
-          foreach ($groupings as $grouping) {
-            if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
-              return new AccessResultAllowed();
+          $groupings = $entity->type->entity->get('groupings');
+          if (!empty($groupings)) {
+            foreach ($groupings as $grouping) {
+              if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
+                return new AccessResultAllowed();
+              }
             }
           }
           return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
@@ -52,7 +56,18 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add activity entities');
+    if (!empty($entity_bundle)) {
+      $activity_type = ActivityType::load($entity_bundle);
+      $groupings = $activity_type->get('groupings');
+      if (!empty($groupings)) {
+        foreach ($groupings as $grouping) {
+          if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
+            return new AccessResultAllowed();
+          }
+        }
+      }
+    }
+    return Permission::allowedIfIsManager($account, Grouping::load($activity_type->get('organization')));
   }
 
 }
