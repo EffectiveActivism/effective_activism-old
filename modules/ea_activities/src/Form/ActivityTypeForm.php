@@ -7,6 +7,7 @@
 
 namespace Drupal\ea_activities\Form;
 
+use Drupal\ea_activities\Entity\ActivityType;
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityInterface;
@@ -49,6 +50,8 @@ class ActivityTypeForm extends EntityForm {
         return $result;
       }, array());
     }
+    $form['#prefix'] = '<div id="ajax">';
+    $form['#suffix'] = '</div>';
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
@@ -90,7 +93,11 @@ class ActivityTypeForm extends EntityForm {
       '#description' => $this->t("The organization that the Activity type is available for. Once this option is saved, it cannot be changed."),
       '#options' => $organizations,
       '#required' => TRUE,
-      '#disabled' => !empty($organization),
+      '#disabled' => $activity_type->isNew() ? FALSE : TRUE,
+      '#ajax' => [
+        'callback' => [$this, 'updateAvailableGroupings'],
+        'wrapper' => 'ajax',
+      ],
     );
     $form['groupings'] = array(
       '#type' => 'select',
@@ -122,5 +129,12 @@ class ActivityTypeForm extends EntityForm {
         ]));
     }
     $form_state->setRedirectUrl($activity_type->urlInfo('collection'));
+  }
+
+  /**
+   * Populates the groupings #options element.
+   */
+  public function updateAvailableGroupings(array &$form, FormStateInterface $form_state) {
+    return $form;
   }
 }
