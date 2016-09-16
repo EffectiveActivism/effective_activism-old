@@ -7,10 +7,12 @@
 
 namespace Drupal\ea_activities;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultAllowed;
 
 /**
  * Access controller for the Activity entity.
@@ -26,17 +28,22 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished activity entities');
+          return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
         }
-        return AccessResult::allowedIfHasPermission($account, 'view published activity entities');
-
+        else {
+          $groupings = $entity->type->entity->get('organization');
+          foreach ($groupings as $grouping) {
+            if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
+              return new AccessResultAllowed();
+            }
+          }
+          return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
+        }
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit activity entities');
-
+        return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete activity entities');
     }
-
     // Unknown operation, no opinion.
     return AccessResult::neutral();
   }
