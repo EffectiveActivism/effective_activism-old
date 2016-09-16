@@ -8,6 +8,7 @@
 namespace Drupal\ea_activities\Form;
 
 use Drupal\ea_data\Entity\DataType;
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -25,11 +26,28 @@ class ActivityTypeForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
     $activity_type = $this->entity;
-    $data_types = $activity_type->data_types;
-    if (!empty($data_types)) {
-      foreach ($data_types as &$target_id) {
-        $target_id = DataType::load($target_id['target_id']);
-      }
+    $organization = $activity_type->organization;
+    $groupings = $activity_type->groupings;
+    // Get data types.
+    $data_types = array();
+    if (!empty($activity_type->data_types)) {
+      $data_types = array_map(function ($data_type) {
+        return DataType::load($data_type['target_id']);
+      }, $activity_type->data_types);
+    }
+    // Get organizations.
+    $organizations = array();
+    $organizations = array_reduce(Grouping::getManagedGroupings(FALSE), function ($result, $grouping) {
+      $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
+      return $result;
+    }, array());
+    // Get available groupings.
+    $available_groupings = array();
+    if (!empty($organization)) {
+      $available_groupings = array_reduce(Grouping::load($organization)->getRelatives(TRUE), function ($result, $grouping) {
+        $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
+        return $result;
+      }, array());
     }
     $form['label'] = array(
       '#type' => 'textfield',
@@ -62,6 +80,25 @@ class ActivityTypeForm extends EntityForm {
       '#default_value' => $data_types,
       '#tags' => TRUE,
       '#description' => $this->t("Data types available for the Activity type."),
+      '#required' => FALSE,
+    );
+    $form['organization'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Organization'),
+      '#default_value' => $organization,
+      '#tags' => TRUE,
+      '#description' => $this->t("The organization that the Activity type is available for. Once this option is saved, it cannot be changed."),
+      '#options' => $organizations,
+      '#required' => TRUE,
+      '#disabled' => !empty($organization),
+    );
+    $form['groupings'] = array(
+      '#type' => 'select',
+      '#title' => $this->t('Groupings'),
+      '#default_value' => $groupings,
+      '#description' => $this->t("The groupings the Activity type is available for."),
+      '#options' => $available_groupings,
+      '#multiple' => TRUE,
       '#required' => FALSE,
     );
     return $form;
