@@ -73,4 +73,18 @@ class ActivityType extends ConfigEntityBundleBase implements ActivityTypeInterfa
    * @var array
    */
   public $data_types;
+
+  /**
+   * The Activity type organization.
+   *
+   * @var int
+   */
+  public $organization;
+
+  /**
+   * The Activity type allowed groupings.
+   *
+   * @var array
+   */
+  public $groupings;
 }

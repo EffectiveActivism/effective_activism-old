@@ -7,10 +7,14 @@
 
 namespace Drupal\ea_activities;
 
+use Drupal\ea_activities\Entity\ActivityType;
+use Drupal\ea_permissions\Permission;
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultAllowed;
 
 /**
  * Access controller for the Activity entity.
@@ -26,17 +30,24 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished activity entities');
+          return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
         }
-        return AccessResult::allowedIfHasPermission($account, 'view published activity entities');
-
+        else {
+          $groupings = $entity->type->entity->get('groupings');
+          if (!empty($groupings)) {
+            foreach ($groupings as $grouping) {
+              if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
+                return new AccessResultAllowed();
+              }
+            }
+          }
+          return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
+        }
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit activity entities');
-
+        return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete activity entities');
     }
-
     // Unknown operation, no opinion.
     return AccessResult::neutral();
   }
@@ -45,7 +56,18 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add activity entities');
+    if (!empty($entity_bundle)) {
+      $activity_type = ActivityType::load($entity_bundle);
+      $groupings = $activity_type->get('groupings');
+      if (!empty($groupings)) {
+        foreach ($groupings as $grouping) {
+          if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
+            return new AccessResultAllowed();
+          }
+        }
+      }
+    }
+    return Permission::allowedIfIsManager($account, Grouping::load($activity_type->get('organization')));
   }
 
 }

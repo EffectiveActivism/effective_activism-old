@@ -19,5 +19,13 @@ ea_activities.activity_type.*:
         mapping:
           target_id:
            type: string
+    organization:
+      type: integer
+      label: 'Data types'
+    groupings:
+      type: sequence
+      label: 'Groupings'
+      sequence:
+        type: integer
     uuid:
       type: string
