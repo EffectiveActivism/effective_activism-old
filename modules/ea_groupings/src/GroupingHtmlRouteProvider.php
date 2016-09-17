@@ -50,7 +50,7 @@ class GroupingHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_list' => $entity_type_id,
           '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_permission', 'view grouping entities')
+        ->setRequirement('_permission', 'view published grouping entities')
         ->setOption('_admin_route', TRUE);
       return $route;
     }

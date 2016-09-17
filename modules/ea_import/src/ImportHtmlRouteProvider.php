@@ -51,7 +51,7 @@ class ImportHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_list' => $entity_type_id,
           '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_permission', 'access import overview')
+        ->setRequirement('_permission', 'view import entities')
         ->setOption('_admin_route', TRUE);
 
       return $route;

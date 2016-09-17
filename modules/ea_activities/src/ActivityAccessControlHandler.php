@@ -36,7 +36,7 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
           $groupings = $entity->type->entity->get('groupings');
           if (!empty($groupings)) {
             foreach ($groupings as $grouping) {
-              if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
+              if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))->isAllowed()) {
                 return new AccessResultAllowed();
               }
             }
@@ -61,13 +61,14 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
       $groupings = $activity_type->get('groupings');
       if (!empty($groupings)) {
         foreach ($groupings as $grouping) {
-          if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))) {
+          if (Permission::allowedIfIsOrganizer($account, Grouping::load($grouping))->isAllowed()) {
             return new AccessResultAllowed();
           }
         }
       }
+      return Permission::allowedIfIsManager($account, Grouping::load($activity_type->get('organization')));
     }
-    return Permission::allowedIfIsManager($account, Grouping::load($activity_type->get('organization')));
+    return AccessResult::allowedIfHasPermission($account, 'add activity entities');
   }
 
 }

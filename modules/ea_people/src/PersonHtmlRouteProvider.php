@@ -55,7 +55,7 @@ class PersonHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_list' => $entity_type_id,
           '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_permission', 'view person entities')
+        ->setRequirement('_permission', 'view published person entities')
         ->setOption('_admin_route', TRUE);
       return $route;
     }
