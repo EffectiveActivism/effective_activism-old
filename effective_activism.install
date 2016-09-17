@@ -5,7 +5,6 @@
  * Install and update functions for the effective_activism module.
  */
 
-
 use Drupal\ea_permissions\Roles;
 use Drupal\user\Entity\Role;
 
@@ -15,16 +14,28 @@ use Drupal\user\Entity\Role;
  * Add roles and permissions as defined in the ea_permissions module.
  */
 function effective_activism_install() {
+  // Create menu.
+  if (empty(\Drupal::entityTypeManager()->getStorage('menu')->load('effective_activism'))) {
+    \Drupal::entityTypeManager()->getStorage('menu')->create([
+      'id' => 'effective_activism',
+      'label' => 'Effective Activism',
+      'description' => 'Provides functions for using the Effective Activism module.',
+    ])->save();
+  }
   // Create organizer and set permissions.
-  $role = Role::create(array('id' => Roles::ORGANIZER_ROLE, 'label' => 'Organizer'));
-  foreach (Roles::ORGANIZER_PERMISSIONS as $permission) {
-    $role->grantPermission($permission);
+  if (empty(Role::load(Roles::ORGANIZER_ROLE))) {
+    $role = Role::create(array('id' => Roles::ORGANIZER_ROLE, 'label' => 'Organizer'));
+    foreach (Roles::ORGANIZER_PERMISSIONS as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
   }
-  $role->save();
   // Create manager and set permissions.
-  $role = Role::create(array('id' => Roles::MANAGER_ROLE, 'label' => 'Manager'));
-  foreach (Roles::MANAGER_PERMISSIONS as $permission) {
-    $role->grantPermission($permission);
+  if (empty(Role::load(Roles::MANAGER_ROLE))) {
+    $role = Role::create(array('id' => Roles::MANAGER_ROLE, 'label' => 'Manager'));
+    foreach (Roles::MANAGER_PERMISSIONS as $permission) {
+      $role->grantPermission($permission);
+    }
+    $role->save();
   }
-  $role->save();
 }
