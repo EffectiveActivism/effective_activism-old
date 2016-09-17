@@ -68,6 +68,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
     parent::preCreate($storage_controller, $values);
     $values += array(
       'user_id' => \Drupal::currentUser()->id(),
+      'managers' => \Drupal::currentUser()->id(),
     );
   }
 
