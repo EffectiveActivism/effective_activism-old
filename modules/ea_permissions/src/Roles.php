@@ -32,6 +32,7 @@ class Roles {
     'add data entities',
     'edit data entities',
     'view data entities',
+    'administer data entities',
     // Event permissions.
     'add event entities',
     'view published event entities',
@@ -46,6 +47,9 @@ class Roles {
     'view unpublished task entities',
     // Import permissions.
     'add import entities',
+    'view import entities',
+    // Use the administration toolbar.
+    'access toolbar',
   );
 
   /**
@@ -70,9 +74,10 @@ class Roles {
     'edit activity entities',
     'view published activity entities',
     // Data permissions.
+    'add data entities',
+    'edit data entities',
+    'view data entities',
     'administer data entities',
-    'administer data fields',
-    'administer data display',
     // Event permissions.
     'add event entities',
     'view published event entities',
@@ -87,5 +92,8 @@ class Roles {
     'view unpublished task entities',
     // Import permissions.
     'add import entities',
+    'view import entities',
+    // Use the administration toolbar.
+    'access toolbar',
   );
 }
