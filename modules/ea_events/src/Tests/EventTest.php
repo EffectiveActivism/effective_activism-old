@@ -32,7 +32,7 @@ define(__NAMESPACE__ . '\ENDTIME', '12:00');
  */
 class EventTest extends WebTestBase {
 
-  public static $modules = array('ea_permissions', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_groupings', 'ea_events', 'ea_import');
+  public static $modules = array('effective_activism');
 
   private $eventRepeater;
 
