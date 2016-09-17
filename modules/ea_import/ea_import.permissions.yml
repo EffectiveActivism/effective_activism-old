@@ -1,6 +1,9 @@
 add import entities:
   title: 'Create new Import entities'
 
+view import entities:
+  title: 'View Import entities'
+
 administer import entities:
   title: 'Administer Import entities'
   description: 'Allow to access the administration form to configure Import entities.'
