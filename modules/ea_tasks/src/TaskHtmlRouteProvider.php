@@ -55,7 +55,7 @@ class TaskHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_list' => $entity_type_id,
           '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_permission', 'view task entities')
+        ->setRequirement('_permission', 'view published task entities')
         ->setOption('_admin_route', TRUE);
       return $route;
     }

@@ -59,7 +59,7 @@ class EventHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_list' => $entity_type_id,
           '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_permission', 'view event entities')
+        ->setRequirement('_permission', 'view published event entities')
         ->setOption('_admin_route', TRUE);
 
       return $route;

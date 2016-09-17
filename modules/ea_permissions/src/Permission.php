@@ -64,33 +64,29 @@ class Permission {
    */
   private static function checkPermission(AccountInterface $account, Grouping $grouping, String $role) {
     // Allow access for administrators.
-    foreach ($account->getRoles() as $userRole) {
-      if ($userRole === 'administrator') {
-        return new AccessResultAllowed();
-      }
+    if (in_array('administrator', $account->getRoles())) {
+      return new AccessResultAllowed();
     }
     // Default response is to deny access.
     $access = new AccessResultForbidden();
     // Determine access based on role.
     switch ($role) {
-      case Roles::ORGANIZER_ROLE :
+      case Roles::ORGANIZER_ROLE:
         // Check if user is organizer of grouping.
-        if (in_array($account->id(), $grouping->get('organizers')->getValue())) {
-          $access = new AccessResultAllowed();
-          break;
+        if (in_array(['target_id' => $account->id()], $grouping->get('organizers')->getValue())) {
+          return new AccessResultAllowed();
         }
-      case Roles::MANAGER_ROLE :
+        break;
+      case Roles::MANAGER_ROLE:
         // Check if user is manager of grouping.
-        if (in_array($account->id(), $grouping->get('managers')->getValue())) {
-          $access = new AccessResultAllowed();
-          break;
+        if (in_array(['target_id' => $account->id()], $grouping->get('managers')->getValue())) {
+          return new AccessResultAllowed();
         }
         // Check if user is manager of parent grouping, if any.
         if (isset($grouping->get('parent')->entity)) {
           $parent = $grouping->get('parent')->entity;
-          if (in_array($account->id(), $parent->get('managers')->referencedEntities())) {
-            $access = new AccessResultAllowed();
-            break;
+          if (in_array(['target_id' => $account->id()], $parent->get('managers')->getValue())) {
+            return new AccessResultAllowed();
           }
         }
     }

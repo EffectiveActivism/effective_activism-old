@@ -25,7 +25,7 @@ class ActivityTest extends WebTestBase {
 
   const GROUPNAME = 'Test group';
 
-  public static $modules = array('ea_permissions', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_groupings', 'ea_events', 'ea_import');
+  public static $modules = array('effective_activism');
 
   private $manager;
 

@@ -12,6 +12,9 @@ view published event entities:
 add event repeater entities:
   title: 'Create new Event repeater entities'
 
+delete event entities:
+  title: 'Delete Event entities'
+
 administer event repeater entities:
   title: 'Administer Event repeater entities'
   description: 'Allow to access the administration form to configure Event repeater entities.'

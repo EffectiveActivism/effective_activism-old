@@ -1,0 +1,150 @@
+# Effective Activism overview
+effective_activism.overview:
+  title: 'Effective Activism'
+  route_name: effective_activism.overview
+  description: 'An overview of features available to the Effective Activism module.'
+  menu_name: effective_activism
+  weight: 100
+
+# Activity menu items definition
+entity.activity.collection:
+  title: 'Activity list'
+  route_name: entity.activity.collection
+  description: 'List Activity entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+# Activity type menu items definition
+entity.activity_type.collection:
+  title: 'Activity type'
+  route_name: entity.activity_type.collection
+  description: 'List Activity type (bundles)'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99
+
+# Data menu items definition
+entity.data.collection:
+  title: 'Data list'
+  route_name: entity.data.collection
+  description: 'List Data entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+# Data type menu items definition
+entity.data_type.collection:
+  title: 'Data type'
+  route_name: entity.data_type.collection
+  description: 'List Data type (bundles)'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99
+
+# Event menu items definition
+entity.event.collection:
+  title: 'Event list'
+  route_name: entity.event.collection
+  description: 'List Event entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+event.admin.structure.settings:
+  title: Event settings
+  description: 'Configure Event entities'
+  route_name: event.settings
+  menu_name: effective_activism
+  parent: entity.event.collection
+
+# Event repeater menu items definition
+entity.event_repeater.collection:
+  title: 'Event repeater list'
+  route_name: entity.event_repeater.collection
+  description: 'List Event repeater entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+event_repeater.admin.structure.settings:
+  title: Event repeater settings
+  description: 'Configure Event repeater entities'
+  route_name: event_repeater.settings
+  menu_name: effective_activism
+  parent: entity.event_repeater.collection
+
+# Grouping menu items definition
+entity.grouping.collection:
+  title: 'Grouping list'
+  route_name: entity.grouping.collection
+  description: 'List Grouping entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+grouping.admin.structure.settings:
+  title: Grouping settings
+  description: 'Configure Grouping entities'
+  route_name: grouping.settings
+  menu_name: effective_activism
+  parent: entity.grouping.collection
+
+# Import menu items definition
+entity.import.collection:
+  title: 'Import list'
+  route_name: entity.import.collection
+  description: 'List Import entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+# Import type menu items definition
+entity.import_type.collection:
+  title: 'Import type'
+  route_name: entity.import_type.collection
+  description: 'List Import type (bundles)'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99
+
+# Location settings menu items definition
+ea_locations.settings:
+  title: 'Location settings'
+  route_name: ea_locations.settings
+  description: 'Configure location settings'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99
+
+# Person menu items definition
+entity.person.collection:
+  title: 'Person list'
+  route_name: entity.person.collection
+  description: 'List Person entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+person.admin.structure.settings:
+  title: Person settings
+  description: 'Configure Person entities'
+  route_name: person.settings
+  menu_name: effective_activism
+  parent: entity.person.collection
+
+# Task menu items definition
+entity.task.collection:
+  title: 'Task list'
+  route_name: entity.task.collection
+  description: 'List Task entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+task.admin.structure.settings:
+  title: Task settings
+  description: 'Configure Task entities'
+  route_name: task.settings
+  menu_name: effective_activism
+  parent: entity.task.collection

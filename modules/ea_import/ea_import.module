@@ -305,7 +305,6 @@ function ea_import_cron() {
     $nextExecution = \Drupal::state()->get('ea_import.next_execution');
     $nextExecution = !empty($nextExecution) ? $nextExecution : 0;
     $nextExecution += $interval;
-    \Drupal::logger('ea_import')->notice('debug: interval:' . $interval . ' nextExecution: ' . $nextExecution . ' request_time: ' . REQUEST_TIME);
     if (REQUEST_TIME >= $nextExecution) {
       $count = 0;
       $duplicate_count = 0;
