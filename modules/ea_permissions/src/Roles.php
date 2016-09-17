@@ -40,6 +40,8 @@ class Roles {
     'view event repeater entities',
     'edit event repeater entities',
     'add event repeater entities',
+    // Location field permissions.
+    'use location autocomplete',
     // Task permissions.
     'add task entities',
     'edit task entities',
@@ -85,6 +87,8 @@ class Roles {
     'view event repeater entities',
     'edit event repeater entities',
     'add event repeater entities',
+    // Location field permissions.
+    'use location autocomplete',
     // Task permissions.
     'add task entities',
     'edit task entities',
