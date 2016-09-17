@@ -13,3 +13,4 @@ dependencies:
   - ea_tasks
   - ea_events
   - ea_import
+  - toolbar
