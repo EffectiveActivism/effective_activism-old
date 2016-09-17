@@ -113,6 +113,7 @@ script:
   - drupal-ti script
 
 after_script:
+  - drupal-ti --include .travis_scripts/code_style_review.sh
   - drupal-ti after_script
 
 notifications:
