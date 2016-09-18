@@ -36,7 +36,7 @@ class ActivityTest extends WebTestBase {
     $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
     $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
     // Create data type.
-    $this->data_type = DataType::create(array(
+    $this->dataType = DataType::create(array(
       'id' => 'data_type_test',
       'label' => 'Test',
     ));
