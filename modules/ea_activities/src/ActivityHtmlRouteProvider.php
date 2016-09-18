@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\ActivityHtmlRouteProvider.
- */
-
 namespace Drupal\ea_activities;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -18,6 +13,7 @@ use Symfony\Component\Routing\Route;
  * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
 class ActivityHtmlRouteProvider extends AdminHtmlRouteProvider {
+
   /**
    * {@inheritdoc}
    */

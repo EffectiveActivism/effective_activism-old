@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\Form\PersonSettingsForm.
- */
-
 namespace Drupal\ea_people\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -41,7 +36,6 @@ class PersonSettingsForm extends FormBase {
     // Empty implementation of the abstract submit class.
   }
 
-
   /**
    * Defines the settings form for Person entities.
    *
@@ -57,4 +51,5 @@ class PersonSettingsForm extends FormBase {
     $form['Person_settings']['#markup'] = 'Settings form for Person entities. Manage field settings here.';
     return $form;
   }
+
 }

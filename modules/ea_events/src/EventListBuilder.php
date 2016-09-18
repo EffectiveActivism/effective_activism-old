@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\EventListBuilder.
- */
-
 namespace Drupal\ea_events;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -18,7 +13,9 @@ use Drupal\Core\Url;
  * @ingroup ea_events
  */
 class EventListBuilder extends EntityListBuilder {
+
   use LinkGeneratorTrait;
+
   /**
    * {@inheritdoc}
    */

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\Form\DataSettingsForm.
- */
-
 namespace Drupal\ea_data\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -18,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup ea_data
  */
 class DataSettingsForm extends FormBase {
+
   /**
    * Returns a unique string identifying the form.
    *
@@ -37,9 +33,7 @@ class DataSettingsForm extends FormBase {
    *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Empty implementation of the abstract submit class.
   }
-
 
   /**
    * Defines the settings form for Data entities.

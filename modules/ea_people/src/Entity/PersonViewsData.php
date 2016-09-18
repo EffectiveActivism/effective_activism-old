@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\Entity\Person.
- */
-
 namespace Drupal\ea_people\Entity;
 
 use Drupal\views\EntityViewsData;
@@ -27,4 +22,5 @@ class PersonViewsData extends EntityViewsData implements EntityViewsDataInterfac
     );
     return $data;
   }
+
 }

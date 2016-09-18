@@ -1,15 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_locations\Form\LocationsSettingsForm.
- */
-
 namespace Drupal\ea_locations\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
+/**
+ * Defines the LocationSettingsForm class.
+ */
 class LocationsSettingsForm extends ConfigFormBase {
 
   /**

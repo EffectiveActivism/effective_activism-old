@@ -21,7 +21,6 @@ function ea_activities_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.ea_activities':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('') . '</p>';
       return $output;
 
     default:
@@ -48,9 +47,10 @@ function ea_activities_theme() {
 
 /**
  * Implements hook_form_alter().
- * 
- * Whether creating or updating a bundle, add fields as defined in the bundle settings.
- * Hide fields that have been removed to avoid data loss for previously created entities.
+ *
+ * Whether creating or updating a bundle, add fields as defined in the bundle
+ * settings. Hide fields that have been removed to avoid data loss for
+ * previously created entities.
  */
 function ea_activities_form_alter(&$form, FormStateInterface $form_state, $form_id) {
   if ($form_id === 'activity_type_add_form' || $form_id === 'activity_type_edit_form') {
@@ -62,6 +62,9 @@ function ea_activities_form_alter(&$form, FormStateInterface $form_state, $form_
   }
 }
 
+/**
+ * Custom submit handler.
+ */
 function _ea_activities_bundle_settings_submit($form, FormStateInterface $form_state) {
   $bundle_id = $form_state->getFormObject()->getEntity()->id();
   $entity_type_id = 'activity';
@@ -96,16 +99,13 @@ function _ea_activities_bundle_settings_submit($form, FormStateInterface $form_s
           'label' => $label,
         ));
         $field->setRequired(TRUE)
-        ->setSetting('target_type', 'data')
-        ->setSetting('handler', 'default')
-        ->setSetting('handler_settings', array(
-          'target_bundles' =>
-            array(
-              $data_type['target_id'] => $data_type['target_id']
-            )
-          )
-        )
-        ->save();
+          ->setSetting('target_type', 'data')
+          ->setSetting('handler', 'default')
+          ->setSetting('handler_settings', array(
+            'target_bundles' => array(
+              $data_type['target_id'] => $data_type['target_id'],
+            ),
+          ))->save();
       }
       // Unhide any fields that already exists.
       _ea_activities_enable_field_display($field);
@@ -125,38 +125,38 @@ function _ea_activities_bundle_settings_submit($form, FormStateInterface $form_s
 
 /**
  * Set field display to simple inline entity form and require field.
- * 
+ *
  * @param FieldConfig $field
  *   The field to enable.
  */
-function _ea_activities_enable_field_display($field) {
+function _ea_activities_enable_field_display(FieldConfig $field) {
   // Set form display settings.
   entity_get_form_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
-  ->setComponent($field->getName(), array(
-    'type' => 'inline_entity_form_simple',
-  ))
-  ->save();
+    ->setComponent($field->getName(), array(
+      'type' => 'inline_entity_form_simple',
+    ))
+    ->save();
   // Set view display settings.
   entity_get_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
-  ->setComponent($field->getName(), array(
-    'type' => 'entity_reference_entity_view',
-  ))
-  ->save();
+    ->setComponent($field->getName(), array(
+      'type' => 'entity_reference_entity_view',
+    ))
+    ->save();
 }
 
 /**
  * Set field display to hidden and do not require field.
- * 
+ *
  * @param FieldConfig $field
  *   The field to disable.
  */
-function _ea_activities_disable_field_display($field) {
+function _ea_activities_disable_field_display(FieldConfig $field) {
   // Set form display settings.
   entity_get_form_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
-  ->removeComponent($field->getName())
-  ->save();
+    ->removeComponent($field->getName())
+    ->save();
   // Set view display settings.
   entity_get_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
-  ->removeComponent($field->getName())
-  ->save();
+    ->removeComponent($field->getName())
+    ->save();
 }

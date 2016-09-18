@@ -1,7 +1,15 @@
 <?php
 
+/**
+ * @file
+ * Contains effective_activism.module.
+ */
+
 use Drupal\Core\Url;
 
+/**
+ * Implements hook_toolbar().
+ */
 function effective_activism_toolbar() {
   // Define tab links.
   $organizer_links = array(

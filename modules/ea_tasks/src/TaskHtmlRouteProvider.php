@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\TaskHtmlRouteProvider.
- */
-
 namespace Drupal\ea_tasks;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -117,4 +112,5 @@ class TaskHtmlRouteProvider extends AdminHtmlRouteProvider {
       return $route;
     }
   }
+
 }

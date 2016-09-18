@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @file
- * ICalendar test cases for the ea_import module.
- */
-
 namespace Drupal\ea_import\Tests;
 
-use Drupal\ea_import\Tests\ImportWebTestBase;
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal;
 
 /**
  * Function tests for ea_import ICalendar import entity type.
@@ -48,13 +41,13 @@ class ICalendarImportTest extends ImportWebTestBase {
    */
   public function testImports() {
     $this->drupalLogin($this->organizer);
-    $this->createICalendarImportEntity();
+    $this->createIcalendarImportEntity();
   }
 
   /**
    * Creates an ICalendar Import entity.
    */
-  private function createICalendarImportEntity() {
+  private function createIcalendarImportEntity() {
     $this->drupalGet('effectiveactivism/imports/add/icalendar');
     $this->assertResponse(200);
     $this->drupalPostForm(NULL, array(
@@ -67,4 +60,5 @@ class ICalendarImportTest extends ImportWebTestBase {
     $this->assertText('Created the import.', 'Added a new import entity.');
     $this->assertText('One event imported', 'Successfully imported event');
   }
+
 }

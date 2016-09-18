@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\DataAccessControlHandler.
- */
-
 namespace Drupal\ea_data;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -18,6 +13,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\ea_data\Entity\Data.
  */
 class DataAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */
@@ -26,10 +22,13 @@ class DataAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'view data entities');
+
       case 'update':
         return AccessResult::allowedIfHasPermission($account, 'edit data entities');
+
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete data entities');
+
     }
     // Unknown operation, no opinion.
     return AccessResult::neutral();
@@ -41,4 +40,5 @@ class DataAccessControlHandler extends EntityAccessControlHandler {
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'add data entities');
   }
+
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\DataTypeHtmlRouteProvider.
- */
-
 namespace Drupal\ea_data;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -18,6 +13,7 @@ use Symfony\Component\Routing\Route;
  * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
 class DataTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
+
   /**
    * {@inheritdoc}
    */

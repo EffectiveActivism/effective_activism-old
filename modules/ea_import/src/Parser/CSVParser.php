@@ -1,13 +1,7 @@
 <?php
-/**
- * @file
- * Contains \Drupal\ea_import\Form\CSVParser.
- * 
- */
 
 namespace Drupal\ea_import\Parser;
 
-use Drupal\file\FileInterface;
 use Drupal\file\Entity\File;
 
 /**
@@ -16,18 +10,17 @@ use Drupal\file\Entity\File;
 class CSVParser {
 
   /* CSV file */
-  private /** @type {FileInterface} */ $file;
+  private /* @type FileInterface */ $file;
 
   /**
    * Creates the CSVParser Object.
    *
-   * @param {mixed} $lines An array of lines from an iCal file.
-   *
-   * @return Object The iCal Object.
+   * @param string $file
+   *   An iCal file.
    */
-  public function __construct(string $file) {
+  public function __construct($file) {
     if (empty($file)) {
-      return false;
+      return FALSE;
     }
     // Load file entity.
     $csv_file = File::load($file);
@@ -37,8 +30,9 @@ class CSVParser {
 
   /**
    * Return parsed events.
-   * 
-   * @return Array List of event data.
+   *
+   * @return array
+   *   List of event data.
    */
   public function getEvents() {
     $events = [];
@@ -65,8 +59,9 @@ class CSVParser {
 
   /**
    * Validate headers.
-   * 
-   * @return Boolean Whether or not CSV headers are valid.
+   *
+   * @return bool
+   *   Whether or not CSV headers are valid.
    */
   public function validateHeaders() {
     $isValid = FALSE;
@@ -91,4 +86,5 @@ class CSVParser {
     }
     return $isValid;
   }
+
 }

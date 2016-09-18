@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\Entity\Task.
- */
-
 namespace Drupal\ea_tasks\Entity;
 
 use Drupal\views\EntityViewsData;

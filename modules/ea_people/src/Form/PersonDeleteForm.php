@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\Form\PersonDeleteForm.
- */
-
 namespace Drupal\ea_people\Form;
 
 use Drupal\Core\Entity\ContentEntityDeleteForm;
@@ -15,5 +10,4 @@ use Drupal\Core\Entity\ContentEntityDeleteForm;
  * @ingroup ea_people
  */
 class PersonDeleteForm extends ContentEntityDeleteForm {
-
 }

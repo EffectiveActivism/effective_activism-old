@@ -1,13 +1,7 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\Form\DataTypeForm.
- */
-
 namespace Drupal\ea_data\Form;
 
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -17,12 +11,12 @@ use Drupal\Core\Form\FormStateInterface;
  * @package Drupal\ea_data\Form
  */
 class DataTypeForm extends EntityForm {
+
   /**
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
-
     $data_type = $this->entity;
     $form['label'] = array(
       '#type' => 'textfield',
@@ -32,7 +26,6 @@ class DataTypeForm extends EntityForm {
       '#description' => $this->t("Label for the Data type."),
       '#required' => TRUE,
     );
-
     $form['id'] = array(
       '#type' => 'machine_name',
       '#default_value' => $data_type->id(),
@@ -41,7 +34,6 @@ class DataTypeForm extends EntityForm {
       ),
       '#disabled' => !$data_type->isNew(),
     );
-
     $form['description'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
@@ -50,7 +42,6 @@ class DataTypeForm extends EntityForm {
       '#description' => $this->t("Description for the Data type."),
       '#required' => FALSE,
     );
-
     return $form;
   }
 
@@ -60,7 +51,6 @@ class DataTypeForm extends EntityForm {
   public function save(array $form, FormStateInterface $form_state) {
     $data_type = $this->entity;
     $status = $data_type->save();
-
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Data type.', [

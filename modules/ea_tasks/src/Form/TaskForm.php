@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\Form\TaskForm.
- */
-
 namespace Drupal\ea_tasks\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -39,6 +34,7 @@ class TaskForm extends ContentEntityForm {
           '%label' => $entity->getType(),
         ]));
         break;
+
       default:
         drupal_set_message($this->t('Saved the %label Task.', [
           '%label' => $entity->getType(),
@@ -46,4 +42,5 @@ class TaskForm extends ContentEntityForm {
     }
     $form_state->setRedirect('entity.task.canonical', ['task' => $entity->id()]);
   }
+
 }

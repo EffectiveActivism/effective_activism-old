@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\Entity\Activity.
- */
-
 namespace Drupal\ea_activities\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Entity\ContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
@@ -205,4 +199,5 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       ->setDescription(t('The time that the entity was last edited.'));
     return $fields;
   }
+
 }

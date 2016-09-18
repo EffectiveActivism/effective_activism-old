@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\Entity\DataType.
- */
-
 namespace Drupal\ea_data\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
@@ -45,6 +40,7 @@ use Drupal\ea_data\DataTypeInterface;
  * )
  */
 class DataType extends ConfigEntityBundleBase implements DataTypeInterface {
+
   /**
    * The Data type ID.
    *
@@ -65,4 +61,5 @@ class DataType extends ConfigEntityBundleBase implements DataTypeInterface {
    * @var string
    */
   public $description;
+
 }

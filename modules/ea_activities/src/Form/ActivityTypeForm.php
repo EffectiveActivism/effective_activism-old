@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\Form\ActivityTypeForm.
- */
-
 namespace Drupal\ea_activities\Form;
 
-use Drupal\ea_activities\Entity\ActivityType;
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -123,6 +116,7 @@ class ActivityTypeForm extends EntityForm {
           '%label' => $activity_type->label(),
         ]));
         break;
+
       default:
         drupal_set_message($this->t('Saved the %label Activity type.', [
           '%label' => $activity_type->label(),
@@ -137,4 +131,5 @@ class ActivityTypeForm extends EntityForm {
   public function updateAvailableGroupings(array &$form, FormStateInterface $form_state) {
     return $form;
   }
+
 }

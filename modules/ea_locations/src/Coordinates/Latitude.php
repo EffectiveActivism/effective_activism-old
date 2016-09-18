@@ -1,14 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_locations\Coordinates\Latitude.
- */
-
 namespace Drupal\ea_locations\Coordinates;
 
 use Drupal\ea_locations\Controller\LocationController;
-use Drupal\Core\TypedData\DataDefinitionInterface;
 use Drupal\Core\TypedData\TypedData;
 
 /**
@@ -31,7 +25,7 @@ class Latitude extends TypedData {
       return $this->latitude;
     }
     $item = $this->getParent();
-    $locationController = new LocationController;
+    $locationController = new LocationController();
     $this->latitude = $locationController->getCoordinates($item->address);
     return $this->latitude;
   }
@@ -58,4 +52,5 @@ class Latitude extends TypedData {
       $this->parent->onChange($this->name);
     }
   }
+
 }

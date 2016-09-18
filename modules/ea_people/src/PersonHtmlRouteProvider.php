@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\PersonHtmlRouteProvider.
- */
-
 namespace Drupal\ea_people;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -117,4 +112,5 @@ class PersonHtmlRouteProvider extends AdminHtmlRouteProvider {
       return $route;
     }
   }
+
 }

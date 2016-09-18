@@ -22,4 +22,5 @@ class GroupingViewsData extends EntityViewsData implements EntityViewsDataInterf
     );
     return $data;
   }
+
 }

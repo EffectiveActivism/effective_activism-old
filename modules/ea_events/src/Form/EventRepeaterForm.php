@@ -32,6 +32,7 @@ class EventRepeaterForm extends ContentEntityForm {
       case SAVED_NEW:
         drupal_set_message($this->t('Created Event repeater.'));
         break;
+
       default:
         drupal_set_message($this->t('Saved the Event repeater.'));
     }

@@ -33,12 +33,14 @@ class ImportAccessControlHandler extends EntityAccessControlHandler {
           return new AccessResultAllowed();
         }
         break;
+
       case 'update':
         if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed()) {
           return new AccessResultAllowed();
         }
         break;
+
       case 'delete':
         if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed()) {

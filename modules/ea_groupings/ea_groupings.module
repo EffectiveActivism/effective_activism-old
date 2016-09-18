@@ -19,13 +19,14 @@ function ea_groupings_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Manages organizations and groups.') . '</p>';
       return $output;
+
     default:
   }
 }
 
 /**
  * Implements hook_form_alter().
- * 
+ *
  * Hide managers entity reference field for groupings with a parent.
  * Only when a grouping is parent do we allow the manager field to be set.
  */
@@ -34,7 +35,7 @@ function ea_groupings_form_alter(&$form, FormStateInterface $form_state, $form_i
     $form['managers']['#states'] = array(
       'invisible' => array(
         ':input[name="parent[0][target_id]"]' => array('filled' => TRUE),
-      )
+      ),
     );
   }
 }

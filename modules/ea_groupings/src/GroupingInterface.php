@@ -14,8 +14,6 @@ use Drupal\Core\Session\AccountProxyInterface;
  */
 interface GroupingInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
-  // Add get/set methods for your configuration properties here.
-
   /**
    * Gets the Grouping name.
    *
@@ -80,7 +78,7 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
    *
    * @param bool $include_parent
    *   Whether to include the parent grouping.
-   * 
+   *
    * @return array
    *   An array of groupings related to this entity, including itself.
    */
@@ -91,12 +89,12 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
    *
    * @param bool $include_children
    *   Whether to include child groupings or not.
-   * 
    * @param \Drupal\Core\Session\AccountProxyInterface $user
    *   The user object to check relationship for.
-   * 
+   *
    * @return array
    *   An array of groupings managed by the user.
    */
   public static function getManagedGroupings($include_children, AccountProxyInterface $user);
+
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\Entity\Data.
- */
-
 namespace Drupal\ea_data\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -62,7 +57,9 @@ use Drupal\user\UserInterface;
  * )
  */
 class Data extends ContentEntityBase implements DataInterface {
+
   use EntityChangedTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -183,4 +180,5 @@ class Data extends ContentEntityBase implements DataInterface {
       ->setDescription(t('The time that the entity was last edited.'));
     return $fields;
   }
+
 }

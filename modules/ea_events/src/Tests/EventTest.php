@@ -1,17 +1,10 @@
 <?php
 
-/**
- * @file
- * Test cases for the ea_events module.
- */
-
 namespace Drupal\ea_events\Tests;
 
-use Drupal\ea_events\Entity\Event;
 use Drupal\ea_permissions\Roles;
 use Drupal\simpletest\WebTestBase;
 use Drupal\ea_events\Entity\EventRepeater;
-use Drupal;
 
 /**
  * Test values.
@@ -127,4 +120,5 @@ class EventTest extends WebTestBase {
     }
     return $retval;
   }
+
 }
