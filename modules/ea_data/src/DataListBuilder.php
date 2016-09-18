@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\DataListBuilder.
- */
-
 namespace Drupal\ea_data;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
-use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Routing\LinkGeneratorTrait;
 use Drupal\Core\Url;
 
@@ -19,7 +13,9 @@ use Drupal\Core\Url;
  * @ingroup ea_data
  */
 class DataListBuilder extends EntityListBuilder {
+
   use LinkGeneratorTrait;
+
   /**
    * {@inheritdoc}
    */

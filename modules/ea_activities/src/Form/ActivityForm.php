@@ -1,15 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\Form\ActivityForm.
- */
-
 namespace Drupal\ea_activities\Form;
 
 use Drupal\ea_activities\Entity\ActivityType;
-use Drupal\ea_data\Entity\DataType;
-use Drupal\ea_data\Entity\Data;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -49,6 +42,7 @@ class ActivityForm extends ContentEntityForm {
       case SAVED_NEW:
         drupal_set_message($this->t('Created an Activity.'));
         break;
+
       default:
         drupal_set_message($this->t('Saved an Activity.'));
     }

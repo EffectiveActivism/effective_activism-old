@@ -34,6 +34,7 @@ class GroupingForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
         break;
+
       default:
         drupal_set_message($this->t('Saved the %label Grouping.', [
           '%label' => $entity->label(),
@@ -41,4 +42,5 @@ class GroupingForm extends ContentEntityForm {
     }
     $form_state->setRedirect('entity.grouping.canonical', ['grouping' => $entity->id()]);
   }
+
 }

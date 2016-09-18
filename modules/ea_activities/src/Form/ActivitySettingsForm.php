@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\Form\ActivitySettingsForm.
- */
-
 namespace Drupal\ea_activities\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -18,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup ea_activities
  */
 class ActivitySettingsForm extends FormBase {
+
   /**
    * Returns a unique string identifying the form.
    *
@@ -37,9 +33,7 @@ class ActivitySettingsForm extends FormBase {
    *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Empty implementation of the abstract submit class.
   }
-
 
   /**
    * Defines the settings form for Activity entities.

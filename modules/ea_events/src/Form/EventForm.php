@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\Form\EventForm.
- */
-
 namespace Drupal\ea_events\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -40,7 +35,8 @@ class EventForm extends ContentEntityForm {
       if (empty($mobile_phone_number[0]['value']) && empty($email_address[0]['value'])) {
         $form_state->setErrorByName($form_state->getTriggeringElement(), $this->t('Please add at least one contact method.'));
       }
-      // Check if e-mail or phone number exists in any grouping related to host grouping.
+      // Check if e-mail or phone number exists in any grouping
+      // related to host grouping.
       if (isset($this->entity->grouping->entity)) {
         $host = $this->entity->grouping->entity;
         $groupings = $host->getRelatives();
@@ -69,9 +65,11 @@ class EventForm extends ContentEntityForm {
       case SAVED_NEW:
         drupal_set_message($this->t('Created event.'));
         break;
+
       default:
         drupal_set_message($this->t('Saved the event.'));
     }
     $form_state->setRedirect('entity.event.canonical', ['event' => $entity->id()]);
   }
+
 }

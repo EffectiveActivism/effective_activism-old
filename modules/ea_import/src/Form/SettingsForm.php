@@ -1,16 +1,11 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_import\Form\SettingsForm.
- */
-
 namespace Drupal\ea_import\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-/*
+/**
  * Provides a configuration form for import settings.
  */
 class SettingsForm extends ConfigFormBase {
@@ -76,4 +71,5 @@ class SettingsForm extends ConfigFormBase {
       ->save();
     parent::submitForm($form, $form_state);
   }
+
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\TaskAccessControlHandler.
- */
-
 namespace Drupal\ea_tasks;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -30,10 +25,13 @@ class TaskAccessControlHandler extends EntityAccessControlHandler {
           return AccessResult::allowedIfHasPermission($account, 'view unpublished task entities');
         }
         return AccessResult::allowedIfHasPermission($account, 'view published task entities');
+
       case 'update':
         return AccessResult::allowedIfHasPermission($account, 'edit task entities');
+
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete task entities');
+
     }
     // Unknown operation, no opinion.
     return AccessResult::neutral();
@@ -45,4 +43,5 @@ class TaskAccessControlHandler extends EntityAccessControlHandler {
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'add task entities');
   }
+
 }

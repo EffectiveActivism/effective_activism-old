@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\Form\PersonForm.
- */
-
 namespace Drupal\ea_people\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -70,6 +65,7 @@ class PersonForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
         break;
+
       default:
         drupal_set_message($this->t('Saved the %label Person.', [
           '%label' => $entity->label(),
@@ -77,4 +73,5 @@ class PersonForm extends ContentEntityForm {
     }
     $form_state->setRedirect('entity.person.canonical', ['person' => $entity->id()]);
   }
+
 }

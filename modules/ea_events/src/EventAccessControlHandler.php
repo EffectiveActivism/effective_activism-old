@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\EventAccessControlHandler.
- */
-
 namespace Drupal\ea_events;
 
 use Drupal\ea_permissions\Permission;
@@ -39,6 +34,7 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
           return AccessResult::allowedIfHasPermission($account, 'view published event entities');
         }
         break;
+
       case 'update':
         if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed()) {
@@ -48,6 +44,7 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
           return new AccessResultForbidden();
         }
         break;
+
       case 'delete':
         if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
           Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed()) {

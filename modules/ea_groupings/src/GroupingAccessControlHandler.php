@@ -30,8 +30,10 @@ class GroupingAccessControlHandler extends EntityAccessControlHandler {
         }
       case 'update':
         return Permission::allowedIfIsManager($account, $entity);
+
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete grouping entities');
+
     }
     // Unknown operation, no opinion.
     return AccessResult::neutral();
@@ -43,4 +45,5 @@ class GroupingAccessControlHandler extends EntityAccessControlHandler {
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'add grouping entities');
   }
+
 }

@@ -1,15 +1,8 @@
 <?php
-/**
- * @file
- * Contains \Drupal\ea_permissions\Permission.
- * 
- */
 
 namespace Drupal\ea_permissions;
 
-use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultAllowed;
 use Drupal\Core\Access\AccessResultForbidden;
 use Drupal\Core\Session\AccountInterface;
@@ -20,7 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 class Permission {
 
   /**
-   * Creates an allowed access result if the user is organizer of the grouping, denied otherwise.
+   * Determines access based on if the user is organizer of the grouping.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account for which to check a permission.
@@ -35,7 +28,7 @@ class Permission {
   }
 
   /**
-   * Creates an allowed access result if the user is manager of the grouping, denied otherwise.
+   * Determines access based on if the user is manager of the grouping.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The account for which to check a permission.
@@ -62,7 +55,7 @@ class Permission {
    * @return \Drupal\Core\Access\AccessResult
    *   Returns an access result.
    */
-  private static function checkPermission(AccountInterface $account, Grouping $grouping, String $role) {
+  private static function checkPermission(AccountInterface $account, Grouping $grouping, $role) {
     // Allow access for administrators.
     if (in_array('administrator', $account->getRoles())) {
       return new AccessResultAllowed();
@@ -77,6 +70,7 @@ class Permission {
           return new AccessResultAllowed();
         }
         break;
+
       case Roles::MANAGER_ROLE:
         // Check if user is manager of grouping.
         if (in_array(['target_id' => $account->id()], $grouping->get('managers')->getValue())) {
@@ -92,4 +86,5 @@ class Permission {
     }
     return $access;
   }
+
 }

@@ -41,6 +41,7 @@ class ImportForm extends ContentEntityForm {
             '%label' => $entity->label(),
           ]));
           break;
+
         default:
           drupal_set_message($this->t('Saved the import.', [
             '%label' => $entity->label(),
@@ -49,7 +50,7 @@ class ImportForm extends ContentEntityForm {
       $form_state->setRedirect('entity.import.canonical', ['import' => $entity->id()]);
     }
     catch (EntityStorageException $exception) {
-      // Custom field validation for configured bundle types is not yet possible.
+      // Custom field validation for configured bundle type is not yet possible.
       // It is also not yet possible to define bundle types as classes.
       // Therefore, as a temporary solution, we throw exceptions in a
       // hook_entity_presave call and catch them here.
@@ -58,4 +59,5 @@ class ImportForm extends ContentEntityForm {
       drupal_set_message($exception->getMessage(), 'error');
     }
   }
+
 }

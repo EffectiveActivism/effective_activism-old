@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\ActivityListBuilder.
- */
-
 namespace Drupal\ea_activities;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -18,7 +13,9 @@ use Drupal\Core\Url;
  * @ingroup ea_activities
  */
 class ActivityListBuilder extends EntityListBuilder {
+
   use LinkGeneratorTrait;
+
   /**
    * {@inheritdoc}
    */

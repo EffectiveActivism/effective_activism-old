@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\Entity\Person.
- */
-
 namespace Drupal\ea_people\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -262,4 +257,5 @@ class Person extends ContentEntityBase implements PersonInterface {
       ->setDescription(t('The time that the entity was last edited.'));
     return $fields;
   }
+
 }

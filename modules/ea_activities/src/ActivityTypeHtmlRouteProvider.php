@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\ActivityTypeHtmlRouteProvider.
- */
-
 namespace Drupal\ea_activities;
 
 use Drupal\Core\Entity\EntityTypeInterface;

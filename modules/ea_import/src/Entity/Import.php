@@ -39,7 +39,7 @@ use Drupal\user\UserInterface;
  *   base_table = "import",
  *   data_table = "import_field_data",
  *   translatable = TRUE,
-  *   admin_permission = "administer import entities",
+ *   admin_permission = "administer import entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",

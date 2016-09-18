@@ -13,8 +13,6 @@ use Drupal\user\EntityOwnerInterface;
  */
 interface ImportInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
-  // Add get/set methods for your configuration properties here.
-
   /**
    * Gets the Import type.
    *

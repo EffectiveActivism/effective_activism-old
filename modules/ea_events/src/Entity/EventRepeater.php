@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\Entity\EventRepeater.
- */
-
 namespace Drupal\ea_events\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -65,10 +60,9 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
   use EntityChangedTrait;
 
   /**
-   * EventRepeater default values
+   * EventRepeater default values.
    */
   const DEFAULT_VALUES = array(
-    
     'event_freq' => 'none',
     'event_count' => '1',
     'event_until' => '1970-01-01',
@@ -442,7 +436,8 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
         0 => array(
           'default_date_type' => 'now',
           'default_date' => 'tomorrow noon',
-      )))
+        ),
+      ))
       ->setDisplayOptions('view', array(
         'type' => 'datetime_default',
         'weight' => 0,

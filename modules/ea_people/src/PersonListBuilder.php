@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\PersonListBuilder.
- */
-
 namespace Drupal\ea_people;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -46,4 +41,5 @@ class PersonListBuilder extends EntityListBuilder {
     );
     return $row + parent::buildRow($entity);
   }
+
 }

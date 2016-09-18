@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @file
- * Test cases for the ea_activities module.
- */
-
 namespace Drupal\ea_activities\Tests;
 
 use Drupal\ea_permissions\Roles;
-use Drupal\ea_activities\Entity\Activity;
 use Drupal\ea_data\Entity\DataType;
-use Drupal\ea_data\Entity\Data;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\simpletest\WebTestBase;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -31,7 +24,7 @@ class ActivityTest extends WebTestBase {
 
   private $organizer;
 
-  private $data_type;
+  private $dataType;
 
   private $organization;
 
@@ -43,11 +36,11 @@ class ActivityTest extends WebTestBase {
     $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
     $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
     // Create data type.
-    $this->data_type = DataType::create(array(
+    $this->dataType = DataType::create(array(
       'id' => 'data_type_test',
       'label' => 'Test',
     ));
-    $this->data_type->save();
+    $this->dataType->save();
     // Add an integer field to the data type.
     $field_name = 'field_integer_input';
     $entity_type_id = 'data';
@@ -74,21 +67,21 @@ class ActivityTest extends WebTestBase {
         'label' => $label,
       ));
       $field
-      ->setRequired(TRUE)
-      ->save();
+        ->setRequired(TRUE)
+        ->save();
     }
     // Form display settings for field_integer_input.
     entity_get_form_display($entity_type_id, $bundle, 'default')
-    ->setComponent('field_integer_input', array(
-      'type' => 'number',
-    ))
-    ->save();
+      ->setComponent('field_integer_input', array(
+        'type' => 'number',
+      ))
+      ->save();
     // View display settings for field_integer_input.
     entity_get_display($entity_type_id, $bundle, 'default')
-    ->setComponent('field_integer_input', array(
-      'type' => 'number_integer',
-    ))
-    ->save();
+      ->setComponent('field_integer_input', array(
+        'type' => 'number_integer',
+      ))
+      ->save();
     // Create organization grouping.
     $this->organization = Grouping::create(array(
       'user_id' => $this->manager->id(),
@@ -110,7 +103,7 @@ class ActivityTest extends WebTestBase {
 
   /**
    * Create an activity type.
-   * 
+   *
    * Creates a data type called data_type_test and adds a numeric
    * field field_integer_input to it.
    */
@@ -138,7 +131,7 @@ class ActivityTest extends WebTestBase {
 
   /**
    * Create an activity content entity.
-   * 
+   *
    * Creates a content entity of type activity_type_test and adds a random
    * numeric value to the field_integer_input field.
    */
@@ -157,4 +150,5 @@ class ActivityTest extends WebTestBase {
     $this->assertText('Created an Activity.', 'Added a new activity entity.');
     $this->assertText($random_value, 'Confirmed value was saved.');
   }
+
 }

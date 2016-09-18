@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\Entity\Event.
- */
-
 namespace Drupal\ea_events\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -174,7 +169,8 @@ class Event extends ContentEntityBase implements EventInterface {
         0 => array(
           'default_date_type' => 'now',
           'default_date' => 'tomorrow noon',
-      )))
+        ),
+      ))
       ->setDisplayOptions('view', array(
         'type' => 'datetime_default',
         'weight' => 0,
@@ -196,7 +192,8 @@ class Event extends ContentEntityBase implements EventInterface {
         0 => array(
           'default_date_type' => 'now',
           'default_date' => 'tomorrow 13:00',
-      )))
+        ),
+      ))
       ->setDisplayOptions('view', array(
         'type' => 'datetime_default',
         'weight' => 0,
@@ -386,4 +383,5 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDescription(t('The time that the entity was last edited.'));
     return $fields;
   }
+
 }

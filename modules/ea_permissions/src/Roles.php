@@ -1,12 +1,10 @@
 <?php
-/**
- * @file
- * Contains \Drupal\ea_permissions\Roles.
- * 
- */
 
 namespace Drupal\ea_permissions;
 
+/**
+ * Defines roles other modules to use.
+ */
 class Roles {
 
   /**
@@ -100,4 +98,5 @@ class Roles {
     // Use the administration toolbar.
     'access toolbar',
   );
+
 }

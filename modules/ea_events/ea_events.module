@@ -9,7 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_form_alter().
- * 
+ *
  * Control visibility for Event Repeater entities.
  */
 function ea_events_form_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -20,7 +20,7 @@ function ea_events_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 
 /**
  * Implements hook_inline_entity_form_entity_form_alter().
- * 
+ *
  * Control visibility for inline Event Repeater entities.
  */
 function ea_events_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
@@ -31,9 +31,11 @@ function ea_events_inline_entity_form_entity_form_alter(&$entity_form, FormState
 
 /**
  * Return event states.
- * 
- * @param {array} $form the form array to add states to.
- * @param {string} $extra_identifier an optional string to identify inputs.
+ *
+ * @param array $form
+ *   The form array to add states to.
+ * @param string $extra_identifier
+ *   An optional string to identify inputs.
  */
 function _ea_events_get_states(&$form, $extra_identifier = NULL) {
   $startBracket = strlen($extra_identifier) > 0 ? '[' : '';

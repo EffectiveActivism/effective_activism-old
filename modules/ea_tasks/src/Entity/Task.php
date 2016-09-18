@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\Entity\Task.
- */
-
 namespace Drupal\ea_tasks\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -244,4 +239,5 @@ class Task extends ContentEntityBase implements TaskInterface {
       ->setDescription(t('The time that the entity was last edited.'));
     return $fields;
   }
+
 }

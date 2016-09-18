@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\Form\DataForm.
- */
-
 namespace Drupal\ea_data\Form;
 
 use Drupal\Core\Entity\ContentEntityForm;
@@ -16,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup ea_data
  */
 class DataForm extends ContentEntityForm {
+
   /**
    * {@inheritdoc}
    */
@@ -38,6 +34,7 @@ class DataForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
         break;
+
       default:
         drupal_set_message($this->t('Saved data.', [
           '%label' => $entity->label(),

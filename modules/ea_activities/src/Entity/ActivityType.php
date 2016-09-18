@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\Entity\ActivityType.
- */
-
 namespace Drupal\ea_activities\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
@@ -72,7 +67,7 @@ class ActivityType extends ConfigEntityBundleBase implements ActivityTypeInterfa
    *
    * @var array
    */
-  public $data_types;
+  public $dataTypes;
 
   /**
    * The Activity type organization.
@@ -87,4 +82,5 @@ class ActivityType extends ConfigEntityBundleBase implements ActivityTypeInterfa
    * @var array
    */
   public $groupings;
+
 }

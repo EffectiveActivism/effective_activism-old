@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\Form\TaskDeleteForm.
- */
-
 namespace Drupal\ea_tasks\Form;
 
 use Drupal\Core\Entity\ContentEntityDeleteForm;
@@ -15,5 +10,4 @@ use Drupal\Core\Entity\ContentEntityDeleteForm;
  * @ingroup ea_tasks
  */
 class TaskDeleteForm extends ContentEntityDeleteForm {
-
 }

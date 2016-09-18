@@ -1,14 +1,7 @@
 <?php
-/**
- * @file
- * Contains \Drupal\ea_import\Parser\RruleParser.
- * 
- */
 
 namespace Drupal\ea_import\Parser;
 
-use Recurr\Rule;
-use Recurr\Exception\InvalidRRule;
 use Drupal\ea_events\Entity\EventRepeater;
 
 /**
@@ -16,34 +9,57 @@ use Drupal\ea_events\Entity\EventRepeater;
  */
 class RruleParser {
 
-  /* Recurr\Rule object */
-  private /** @type {Rule} */ $Rule;
+  /**
+   * Recurr\Rule object.
+   *
+   * @var Rule
+   */
+  private $Rule;
 
-  /* RRULE string */
-  private /** @type {string} */ $rrule;
+  /**
+   * RRULE string.
+   *
+   * @var string
+   */
+  private $rrule;
 
-  /* timezone */
-  private /** @type {DateTimeZone} */ $timezone;
+  /**
+   * Timezone.
+   *
+   * @var DateTimeZone
+   */
+  private $timezone;
 
-  /* start date */
-  private /** @type {DateTime} */ $startDate;
+  /**
+   * Start date.
+   *
+   * @var DateTime
+   */
+  private $startDate;
 
-  /* end date */
-  private /** @type {DateTime} */ $endDate;
+  /**
+   * End date.
+   *
+   * @var DateTime
+   */
+  private $endDate;
 
-  /* array of values */
-  private /** @type {Array} */$eventRepeaterValues;
+  /**
+   * Array of values.
+   *
+   * @var array
+   */
+  private $eventRepeaterValues;
 
   /**
    * Creates an RRULE Object.
    *
-   * @param {string} $rrule An RRULE.
-   *
-   * @return Object The RruleParser Object.
+   * @param string $rrule
+   *   An RRULE.
    */
-  public function __construct(string $rrule) {
+  public function __construct($rrule) {
     if (empty($rrule)) {
-      return false;
+      return FALSE;
     }
     $this->rrule = $rrule;
     return $this;
@@ -51,8 +67,9 @@ class RruleParser {
 
   /**
    * Get values from the RRULE formatted for the EventRepeater entity.
-   * 
-   * @return string Values for an EventRepeater entity.
+   *
+   * @return string
+   *   Values for an EventRepeater entity.
    */
   public function getEventRepeaterValues() {
     $this->eventRepeaterValues = EventRepeater::DEFAULT_VALUES;
@@ -60,25 +77,31 @@ class RruleParser {
     foreach ($components as $component) {
       $componentArray = explode('=', $component);
       switch ($componentArray[0]) {
-        case 'FREQ' :
+        case 'FREQ':
           $this->eventRepeaterValues['event_freq'] = $componentArray[1];
           break;
-        case 'COUNT' :
+
+        case 'COUNT':
           $this->eventRepeaterValues['event_count'] = $componentArray[1];
           break;
-        case 'UNTIL' :
+
+        case 'UNTIL':
           $this->eventRepeaterValues['event_until'] = $this->getDate($componentArray[1]);
           break;
-        case 'INTERVAL' :
+
+        case 'INTERVAL':
           $this->eventRepeaterValues['event_interval'] = $componentArray[1];
           break;
-        case 'BYMONTH' :
+
+        case 'BYMONTH':
           $this->eventRepeaterValues['event_bymonth'] = $componentArray[1];
           break;
-        case 'BYMONTHDAY' :
+
+        case 'BYMONTHDAY':
           $this->eventRepeaterValues['event_bymonthday'] = $componentArray[1];
           break;
-        case 'BYDAY' :
+
+        case 'BYDAY':
           // Assuming FREQ comes before BYDAY.
           if ($this->eventRepeaterValues['event_freq'] !== 'WEEKLY') {
             $this->eventRepeaterValues['event_byday'] = $componentArray[1];
@@ -87,9 +110,9 @@ class RruleParser {
             $this->eventRepeaterValues['event_byday_multiple'] = $componentArray[1];
           }
           break;
-        case 'BYSETPOS' :
+
+        case 'BYSETPOS':
           $this->eventRepeaterValues['event_bysetpos'] = $componentArray[1];
-          break;
       }
     }
     return $this->eventRepeaterValues;
@@ -97,12 +120,14 @@ class RruleParser {
 
   /**
    * Get the RRULE from the EventRepeater entity.
-   * 
-   * @param {EventRepeater Object} $frequency An EventRepeater entity.
-   * 
-   * @return string The RRULE corresponding to the EventRepeater entity.
+   *
+   * @param EventRepeater $eventRepeater
+   *   An EventRepeater entity.
+   *
+   * @return string
+   *   The RRULE corresponding to the EventRepeater entity.
    */
-  public function setRRULE(EventRepeater $eventRepeater) {
+  public function setRrule(EventRepeater $eventRepeater) {
     // Get variables.
     $frequency = $eventRepeater->event_frequency->value;
     $interval = $eventRepeater->event_interval->value;
@@ -122,10 +147,11 @@ class RruleParser {
     // Build RRULE.
     $rrule = "FREQ=$frequency;INTERVAL=$interval";
     switch ($frequency) {
-      case 'WEEKLY' :
+      case 'WEEKLY':
         $rrule .= ";BYDAY=$byday_multiple";
         break;
-      case 'MONTHLY' :
+
+      case 'MONTHLY':
         if ($event_repeat_by === 'day_of_the_month') {
           $rrule .= ";BYMONTHDAY=$bymonthday";
         }
@@ -133,7 +159,8 @@ class RruleParser {
           $rrule .= ";BYSETPOS=$bysetpos;BYDAY=$byday";
         }
         break;
-      case 'YEARLY' :
+
+      case 'YEARLY':
         if ($event_repeat_by === 'day_of_the_month') {
           $rrule .= ";BYMONTHDAY=$bymonthday";
         }
@@ -141,21 +168,21 @@ class RruleParser {
           $rrule .= ";BYSETPOS=$bysetpos;BYDAY=$byday;BYMONTH=$bymonth";
         }
         break;
-      case 'none' :
-      case 'DAILY' :
-      default :
+
+      case 'none':
+      case 'DAILY':
     }
     // Add end configurations.
     switch ($ends) {
-      case 'never' :
+      case 'never':
         break;
-      case 'COUNT' :
+
+      case 'COUNT':
         $rrule .= ";COUNT=$count";
         break;
-      case 'UNTIL' :
+
+      case 'UNTIL':
         $rrule .= ";UNTIL=$until";
-        break;
-      default :
     }
     $this->rrule = $rrule;
     return $this;
@@ -163,25 +190,30 @@ class RruleParser {
 
   /**
    * Format RRULE date to Drupal date.
-   * 
-   * @param {string} $date The RRULE date.
-   * 
-   * @return string The formatted date.
+   *
+   * @param string $date
+   *   The RRULE date.
+   *
+   * @return string
+   *   The formatted date.
    */
-  private function toDrupalDate(string $date) {
+  private function toDrupalDate($date) {
     $dateObject = DateTime::createFromFormat('Ymd\THis', $date);
     return $dateObject->format('Y-m-d');
   }
 
   /**
    * Format Drupal date to RRULE date.
-   * 
-   * @param {string} $date The Drupal date.
-   * 
-   * @return string The formatted date.
+   *
+   * @param string $date
+   *   The Drupal date.
+   *
+   * @return string
+   *   The formatted date.
    */
-  private function toRRULEDate(string $date) {
+  private function toRruleDate($date) {
     $dateObject = DateTime::createFromFormat('Ymd\THis', $date);
     return $dateObject->format('Y-m-d');
   }
+
 }

@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\DataHtmlRouteProvider.
- */
-
 namespace Drupal\ea_data;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -138,4 +133,5 @@ class DataHtmlRouteProvider extends AdminHtmlRouteProvider {
       return $route;
     }
   }
+
 }

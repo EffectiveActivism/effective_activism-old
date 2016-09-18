@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\Form\EventSettingsForm.
- */
-
 namespace Drupal\ea_events\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -18,6 +13,7 @@ use Drupal\Core\Form\FormStateInterface;
  * @ingroup ea_events
  */
 class EventSettingsForm extends FormBase {
+
   /**
    * Returns a unique string identifying the form.
    *
@@ -37,9 +33,7 @@ class EventSettingsForm extends FormBase {
    *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Empty implementation of the abstract submit class.
   }
-
 
   /**
    * Defines the settings form for Event entities.

@@ -5,8 +5,6 @@
  * Contains ea_import.module.
  */
 
-use Drupal\ea_import\Entity\Import;
-use Drupal\ea_import\CSVFileException;
 use Drupal\ea_import\Parser\CSVParser;
 use Drupal\ea_import\Parser\ICalendarParser;
 use Drupal\ea_import\Parser\RruleParser;
@@ -14,7 +12,6 @@ use Drupal\ea_events\Entity\Event;
 use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Form\FormStateInterface;
 
 const EA_IMPORT_BUNDLE_CSV = 'csv';
@@ -32,7 +29,7 @@ function ea_import_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Import content from 3rd party sources.') . '</p>';
       return $output;
-    default:
+
   }
 }
 
@@ -55,8 +52,8 @@ function ea_import_theme() {
 }
 
 /**
-* Implements hook_theme_suggestions_HOOK().
-*/
+ * Implements hook_theme_suggestions_HOOK().
+ */
 function ea_import_theme_suggestions_import(array $variables) {
   $suggestions = array();
   $entity = $variables['elements']['#import'];
@@ -109,7 +106,10 @@ function ea_import_entity_presave(EntityInterface $entity) {
             }
           }
           if ($error_count > 0) {
-            throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode(', ', $error_list))));
+            throw new Exception(t('Errors found in row @row: @errors', array(
+              '@row' => $count,
+              '@errors' => implode(', ', $error_list),
+            )));
           }
         }
       }
@@ -165,7 +165,10 @@ function ea_import_entity_presave(EntityInterface $entity) {
           foreach ($event_repeater_errors as $error) {
             $event_repeater_error_list[] = strip_tags($error->getMessage());
           }
-          throw new Exception(t('Errors found in row @row: The RRULE is not formatted properly. @errors', array('@row' => $count, '@errors' => implode(', ', $event_repeater_error_list))));
+          throw new Exception(t('Errors found in row @row: The RRULE is not formatted properly. @errors', array(
+            '@row' => $count,
+            '@errors' => implode(', ', $event_repeater_error_list),
+          )));
         }
       }
       // Create event.
@@ -189,7 +192,10 @@ function ea_import_entity_presave(EntityInterface $entity) {
           }
         }
         if ($error_count > 0) {
-          throw new Exception(t('Errors found in row @row: @errors', array('@row' => $count, '@errors' => implode(', ', $error_list))));
+          throw new Exception(t('Errors found in row @row: @errors', array(
+            '@row' => $count,
+            '@errors' => implode(', ', $error_list),
+          )));
         }
       }
     }
@@ -219,9 +225,11 @@ function ea_import_import_insert(EntityInterface $entity) {
     }
     if ($count > 1) {
       drupal_set_message(t('@count events imported', array('@count' => $count)));
-    } elseif ($count === 1) {
+    }
+    elseif ($count === 1) {
       drupal_set_message(t('One event imported'));
-    } else {
+    }
+    else {
       drupal_set_message(t('No events imported'), 'warning');
     }
   }
@@ -252,7 +260,7 @@ function ea_import_import_insert(EntityInterface $entity) {
       // Get RRULE.
       $rrule = $parsed_event['rrule'];
       unset($parsed_event['rrule']);
-      // Save event if UID is not found within grouping scope. 
+      // Save event if UID is not found within grouping scope.
       if (!_ea_import_uid_exists($gid, $uid)) {
         $count++;
         // If RRULE exists, create event repeater entity.
@@ -279,9 +287,11 @@ function ea_import_import_insert(EntityInterface $entity) {
     }
     if ($count > 1) {
       drupal_set_message(t('@count events imported', array('@count' => $count)));
-    } elseif ($count === 1) {
+    }
+    elseif ($count === 1) {
       drupal_set_message(t('One event imported'));
-    } else {
+    }
+    else {
       drupal_set_message(t('No events imported'), 'warning');
     }
     if ($duplicate_count > 1) {
@@ -375,7 +385,7 @@ function ea_import_cron() {
 
 /**
  * Implements hook_form_alter().
- * 
+ *
  * Disallow changes to the source file of existing import entities.
  */
 function ea_import_form_alter(&$form, FormStateInterface $form_state, $form_id) {
@@ -386,22 +396,25 @@ function ea_import_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 
 /**
  * Check for matching gid/uid pair.
- * 
- * @param int $gid The grouping id.
- * @param string $uid The unique id.
- * 
- * @return boolean Returns TRUE if gid/uid match found.
+ *
+ * @param int $gid
+ *   The grouping id.
+ * @param string $uid
+ *   The unique id.
+ *
+ * @return bool
+ *   Returns TRUE if gid/uid match found.
  */
-function _ea_import_uid_exists(int $gid, string $uid) {
+function _ea_import_uid_exists($gid, $uid) {
   $count = NULL;
   try {
     $count = (boolean) db_select('ea_import_uids', 'id')
-     ->fields('id')
-     ->condition('gid', $gid)
-     ->condition('uid', $uid)
-     ->countQuery()
-     ->execute()
-     ->fetchField();
+      ->fields('id')
+      ->condition('gid', $gid)
+      ->condition('uid', $uid)
+      ->countQuery()
+      ->execute()
+      ->fetchField();
   }
   catch (Exception $exception) {
     \Drupal::logger('ea_import')->notice(t('Database operation failed. Message = %message', array(
@@ -413,11 +426,15 @@ function _ea_import_uid_exists(int $gid, string $uid) {
 
 /**
  * Insert gid/uid pair.
- * 
- * @param int $gid The grouping id.
- * @param string $uid The unique id.
+ *
+ * @param string $uid
+ *   The unique id.
+ * @param int $gid
+ *   The grouping id.
+ * @param int $eid
+ *   The event id.
  */
-function _ea_import_uid_insert(string $uid, int $gid, int $eid) {
+function _ea_import_uid_insert($uid, $gid, $eid) {
   try {
     $result = db_insert('ea_import_uids')
       ->fields(array(

@@ -1,15 +1,9 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\ActivityInterface.
- */
-
 namespace Drupal\ea_activities;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\EntityOwnerInterface;
 
 /**
@@ -18,7 +12,6 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup ea_activities
  */
 interface ActivityInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
 
   /**
    * Gets the Activity type.

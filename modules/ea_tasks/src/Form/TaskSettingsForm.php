@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\Form\TaskSettingsForm.
- */
-
 namespace Drupal\ea_tasks\Form;
 
 use Drupal\Core\Form\FormBase;
@@ -38,9 +33,7 @@ class TaskSettingsForm extends FormBase {
    *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    // Empty implementation of the abstract submit class.
   }
-
 
   /**
    * Defines the settings form for Task entities.
@@ -57,4 +50,5 @@ class TaskSettingsForm extends FormBase {
     $form['Task_settings']['#markup'] = 'Settings form for Task entities. Manage field settings here.';
     return $form;
   }
+
 }

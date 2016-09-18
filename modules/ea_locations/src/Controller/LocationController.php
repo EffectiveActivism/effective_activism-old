@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_locations\Controller\LocationController.
- */
-
 namespace Drupal\ea_locations\Controller;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -41,11 +36,11 @@ class LocationController {
   /**
    * Validates an address.
    *
-   * @param String $address
+   * @param string $address
    *   An address string that needs to be validated against Google Maps API
    *   format.
    *
-   * @return Boolean
+   * @return bool
    *   Returns TRUE if string is a valid Google Maps address, FALSE if not.
    *   If any connection errors occur, validation returns TRUE.
    */
@@ -80,10 +75,10 @@ class LocationController {
   /**
    * Get locations based on input.
    *
-   * @param String $input
+   * @param string $input
    *   A location string.
    *
-   * @return Array
+   * @return array
    *   Returns array of suggestions or FALSE if any connection errors occur.
    */
   public function getAddressSuggestions($input) {
@@ -107,11 +102,12 @@ class LocationController {
   /**
    * Get coordinates based off an address.
    *
-   * @param String $address
+   * @param string $address
    *   A Google address string.
    *
-   * @return Array
-   *   Returns array of coordinates as array('lat' => float, 'lon' => float) or FALSE if no coordinates are found.
+   * @return array
+   *   Returns array of coordinates as array('lat' => float, 'lon' => float)
+   *   or FALSE if no coordinates are found.
    */
   public function getCoordinates($address) {
     $coordinates = [
@@ -139,13 +135,12 @@ class LocationController {
   /**
    * Make a request to Google APIs.
    *
-   * @param String $url
+   * @param string $url
    *   A Google API url.
-   * 
-   * @param Array $query
+   * @param array $query
    *   The query to submit.
    *
-   * @return String
+   * @return string
    *   Returns JSON response.
    */
   private function request($url, $query) {
@@ -168,4 +163,5 @@ class LocationController {
     }
     return FALSE;
   }
+
 }

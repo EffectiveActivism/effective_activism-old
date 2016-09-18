@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\TaskInterface.
- */
-
 namespace Drupal\ea_tasks;
 
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -17,7 +12,6 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup ea_tasks
  */
 interface TaskInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
 
   /**
    * Gets the Task type.

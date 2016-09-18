@@ -1,16 +1,9 @@
 <?php
 
-/**
- * @file
- * ICalendar test cases for the ea_import module.
- */
-
 namespace Drupal\ea_import\Tests;
 
-use Drupal\ea_import\Tests\ImportWebTestBase;
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal;
 
 /**
  * Function tests for ea_import CSV import entity type.
@@ -53,13 +46,13 @@ class CSVImportTest extends ImportWebTestBase {
    */
   public function testImports() {
     $this->drupalLogin($this->organizer);
-    $this->createCSVImportEntity();
+    $this->createCsvImportEntity();
   }
 
   /**
    * Creates a CSV Import entity.
    */
-  private function createCSVImportEntity() {
+  private function createCsvImportEntity() {
     $this->drupalGet('effectiveactivism/imports/add/csv');
     $this->assertResponse(200);
     $this->drupalPostForm(NULL, array(
@@ -71,4 +64,5 @@ class CSVImportTest extends ImportWebTestBase {
     $this->assertText('Created the import.', 'Added a new import entity.');
     $this->assertText('One event imported', 'Successfully imported event');
   }
+
 }

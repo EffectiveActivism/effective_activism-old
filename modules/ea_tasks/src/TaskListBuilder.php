@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_tasks\TaskListBuilder.
- */
-
 namespace Drupal\ea_tasks;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -46,4 +41,5 @@ class TaskListBuilder extends EntityListBuilder {
     );
     return $row + parent::buildRow($entity);
   }
+
 }

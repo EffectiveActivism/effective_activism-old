@@ -1,14 +1,17 @@
 <?php
-/**
- * @file
- * Contains \Drupal\effective_activism\Controller\Overview.
- */
 
 namespace Drupal\effective_activism\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 
+/**
+ * Defines the Overview controller.
+ */
 class Overview extends ControllerBase {
+
+  /**
+   * Returns a render array for the overview page.
+   */
   public function content() {
     $content = array(
       '#type' => 'markup',
@@ -16,4 +19,5 @@ class Overview extends ControllerBase {
     );
     return $content;
   }
+
 }

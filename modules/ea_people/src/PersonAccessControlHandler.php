@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\PersonAccessControlHandler.
- */
-
 namespace Drupal\ea_people;
 
 use Drupal\Core\Entity\EntityAccessControlHandler;
@@ -30,8 +25,10 @@ class PersonAccessControlHandler extends EntityAccessControlHandler {
           return AccessResult::allowedIfHasPermission($account, 'view unpublished person entities');
         }
         return AccessResult::allowedIfHasPermission($account, 'view published person entities');
+
       case 'update':
         return AccessResult::allowedIfHasPermission($account, 'edit person entities');
+
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete person entities');
     }
@@ -45,4 +42,5 @@ class PersonAccessControlHandler extends EntityAccessControlHandler {
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'add person entities');
   }
+
 }

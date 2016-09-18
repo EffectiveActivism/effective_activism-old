@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\Form\ActivityDeleteForm.
- */
-
 namespace Drupal\ea_activities\Form;
 
 use Drupal\Core\Entity\ContentEntityDeleteForm;
@@ -15,5 +10,4 @@ use Drupal\Core\Entity\ContentEntityDeleteForm;
  * @ingroup ea_activities
  */
 class ActivityDeleteForm extends ContentEntityDeleteForm {
-
 }

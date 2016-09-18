@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_activities\ActivityAccessControlHandler.
- */
-
 namespace Drupal\ea_activities;
 
 use Drupal\ea_activities\Entity\ActivityType;
@@ -22,11 +17,12 @@ use Drupal\Core\Access\AccessResultAllowed;
  * @see \Drupal\ea_activities\Entity\Activity.
  */
 class ActivityAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\ea_activities\ActivityInterface $entity */
+    /* @var \Drupal\ea_activities\ActivityInterface $entity */
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
@@ -45,8 +41,10 @@ class ActivityAccessControlHandler extends EntityAccessControlHandler {
         }
       case 'update':
         return Permission::allowedIfIsManager($account, Grouping::load($entity->type->entity->get('organization')));
+
       case 'delete':
         return AccessResult::allowedIfHasPermission($account, 'delete activity entities');
+
     }
     // Unknown operation, no opinion.
     return AccessResult::neutral();

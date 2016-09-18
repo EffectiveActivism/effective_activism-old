@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\EventHtmlRouteProvider.
- */
-
 namespace Drupal\ea_events;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -18,6 +13,7 @@ use Symfony\Component\Routing\Route;
  * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
 class EventHtmlRouteProvider extends AdminHtmlRouteProvider {
+
   /**
    * {@inheritdoc}
    */

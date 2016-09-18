@@ -10,7 +10,7 @@ use Drupal\user\Entity\Role;
 
 /**
  * Implements hook_install().
- * 
+ *
  * Add roles and permissions as defined in the ea_permissions module.
  */
 function effective_activism_install() {

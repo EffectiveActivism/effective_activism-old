@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\user\UserInterface;
-use DateTimeZone;
 
 /**
  * Defines the Grouping entity.
@@ -434,4 +433,5 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       ->setDescription(t('The time that the entity was last edited.'));
     return $fields;
   }
+
 }

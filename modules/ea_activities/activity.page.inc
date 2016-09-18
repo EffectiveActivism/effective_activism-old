@@ -32,30 +32,30 @@ function template_preprocess_activity(array &$variables) {
 }
 
 /**
-* Prepares variables for a custom entity type creation list templates.
-*
-* Default template: activity-content-add-list.html.twig.
-*
-* @param array $variables
-*   An associative array containing:
-*   - content: An array of activity-types.
-*
-* @see block_content_add_page()
-*/
+ * Prepares variables for a custom entity type creation list templates.
+ *
+ * Default template: activity-content-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - content: An array of activity-types.
+ *
+ * @see block_content_add_page()
+ */
 function template_preprocess_activity_content_add_list(&$variables) {
   $variables['types'] = array();
   $query = \Drupal::request()->query->all();
   foreach ($variables['content'] as $type) {
     $variables['types'][$type->id()] = array(
       'link' => Link::fromTextAndUrl($type->id(), new Url('entity.activity.add_form', array(
-        'activity_type' => $type->id()
+        'activity_type' => $type->id(),
       ), array('query' => $query))),
       'description' => array(
-      '#markup' => $type->id(),
+        '#markup' => $type->id(),
       ),
       'title' => $type->id(),
       'localized_options' => array(
-      'query' => $query,
+        'query' => $query,
       ),
     );
   }

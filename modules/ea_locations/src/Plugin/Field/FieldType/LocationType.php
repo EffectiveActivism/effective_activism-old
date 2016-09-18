@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_locations\Plugin\Field\FieldType\LocationType.
- */
-
 namespace Drupal\ea_locations\Plugin\Field\FieldType;
 
 use Drupal\Core\Field\FieldItemBase;
@@ -98,9 +93,10 @@ class LocationType extends FieldItemBase {
         'Length' => array(
           'max' => static::ADDRESS_MAXLENGTH,
           'maxMessage' => t('%name: the location address may not be longer than @max characters.', array('%name' => $this->getFieldDefinition()->getLabel(), '@max' => self::ADDRESS_MAXLENGTH)),
-        )
+        ),
       ),
     ));
     return $constraints;
   }
+
 }
