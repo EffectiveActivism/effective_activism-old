@@ -12,7 +12,7 @@ class CSVParser {
   /**
    * CSV file.
    *
-   * @type FileInterface
+   * @var FileInterface
    */
   private $file;
 

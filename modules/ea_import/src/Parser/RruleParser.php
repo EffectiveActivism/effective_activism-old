@@ -12,42 +12,42 @@ class RruleParser {
   /**
    * Recurr\Rule object.
    *
-   * @type Rule
+   * @var Rule
    */
   private $Rule;
 
   /**
    * RRULE string.
    *
-   * @type string
+   * @var string
    */
   private $rrule;
 
   /**
    * Timezone.
    *
-   * @type DateTimeZone
+   * @var DateTimeZone
    */
   private $timezone;
 
   /**
    * Start date.
    *
-   * @type DateTime
+   * @var DateTime
    */
   private $startDate;
 
   /**
    * End date.
    *
-   * @type DateTime
+   * @var DateTime
    */
   private $endDate;
 
   /**
    * Array of values.
    *
-   * @type array
+   * @var array
    */
   private $eventRepeaterValues;
 

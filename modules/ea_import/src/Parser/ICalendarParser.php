@@ -12,35 +12,35 @@ class ICalendarParser {
   /**
    * The raw calendar.
    *
-   * @type string
+   * @var string
    */
   private $raw;
 
   /**
    * The parsed calendar.
    *
-   * @type array
+   * @var array
    */
   private $cal;
 
   /**
    * How many events are in this iCal?
    *
-   * @type int
+   * @var int
    */
   private $eventCount = 0;
 
   /**
    * Which keyword has been added to cal at last?
    *
-   * @type string
+   * @var string
    */
   private $lastKeyword;
 
   /**
    * Filters to apply.
    *
-   * @type array
+   * @var array
    */
   private $filters;
 
