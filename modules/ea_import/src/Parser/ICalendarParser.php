@@ -10,20 +10,39 @@ namespace Drupal\ea_import\Parser;
 class ICalendarParser {
 
   /**
-   * The raw calendar. */
-  private /* @type string */ $raw;
+   * The raw calendar.
+   *
+   * @type string
+   */
+  private $raw;
 
-  /* The parsed calendar. */
-  private /* @type array */ $cal;
+  /**
+   * The parsed calendar.
+   *
+   * @type array
+   */
+  private $cal;
 
-  /* How many events are in this iCal? */
-  private /* @type int */ $eventCount = 0;
+  /**
+   * How many events are in this iCal?
+   *
+   * @type int
+   */
+  private $eventCount = 0;
 
-  /* Which keyword has been added to cal at last? */
-  private /* @type string */ $lastKeyword;
+  /**
+   * Which keyword has been added to cal at last?
+   *
+   * @type string
+   */
+  private $lastKeyword;
 
-  /* Filters to apply */
-  private /* @type array */ $filters;
+  /**
+   * Filters to apply.
+   *
+   * @type array
+   */
+  private $filters;
 
   /**
    * Creates the ICalendarParser Object.

@@ -9,23 +9,47 @@ use Drupal\ea_events\Entity\EventRepeater;
  */
 class RruleParser {
 
-  /* Recurr\Rule object */
-  private /* @type Rule */ $Rule;
+  /**
+   * Recurr\Rule object.
+   *
+   * @type Rule
+   */
+  private $Rule;
 
-  /* RRULE string */
-  private /* @type string */ $rrule;
+  /**
+   * RRULE string.
+   *
+   * @type string
+   */
+  private $rrule;
 
-  /* timezone */
-  private /* @type DateTimeZone */ $timezone;
+  /**
+   * Timezone.
+   *
+   * @type DateTimeZone
+   */
+  private $timezone;
 
-  /* start date */
-  private /* @type DateTime */ $startDate;
+  /**
+   * Start date.
+   *
+   * @type DateTime
+   */
+  private $startDate;
 
-  /* end date */
-  private /* @type DateTime */ $endDate;
+  /**
+   * End date.
+   *
+   * @type DateTime
+   */
+  private $endDate;
 
-  /* array of values */
-  private /* @type array */$eventRepeaterValues;
+  /**
+   * Array of values.
+   *
+   * @type array
+   */
+  private $eventRepeaterValues;
 
   /**
    * Creates an RRULE Object.

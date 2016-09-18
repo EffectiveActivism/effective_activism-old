@@ -9,8 +9,12 @@ use Drupal\file\Entity\File;
  */
 class CSVParser {
 
-  /* CSV file */
-  private /* @type FileInterface */ $file;
+  /**
+   * CSV file.
+   *
+   * @type FileInterface
+   */
+  private $file;
 
   /**
    * Creates the CSVParser Object.
