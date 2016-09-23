@@ -1,0 +1,10 @@
+name: Imports
+type: module
+description: Import content from 3rd party sources.
+core: 8.x
+package: Effective Activism
+dependencies:
+  - ea_events
+  - ea_groupings
+  - file
+  - link

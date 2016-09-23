@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - ea_imports.import_type.icalendar
+    - field.storage.import.field_filter_title
+id: import.icalendar.field_filter_title
+field_name: field_filter_title
+entity_type: import
+bundle: icalendar
+label: Title
+description: 'Type in a title to only import ICalendar events that partially match the title,'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string
