@@ -1,6 +1,0 @@
-{
-  "name": "drupal/ea_import",
-  "require": {
-    "simshaun/recurr": "*"
-  }
-}

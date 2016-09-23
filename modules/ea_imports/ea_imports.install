@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the ea_imports module.
+ */
+
+/**
+ * Implements hook_schema().
+ *
+ * Defines the database tables used by this module.
+ *
+ * @see hook_schema()
+ * @ingroup ea_imports
+ */
+function ea_imports_schema() {
+  $schema['ea_imports_uids'] = array(
+    'description' => 'Stores UID pairs.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique ID.',
+      ),
+      'uid' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'External UID.',
+      ),
+      'gid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Grouping ID.',
+      ),
+      'eid' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Event ID.',
+      ),
+    ),
+    'primary key' => array('id'),
+    'indexes' => array(
+      'uid' => array('uid'),
+      'gid' => array('gid'),
+      'eid' => array('eid'),
+    ),
+  );
+  return $schema;
+}

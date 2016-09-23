@@ -1,0 +1,7 @@
+ea_imports.icalendar.settings:
+  path: '/effectiveactivism/settings/import'
+  defaults:
+    _title: 'Import settings'
+    _form: '\Drupal\ea_imports\Form\SettingsForm'
+  requirements:
+    _permission: 'administer site configuration'

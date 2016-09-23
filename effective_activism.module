@@ -27,7 +27,7 @@ function effective_activism_toolbar() {
         'title' => t('Events'),
       ),
     ),
-    'ea_import' => array(
+    'ea_imports' => array(
       'title' => t('Imports'),
       'url' => Url::fromRoute('entity.import.collection'),
       'attributes' => array(
@@ -78,7 +78,7 @@ function effective_activism_toolbar() {
         'title' => t('Activity types'),
       ),
     ),
-    'ea_import' => array(
+    'ea_imports' => array(
       'title' => t('Imports'),
       'url' => Url::fromRoute('entity.import.collection'),
       'attributes' => array(
