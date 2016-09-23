@@ -53,7 +53,10 @@ class CSVParser {
           'description' => $data[1],
           'start_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, $data[2]),
           'end_date' => date(DATETIME_DATETIME_STORAGE_FORMAT, $data[3]),
-          'location' => $data[4],
+          'location' => [
+            'address' => $data[4],
+            'extra_information' => $data[5],
+          ],
         );
       }
       fclose($handle);
@@ -80,7 +83,7 @@ class CSVParser {
         $titles[2] !== 'date_start' ||
         $titles[3] !== 'date_end' ||
         $titles[4] !== 'location' ||
-        $titles[5] !== 'location_title'
+        $titles[5] !== 'location_extra_information'
       ) {
         $isValid = FALSE;
       }
