@@ -1,2 +1,2 @@
-title,description,date_start,date_end,location,location_extra_information
-My sample event,My sample event description,1451646000,1451649600,"Hovedbanegården, Copenhagen, Denmark",By the south entrance
+title,start_date,end_date,location,description,tasks,event_repeater,participants,activities
+My custom title,1474638064,1474639064,"{""address"":""Kultorvet, Copenhagen, Denmark"",""extra_information"":""By the fountain""}",My custom protest description,,,,"{""leafleting"":{""field_leaflets"":1000}}"
