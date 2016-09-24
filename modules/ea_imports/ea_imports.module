@@ -70,53 +70,8 @@ function ea_imports_theme_suggestions_import(array $variables) {
  * Implements hook_entity_presave().
  */
 function ea_imports_entity_presave(EntityInterface $entity) {
-  // If the import is a CSV file, validate the content of it.
-  if ($entity->bundle() === EA_IMPORTS_BUNDLE_CSV) {
-    $field_file_csv = $entity->get('field_file_csv')->getValue();
-    $grouping = $entity->get('grouping')->getValue();
-    $gid = $grouping[0]['target_id'];
-    if (!empty($field_file_csv[0]['target_id'])) {
-      // Get CSV file.
-      $parsed_csv = new CSVParser($field_file_csv[0]['target_id']);
-      // Validate CSV headers.
-      if (!$parsed_csv->validateHeaders()) {
-        throw new Exception(t('The CSV header not formatted properly'));
-      }
-      // Iterate events.
-      $count = 0;
-      foreach ($parsed_csv->getEvents() as $parsed_event) {
-        // Validate event.
-        $count++;
-        $parsed_event['grouping'] = $gid;
-        $parsed_event['user_id'] = \Drupal::currentUser()->id();
-        $event = Event::create($parsed_event);
-        $errors = $event->validate();
-        if ($errors->count() > 0) {
-          $error_list = [];
-          $error_count = 0;
-          foreach ($errors as $error) {
-            $error_message = strip_tags($error->getMessage());
-            // Skip missing EventRepeater entity error.
-            if ($error_message !== (string) t('This value should not be null.')) {
-              $error_list[] = $error_message;
-              $error_count++;
-            }
-            if ($error_count > EA_IMPORTS_MAX_ERRORS) {
-              break;
-            }
-          }
-          if ($error_count > 0) {
-            throw new Exception(t('Errors found in row @row: @errors', array(
-              '@row' => $count,
-              '@errors' => implode(', ', $error_list),
-            )));
-          }
-        }
-      }
-    }
-  }
   // If the import is an ICalendar file, validate the content of it.
-  elseif ($entity->bundle() === EA_IMPORTS_BUNDLE_ICALENDAR) {
+  if ($entity->bundle() === EA_IMPORTS_BUNDLE_ICALENDAR) {
     $field_url = $entity->get('field_url')->getValue();
     $grouping = $entity->get('grouping')->getValue();
     $filter_title = $entity->get('field_filter_title')->getValue();
@@ -212,26 +167,8 @@ function ea_imports_import_insert(EntityInterface $entity) {
     $grouping = $entity->get('grouping')->getValue();
     $gid = $grouping[0]['target_id'];
     // Get CSV file.
-    $parsed_csv = new CSVParser($field_file_csv[0]['target_id']);
-    // Iterate events.
-    $count = 0;
-    foreach ($parsed_csv->getEvents() as $parsed_event) {
-      $count++;
-      // Create event.
-      $parsed_event['grouping'] = $gid;
-      $parsed_event['user_id'] = \Drupal::currentUser()->id();
-      $event = Event::create($parsed_event);
-      $event->save();
-    }
-    if ($count > 1) {
-      drupal_set_message(t('@count events imported', array('@count' => $count)));
-    }
-    elseif ($count === 1) {
-      drupal_set_message(t('One event imported'));
-    }
-    else {
-      drupal_set_message(t('No events imported'), 'warning');
-    }
+    $parsed_csv = new CSVParser($field_file_csv[0]['target_id'], $gid);
+    $parsed_csv->import();
   }
   // If the import is an ICalendar file, import the content of it.
   elseif ($entity->bundle() === EA_IMPORTS_BUNDLE_ICALENDAR) {
@@ -389,8 +326,34 @@ function ea_imports_cron() {
  * Disallow changes to the source file of existing import entities.
  */
 function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id === 'import_icalendar_edit_form') {
+  if ($form_id === 'import_csv_add_form') {
+    $form['#validate'][] = '_ea_imports_validate_csv';
+  }
+  elseif ($form_id === 'import_icalendar_edit_form') {
     $form['field_url']['#access'] = 0;
+  }
+}
+
+/**
+ * Validation function for the CSV import form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param FormStateInterface $form_state
+ *   The form state to validate.
+ */
+function _ea_imports_validate_csv(&$form, FormStateInterface $form_state) {
+  $trigger = $form_state->getTriggeringElement();
+  // Do not validate on file upload button trigger.
+  if (!empty($trigger['#name']) && $trigger['#name'] !== 'field_file_csv_0_upload_button' && $trigger['#name'] !== 'field_file_csv_0_remove_button') {
+    if (!empty($form_state->getValue('field_file_csv')[0]['fids'][0])) {
+      $fid = $form_state->getValue('field_file_csv')[0]['fids'][0];
+      $gid = $form_state->getValue('grouping')[0]['target_id'];
+      $parsed_csv = new CSVParser($fid, $gid);
+      if (!$parsed_csv->validate()) {
+        $form_state->setErrorByName('field_file_csv', $parsed_csv->getErrorMessage());
+      }
+    }
   }
 }
 
