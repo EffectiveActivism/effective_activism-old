@@ -9,6 +9,7 @@ use Drupal\ea_data\Entity\Data;
 use Drupal\ea_activities\Entity\Activity;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityStorageException;
+use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Parses ICalendar.
