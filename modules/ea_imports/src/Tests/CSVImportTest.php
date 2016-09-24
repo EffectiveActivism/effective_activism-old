@@ -5,7 +5,6 @@ namespace Drupal\ea_imports\Tests;
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_data\Entity\DataType;
-use Drupal\ea_activities\Entity\ActivityType;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
 
@@ -66,7 +65,7 @@ class CSVImportTest extends ImportWebTestBase {
 
   /**
    * Create grouping.
-   * 
+   *
    * @return Grouping
    *   The created grouping.
    */
@@ -84,7 +83,7 @@ class CSVImportTest extends ImportWebTestBase {
 
   /**
    * Create leaflet data type.
-   * 
+   *
    * @return DataType
    *   The created leaflet data type.
    */
@@ -162,4 +161,5 @@ class CSVImportTest extends ImportWebTestBase {
     $this->assertResponse(200);
     $this->assertText('Created the Leafleting Activity type.', 'Added a new activity type.');
   }
+
 }

@@ -2,14 +2,12 @@
 
 namespace Drupal\ea_imports\Parser;
 
-use Drupal\ea_imports\Parser\ParserValidationException;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_events\Entity\Event;
 use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\ea_data\Entity\Data;
 use Drupal\ea_activities\Entity\Activity;
 use Drupal\file\Entity\File;
-use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Entity\EntityStorageException;
 
 /**
@@ -33,14 +31,14 @@ class CSVParser {
 
   /**
    * The current line number.
-   * 
+   *
    * @var int
    */
   private $line;
 
   /**
    * The current column number.
-   * 
+   *
    * @var int
    */
   private $column;
@@ -51,18 +49,18 @@ class CSVParser {
    * @var array
    */
   private $fieldDefinitions;
-  
+
   /**
    * The parsed data.
-   * 
-   * $var array
+   *
+   * @var array
    */
   private $data;
 
   /**
    * Any validation error message.
-   * 
-   * $var array
+   *
+   * @var array
    */
   private $errorMessage;
 
@@ -218,12 +216,12 @@ class CSVParser {
 
   /**
    * Filters definitions from the entity basefield definitions.
-   * 
-   * @param string @type
+   *
+   * @param string $type
    *   The entity type.
-   * @param string @bundle
-   *   The entity bundle
-   * 
+   * @param string $bundle
+   *   The entity bundle.
+   *
    * @return array
    *   An array of field definitions for the entity type.
    */
@@ -295,13 +293,13 @@ class CSVParser {
 
   /**
    * Validate a value by the corresponding field definition.
-   * 
+   *
    * @param string $value
    *   A value to validate.
    * @param BaseFieldDefinition $fieldDefinition
    *   The field definition to validate against.
    */
-  private function validateValue($value, $fieldDefinition = NULL) {
+  private function validateValue($value, BaseFieldDefinition $fieldDefinition = NULL) {
     if (empty($fieldDefinition)) {
       throw new ParserValidationException(INVALID_HEADERS);
     }
@@ -313,7 +311,7 @@ class CSVParser {
     }
     switch ($fieldDefinition->getType()) {
       case 'integer':
-        if (!is_integer($value)) {
+        if (!is_int($value)) {
           throw new ParserValidationException(WRONG_INT_FORMAT, $this->line + 1, $this->column + 1);
         }
         break;
@@ -361,7 +359,9 @@ class CSVParser {
                 throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($activityEntityTypeFieldDefinitions)]));
               }
               // Set data entity type.
-              $dataEntityValues = ['type' => str_replace('field_', '', array_keys($dataEntityValues)[0])] + $dataEntityValues;
+              $dataEntityValues = [
+                'type' => str_replace('field_', '', array_keys($dataEntityValues)[0]),
+              ] + $dataEntityValues;
               if (array_keys($dataEntityValues) !== array_keys($activityEntityTypeFieldDefinitions)) {
                 throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($activityEntityTypeFieldDefinitions)]));
               }
@@ -397,14 +397,14 @@ class CSVParser {
 
   /**
    * Unpacks a json-formatted array into an entity.
-   * 
+   *
    * @param string $type
    *   The entity type to expect.
    * @param string $json
    *   A json-formatted string defining an entity.
    * @param bool $save
    *   Whether or not the entity should be saved.
-   * 
+   *
    * @return array
    *   The unpacked entity id(s).
    */
@@ -418,7 +418,7 @@ class CSVParser {
             $taskEntity = Task::create($array);
             if ($taskEntity && $save) {
               $taskEntity->save();
-              $ids[] = $taskEntity-id();
+              $ids[] = $taskEntity->id();
               break;
             }
             break;
@@ -427,7 +427,7 @@ class CSVParser {
             $eventRepeaterEntity = EventRepeater::create($array);
             if ($eventRepeaterEntity && $save) {
               $eventRepeaterEntity->save();
-              $ids[] = $eventRepeaterEntity-id();
+              $ids[] = $eventRepeaterEntity->id();
             }
             break;
 

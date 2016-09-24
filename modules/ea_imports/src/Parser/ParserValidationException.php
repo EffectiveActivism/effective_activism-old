@@ -27,28 +27,28 @@ class ParserValidationException extends Exception {
 
   /**
    * Data line number.
-   * 
+   *
    * @var int
    */
   private $dataLine;
 
   /**
    * Data column number.
-   * 
+   *
    * @var int
    */
   private $dataColumn;
 
   /**
    * Additional information.
-   * 
+   *
    * @var string
    */
   private $additionalInformation;
 
   /**
    * Constructs a ParserValidationException.
-   * 
+   *
    * @param string $message
    *   The exception message.
    * @param int $line
@@ -58,7 +58,7 @@ class ParserValidationException extends Exception {
    * @param string $additionalInformation
    *   Any extra information that needs to be passed as a variable.
    */
-  public function __construct($message, int $line = NULL, int $column = NULL, $additionalInformation = NULL) {
+  public function __construct($message, $line = NULL, $column = NULL, $additionalInformation = NULL) {
     $this->dataLine = $line;
     $this->dataColumn = $column;
     $this->additionalInformation = $additionalInformation;
@@ -67,18 +67,18 @@ class ParserValidationException extends Exception {
 
   /**
    * Set the current line of the data file.
-   * 
-   * @param int dataLine
+   *
+   * @param int $dataLine
    *   The current line of the file.
    */
-  public function setDataLine(int $dataLine) {
+  public function setDataLine($dataLine) {
     $this->dataLine = $dataLine;
     return $this;
   }
 
   /**
    * Returns the line of the data file where the exception was registered.
-   * 
+   *
    * @return int
    *   The line number.
    */
@@ -88,18 +88,18 @@ class ParserValidationException extends Exception {
 
   /**
    * Set the current column of the data file.
-   * 
-   * @param int dataColumn
+   *
+   * @param int $dataColumn
    *   The current column of the file.
    */
-  public function setDataColumn(int $dataColumn) {
+  public function setDataColumn($dataColumn) {
     $this->dataColumn = $dataColumn;
     return $this;
   }
 
   /**
    * Returns the column of the data file where the exception was registered.
-   * 
+   *
    * @return int
    *   The column number.
    */
@@ -109,8 +109,8 @@ class ParserValidationException extends Exception {
 
   /**
    * Set the additional information.
-   * 
-   * @param int additionalInformation
+   *
+   * @param int $additionalInformation
    *   The current column of the file.
    */
   public function setAdditionalInformation($additionalInformation) {
@@ -120,7 +120,7 @@ class ParserValidationException extends Exception {
 
   /**
    * Returns the additional information.
-   * 
+   *
    * @return string
    *   The additional information.
    */

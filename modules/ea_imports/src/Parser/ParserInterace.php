@@ -25,10 +25,9 @@ interface ParserInterface {
    */
   public function import();
 
-
   /**
    * Returns a translated error message, if any.
-   * 
+   *
    * @return string
    *   The error message.
    */
