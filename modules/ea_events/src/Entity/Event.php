@@ -325,13 +325,7 @@ class Event extends ContentEntityBase implements EventInterface {
         'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
+        'type' => 'grouping_selector',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
