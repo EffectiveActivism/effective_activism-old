@@ -47,9 +47,9 @@ class LocationController {
   public function validateAddress($address) {
     // First check cache.
     $database = \Drupal::database();
-    $matches = $database->select('ea_locations_addresses')
-      ->fields('id')
-      ->condition('address', $address)
+    $matches = $database->select('ea_locations_addresses', 'location')
+      ->fields('location', ['id'])
+      ->condition('location.address', $address)
       ->countQuery()
       ->execute()
       ->fetchField();
