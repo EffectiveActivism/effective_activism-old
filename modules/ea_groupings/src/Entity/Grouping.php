@@ -183,11 +183,11 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
       $query->notExists('parent');
     }
     switch ($role) {
-      case MANAGER_ROLE:
+      case Roles::MANAGER_ROLE:
         $query->condition('managers', $user->id());
         break;
 
-      case ORGANIZER_ROLE:
+      case Roles::ORGANIZER_ROLE:
         $query->condition('organizers', $user->id());
 
       default:
@@ -415,13 +415,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
         'weight' => 2,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
+        'type' => 'parent_grouping_selector',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)
