@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_groupings\Form;
 
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -27,8 +28,15 @@ class GroupingForm extends ContentEntityForm {
     $entity = $this->entity;
     $parent = $form_state->getValue('parent');
     // Groupings may not have themselves as parent.
-    if (!empty($entity) && $entity->id() === $parent[0]['target_id']) {
+    if (!empty($entity) && !empty($parent[0]['target_id']) && $entity->id() === $parent[0]['target_id']) {
       $form_state->setErrorByName('parent', $this->t('A grouping cannot have itself as parent.'));
+    }
+    // Groupings may not have children as parents.
+    if (!empty($parent[0]['target_id'])) {
+      $grouping = Grouping::load($parent[0]['target_id']);
+      if (!empty($grouping->get('parent')->entity)) {
+        $form_state->setErrorByName('parent', $this->t('The selected parent grouping has a parent itself.'));
+      }
     }
   }
 
