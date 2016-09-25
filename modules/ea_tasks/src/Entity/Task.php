@@ -5,7 +5,7 @@ namespace Drupal\ea_tasks\Entity;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\ea_tasks\TaskInterface;
@@ -36,9 +36,11 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "task",
+ *   revision_table = "task_revision",
  *   admin_permission = "administer task entities",
  *   entity_keys = {
  *     "id" = "id",
+ *     "revision" = "revision_id",
  *     "label" = "type",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
@@ -55,7 +57,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "task.settings"
  * )
  */
-class Task extends ContentEntityBase implements TaskInterface {
+class Task extends RevisionableContentEntityBase implements TaskInterface {
 
   use EntityChangedTrait;
 
@@ -156,6 +158,10 @@ class Task extends ContentEntityBase implements TaskInterface {
       ->setLabel(t('UUID'))
       ->setDescription(t('The UUID of the Task entity.'))
       ->setReadOnly(TRUE);
+    $fields['revision_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The Revision ID of the Task entity.'))
+      ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Task entity.'))
@@ -184,6 +190,7 @@ class Task extends ContentEntityBase implements TaskInterface {
     $fields['type'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Type'))
       ->setDescription(t('The type of the Task.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -202,6 +209,7 @@ class Task extends ContentEntityBase implements TaskInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'person')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -222,10 +230,12 @@ class Task extends ContentEntityBase implements TaskInterface {
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Task is published.'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Task entity.'))
+      ->setRevisionable(TRUE)
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,

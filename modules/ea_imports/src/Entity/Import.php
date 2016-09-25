@@ -5,7 +5,7 @@ namespace Drupal\ea_imports\Entity;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
@@ -38,11 +38,13 @@ use Drupal\user\UserInterface;
  *   },
  *   base_table = "import",
  *   data_table = "import_field_data",
+ *   revision_table = "import_revision",
  *   translatable = TRUE,
  *   admin_permission = "administer import entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
+ *     "revision" = "revision_id",
  *     "label" = "id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
@@ -61,7 +63,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "entity.import_type.edit_form"
  * )
  */
-class Import extends ContentEntityBase implements ImportInterface {
+class Import extends RevisionableContentEntityBase implements ImportInterface {
 
   use EntityChangedTrait;
 
@@ -147,9 +149,14 @@ class Import extends ContentEntityBase implements ImportInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields['revision_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The Revision ID of the Import entity.'))
+      ->setReadOnly(TRUE);
     $fields['grouping'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Grouping'))
       ->setDescription(t('The grouping that this event belongs to.'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'grouping')
       ->setSetting('handler', 'default')
       ->setCardinality(1)
@@ -191,6 +198,7 @@ class Import extends ContentEntityBase implements ImportInterface {
     $fields['events'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Events'))
       ->setDescription(t('The events that belongs to this import.'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'event')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -208,16 +216,14 @@ class Import extends ContentEntityBase implements ImportInterface {
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Import is published.'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
-
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
-
     $fields['changed'] = BaseFieldDefinition::create('changed')
       ->setLabel(t('Changed'))
       ->setDescription(t('The time that the entity was last edited.'));
-
     return $fields;
   }
 

@@ -4,7 +4,7 @@ namespace Drupal\ea_people\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\ea_people\PersonInterface;
@@ -35,9 +35,11 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "person",
+ *   revision_table = "person_revision",
  *   admin_permission = "administer person entities",
  *   entity_keys = {
  *     "id" = "id",
+ *     "revision" = "revision_id",
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
@@ -54,7 +56,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "person.settings"
  * )
  */
-class Person extends ContentEntityBase implements PersonInterface {
+class Person extends RevisionableContentEntityBase implements PersonInterface {
 
   use EntityChangedTrait;
 
@@ -155,6 +157,10 @@ class Person extends ContentEntityBase implements PersonInterface {
       ->setLabel(t('UUID'))
       ->setDescription(t('The UUID of the Person entity.'))
       ->setReadOnly(TRUE);
+    $fields['revision_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The Revision ID of the Person entity.'))
+      ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Person entity.'))
@@ -183,6 +189,7 @@ class Person extends ContentEntityBase implements PersonInterface {
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
       ->setDescription(t('The name of the Person entity.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -202,6 +209,7 @@ class Person extends ContentEntityBase implements PersonInterface {
     $fields['mobile_phone_number'] = BaseFieldDefinition::create('telephone')
       ->setLabel(t('Mobile phone number'))
       ->setDescription(t('The mobile phone number of the person, prefixed by country code.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -221,6 +229,7 @@ class Person extends ContentEntityBase implements PersonInterface {
     $fields['email_address'] = BaseFieldDefinition::create('email')
       ->setLabel(t('E-mail address'))
       ->setDescription(t('The e-mail address of the person.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -240,10 +249,12 @@ class Person extends ContentEntityBase implements PersonInterface {
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Person is published.'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Person entity.'))
+      ->setRevisionable(TRUE)
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,

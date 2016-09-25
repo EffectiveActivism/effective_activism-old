@@ -4,7 +4,7 @@ namespace Drupal\ea_activities\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\ea_activities\ActivityInterface;
@@ -36,10 +36,12 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "activity",
+ *   revision_table = "activity_revision",
  *   admin_permission = "administer activity entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
+ *     "revision" = "revision_id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -56,7 +58,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "entity.activity_type.edit_form"
  * )
  */
-class Activity extends ContentEntityBase implements ActivityInterface {
+class Activity extends RevisionableContentEntityBase implements ActivityInterface {
 
   use EntityChangedTrait;
 
@@ -150,6 +152,10 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       ->setDescription(t('The Activity type/bundle.'))
       ->setSetting('target_type', 'activity_type')
       ->setRequired(TRUE);
+    $fields['revision_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The Revision ID of the Activity entity.'))
+      ->setReadOnly(TRUE);
     $fields['uuid'] = BaseFieldDefinition::create('uuid')
       ->setLabel(t('UUID'))
       ->setDescription(t('The UUID of the Activity entity.'))
@@ -180,10 +186,12 @@ class Activity extends ContentEntityBase implements ActivityInterface {
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
     $fields['status'] = BaseFieldDefinition::create('boolean')
+      ->setRevisionable(TRUE)
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Activity is published.'))
       ->setDefaultValue(TRUE);
     $fields['langcode'] = BaseFieldDefinition::create('language')
+      ->setRevisionable(TRUE)
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Activity entity.'))
       ->setDisplayOptions('form', array(

@@ -5,7 +5,7 @@ namespace Drupal\ea_events\Entity;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\user\UserInterface;
@@ -37,10 +37,12 @@ use Drupal\user\UserInterface;
  *   },
  *   base_table = "event_repeater",
  *   data_table = "event_repeater_field_data",
+ *   revision_table = "event_repeater_revision",
  *   translatable = TRUE,
  *   admin_permission = "administer event repeater entities",
  *   entity_keys = {
  *     "id" = "id",
+ *     "revision" = "revision_id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -55,7 +57,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "event_repeater.settings"
  * )
  */
-class EventRepeater extends ContentEntityBase implements EventRepeaterInterface {
+class EventRepeater extends RevisionableContentEntityBase implements EventRepeaterInterface {
 
   use EntityChangedTrait;
 
@@ -136,6 +138,10 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
+    $fields['revision_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The Revision ID of the Event repeater entity.'))
+      ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Event repeater entity.'))
@@ -162,6 +168,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_freq'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Frequency'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_freq'])
       ->setRequired(TRUE)
       ->setTranslatable(TRUE)
@@ -187,6 +194,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_interval'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Repeat every'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_interval'])
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -205,6 +213,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_repeat_by'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat by'))
+      ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
       ->setRequired(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_repeat_by'])
@@ -227,6 +236,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_bymonthday'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Every'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_bymonthday'])
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -277,6 +287,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_bysetpos'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('On'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_bysetpos'])
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -301,6 +312,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_byday'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Weekday'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_byday'])
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -327,6 +339,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_bymonth'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Month'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_bymonth'])
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -358,6 +371,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_byday_multiple'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat on'))
+      ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setRequired(FALSE)
@@ -385,6 +399,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_ends'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Ends'))
+      ->setRevisionable(TRUE)
       ->setTranslatable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_ends'])
       ->setRequired(TRUE)
@@ -408,6 +423,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_count'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Occurences'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_count'])
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -425,6 +441,7 @@ class EventRepeater extends ContentEntityBase implements EventRepeaterInterface 
       ->setDisplayConfigurable('view', TRUE);
     $fields['event_until'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('On'))
+      ->setRevisionable(TRUE)
       ->setRequired(TRUE)
       ->setDefaultValue(self::DEFAULT_VALUES['event_until'])
       ->setSettings(array(

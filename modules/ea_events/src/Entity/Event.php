@@ -5,7 +5,7 @@ namespace Drupal\ea_events\Entity;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\ea_events\EventInterface;
@@ -36,9 +36,11 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "event",
+ *   revision_table = "event_revision",
  *   admin_permission = "administer event entities",
  *   entity_keys = {
  *     "id" = "id",
+ *     "revision" = "revision_id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -54,7 +56,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "event.settings"
  * )
  */
-class Event extends ContentEntityBase implements EventInterface {
+class Event extends RevisionableContentEntityBase implements EventInterface {
 
   use EntityChangedTrait;
 
@@ -140,9 +142,14 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setLabel(t('UUID'))
       ->setDescription(t('The UUID of the Event entity.'))
       ->setReadOnly(TRUE);
+    $fields['revision_id'] = BaseFieldDefinition::create('integer')
+      ->setLabel(t('Revision ID'))
+      ->setDescription(t('The Revision ID of the Event entity.'))
+      ->setReadOnly(TRUE);
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
       ->setDescription(t('The title of the event.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'text_processing' => 0,
       ))
@@ -161,6 +168,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['start_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Start date'))
       ->setDescription(t('The beginning of the event.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'default_value' => '',
         'text_processing' => 0,
@@ -184,6 +192,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['end_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('End date'))
       ->setDescription(t('The end of the event.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'default_value' => '',
         'text_processing' => 0,
@@ -207,6 +216,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['location'] = BaseFieldDefinition::create('location')
       ->setLabel(t('Location'))
       ->setDescription(t('The location of the event.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'text_processing' => 0,
       ))
@@ -225,6 +235,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
       ->setDescription(t('The description of the event.'))
+      ->setRevisionable(TRUE)
       ->setDisplayOptions('form', array(
         'type' => 'string_textarea',
         'weight' => 2,
@@ -241,6 +252,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['tasks'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Tasks'))
       ->setDescription(t('The tasks to do before, under and after the event.'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'task')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -261,6 +273,7 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['event_repeater'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Repeat'))
       ->setDescription(t('Repeat this event.'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'event_repeater')
       ->setSetting('handler', 'default')
       ->setCardinality(1)
@@ -277,6 +290,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'person')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -296,6 +310,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['activities'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Results'))
+      ->setRevisionable(TRUE)
       ->setSetting('target_type', 'activity')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
@@ -315,6 +330,7 @@ class Event extends ContentEntityBase implements EventInterface {
       ->setDisplayConfigurable('view', TRUE);
     $fields['grouping'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Grouping'))
+      ->setRevisionable(TRUE)
       ->setDescription(t('The grouping that this event belongs to.'))
       ->setSetting('target_type', 'grouping')
       ->setSetting('handler', 'default')
@@ -358,10 +374,12 @@ class Event extends ContentEntityBase implements EventInterface {
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Event is published.'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'))
       ->setDescription(t('The language code for the Event entity.'))
+      ->setRevisionable(TRUE)
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,
