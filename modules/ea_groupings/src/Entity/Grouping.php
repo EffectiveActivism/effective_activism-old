@@ -3,6 +3,7 @@
 namespace Drupal\ea_groupings\Entity;
 
 use Drupal\ea_groupings\GroupingInterface;
+use Drupal\ea_permissions\Roles;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -172,19 +173,31 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getManagedGroupings($include_children = TRUE, AccountProxyInterface $user = NULL) {
+  public static function getGroupings($include_children = TRUE, AccountProxyInterface $user = NULL, $role = NULL) {
     $groupings = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
     }
-    $query = \Drupal::entityQuery('grouping')
-      ->condition('managers', $user->id());
+    $query = \Drupal::entityQuery('grouping');
     if (!$include_children) {
       $query->notExists('parent');
     }
+    switch ($role) {
+      case Roles::MANAGER_ROLE:
+        $query->condition('managers', $user->id());
+        break;
+
+      case Roles::ORGANIZER_ROLE:
+        $query->condition('organizers', $user->id());
+
+      default:
+        $group = $query->orConditionGroup()
+          ->condition('managers', $user->id())
+          ->condition('organizers', $user->id());
+        $result = $query->condition($group);
+    }
     $result = $query->execute();
-    $groupings = Grouping::loadMultiple($result);
-    return $groupings;
+    return Grouping::loadMultiple($result);
   }
 
   /**
@@ -402,13 +415,7 @@ class Grouping extends ContentEntityBase implements GroupingInterface {
         'weight' => 2,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'entity_reference_autocomplete',
-        'settings' => array(
-          'match_operator' => 'CONTAINS',
-          'size' => '60',
-          'autocomplete_type' => 'tags',
-          'placeholder' => '',
-        ),
+        'type' => 'parent_grouping_selector',
         'weight' => -4,
       ))
       ->setDisplayConfigurable('form', TRUE)

@@ -87,7 +87,7 @@ class EventTest extends WebTestBase {
       'start_date[0][value][time]' => STARTTIME,
       'end_date[0][value][date]' => ENDDATE,
       'end_date[0][value][time]' => ENDTIME,
-      'grouping[0][target_id]' => sprintf('%s (%d)', GROUPNAME, 1),
+      'grouping[0][target_id]' => 1,
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created event.', 'Added a new event entity.');
