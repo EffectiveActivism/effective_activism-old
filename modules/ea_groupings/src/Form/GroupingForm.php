@@ -22,6 +22,16 @@ class GroupingForm extends ContentEntityForm {
     return $form;
   }
 
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $entity = $this->entity;
+    $parent = $form_state->getValue('parent');
+    // Groupings may not have themselves as parent.
+    if (!empty($entity) && $entity->id() === $parent[0]['target_id']) {
+      $form_state->setErrorByName('parent', $this->t('A grouping cannot have itself as parent.'));
+    }
+  }
+
   /**
    * {@inheritdoc}
    */
