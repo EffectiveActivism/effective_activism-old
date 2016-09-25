@@ -85,16 +85,18 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
   public function getRelatives($include_parent);
 
   /**
-   * Get groupings that a user is manager of.
+   * Get groupings that a user is attached to.
    *
    * @param bool $include_children
    *   Whether to include child groupings or not.
    * @param \Drupal\Core\Session\AccountProxyInterface $user
    *   The user object to check relationship for.
+   * @param string $role
+   *   The user role to filter by.
    *
    * @return array
-   *   An array of groupings managed by the user.
+   *   An array of groupings that the user is attached to.
    */
-  public static function getManagedGroupings($include_children, AccountProxyInterface $user);
+  public static function getGroupings($include_children, AccountProxyInterface $user, $role);
 
 }
