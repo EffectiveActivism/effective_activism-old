@@ -4,7 +4,6 @@ namespace Drupal\ea_activities\Form;
 
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_permissions\Roles;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 

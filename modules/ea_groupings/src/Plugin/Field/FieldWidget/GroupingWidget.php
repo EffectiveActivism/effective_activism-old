@@ -3,7 +3,6 @@
 namespace Drupal\ea_groupings\Plugin\Field\FieldWidget;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_permissions\Roles;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
