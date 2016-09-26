@@ -143,22 +143,10 @@ class Activity extends RevisionableContentEntityBase implements ActivityInterfac
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields['id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('ID'))
-      ->setDescription(t('The ID of the Activity entity.'))
-      ->setReadOnly(TRUE);
-    $fields['type'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Type'))
-      ->setDescription(t('The Activity type/bundle.'))
-      ->setSetting('target_type', 'activity_type')
-      ->setRequired(TRUE);
+    $fields = parent::baseFieldDefinitions($entity_type);
     $fields['revision_id'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Revision ID'))
       ->setDescription(t('The Revision ID of the Activity entity.'))
-      ->setReadOnly(TRUE);
-    $fields['uuid'] = BaseFieldDefinition::create('uuid')
-      ->setLabel(t('UUID'))
-      ->setDescription(t('The UUID of the Activity entity.'))
       ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
