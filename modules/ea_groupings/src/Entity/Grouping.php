@@ -233,9 +233,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
       ->setDescription(t('The name of the Grouping entity.'))
@@ -254,9 +252,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['phone_number'] = BaseFieldDefinition::create('telephone')
       ->setLabel(t('Phone number'))
       ->setDescription(t('The phone number of the grouping, prefixed by country code.'))
@@ -274,9 +270,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('form', array(
         'type' => 'telephone_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['email_address'] = BaseFieldDefinition::create('email')
       ->setLabel(t('E-mail address'))
       ->setDescription(t('The e-mail address of the grouping.'))
@@ -294,9 +288,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('form', array(
         'type' => 'email_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['location'] = BaseFieldDefinition::create('location')
       ->setLabel(t('Location'))
       ->setDescription(t('The location of the grouping.'))
@@ -314,9 +306,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('form', array(
         'type' => 'location_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['timezone'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Timezone'))
       ->setRevisionable(TRUE)
@@ -333,9 +323,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
       ->setDescription(t('The description of the grouping.'))
@@ -350,9 +338,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'type' => 'basic_string',
         'weight' => 2,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['members'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Members'))
       ->setRevisionable(TRUE)
@@ -370,9 +356,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'allow_existing' => TRUE,
         ),
         'weight' => 2,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['organizers'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Organizers'))
       ->setRevisionable(TRUE)
@@ -390,9 +374,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'allow_existing' => TRUE,
         ),
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['managers'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Managers'))
       ->setRevisionable(TRUE)
@@ -410,9 +392,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'allow_existing' => TRUE,
         ),
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['parent'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Parent grouping'))
       ->setRevisionable(TRUE)
@@ -426,9 +406,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('form', array(
         'type' => 'parent_grouping_selector',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Grouping is published.'))
@@ -441,8 +419,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', TRUE);
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

@@ -155,9 +155,7 @@ class Data extends RevisionableContentEntityBase implements DataInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setRevisionable(TRUE)
       ->setLabel(t('Language code'))
@@ -165,8 +163,7 @@ class Data extends RevisionableContentEntityBase implements DataInterface {
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', TRUE);
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

@@ -39,7 +39,7 @@ use Drupal\user\UserInterface;
  *   base_table = "import",
  *   data_table = "import_field_data",
  *   revision_table = "import_revision",
- *   translatable = TRUE,
+ *   translatable = FALSE,
  *   admin_permission = "administer import entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -168,9 +168,7 @@ class Import extends RevisionableContentEntityBase implements ImportInterface {
       ->setDisplayOptions('form', array(
         'type' => 'grouping_selector',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Import entity.'))
@@ -192,9 +190,7 @@ class Import extends RevisionableContentEntityBase implements ImportInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['events'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Events'))
       ->setDescription(t('The events that belongs to this import.'))
@@ -210,9 +206,7 @@ class Import extends RevisionableContentEntityBase implements ImportInterface {
       ->setDisplayOptions('form', array(
         'type' => 'hidden',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Import is published.'))

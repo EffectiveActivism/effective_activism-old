@@ -176,9 +176,7 @@ class Person extends RevisionableContentEntityBase implements PersonInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
       ->setDescription(t('The name of the Person entity.'))
@@ -196,9 +194,7 @@ class Person extends RevisionableContentEntityBase implements PersonInterface {
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['mobile_phone_number'] = BaseFieldDefinition::create('telephone')
       ->setLabel(t('Mobile phone number'))
       ->setDescription(t('The mobile phone number of the person, prefixed by country code.'))
@@ -216,9 +212,7 @@ class Person extends RevisionableContentEntityBase implements PersonInterface {
       ->setDisplayOptions('form', array(
         'type' => 'telephone_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['email_address'] = BaseFieldDefinition::create('email')
       ->setLabel(t('E-mail address'))
       ->setDescription(t('The e-mail address of the person.'))
@@ -236,9 +230,7 @@ class Person extends RevisionableContentEntityBase implements PersonInterface {
       ->setDisplayOptions('form', array(
         'type' => 'email_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Person is published.'))
@@ -251,8 +243,7 @@ class Person extends RevisionableContentEntityBase implements PersonInterface {
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', TRUE);
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

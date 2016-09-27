@@ -163,9 +163,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_freq'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Frequency'))
       ->setRevisionable(TRUE)
@@ -189,9 +187,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_interval'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Repeat every'))
       ->setRevisionable(TRUE)
@@ -208,9 +204,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ))
       ->setDisplayOptions('form', array(
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_repeat_by'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat by'))
       ->setRevisionable(TRUE)
@@ -231,9 +225,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_buttons',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_bymonthday'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Every'))
       ->setRevisionable(TRUE)
@@ -282,9 +274,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_bysetpos'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('On'))
       ->setRevisionable(TRUE)
@@ -307,9 +297,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_byday'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Weekday'))
       ->setRevisionable(TRUE)
@@ -334,9 +322,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_bymonth'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Month'))
       ->setRevisionable(TRUE)
@@ -366,9 +352,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_byday_multiple'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Repeat on'))
       ->setRevisionable(TRUE)
@@ -394,9 +378,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_buttons',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_ends'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Ends'))
       ->setRevisionable(TRUE)
@@ -418,9 +400,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_count'] = BaseFieldDefinition::create('integer')
       ->setLabel(t('Occurences'))
       ->setRevisionable(TRUE)
@@ -436,9 +416,7 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ))
       ->setDisplayOptions('form', array(
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_until'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('On'))
       ->setRevisionable(TRUE)
@@ -462,9 +440,15 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'datetime_default',
         'weight' => 1,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
+    $fields['langcode'] = BaseFieldDefinition::create('language')
+      ->setRevisionable(TRUE)
+      ->setLabel(t('Language code'))
+      ->setDescription(t('The language code for the Event Repeater entity.'))
+      ->setDisplayOptions('form', array(
+        'type' => 'language_select',
+        'weight' => 10,
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

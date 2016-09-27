@@ -170,9 +170,7 @@ class Activity extends RevisionableContentEntityBase implements ActivityInterfac
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setRevisionable(TRUE)
       ->setLabel(t('Publishing status'))
@@ -185,8 +183,7 @@ class Activity extends RevisionableContentEntityBase implements ActivityInterfac
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', TRUE);
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

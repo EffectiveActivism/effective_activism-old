@@ -155,9 +155,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['start_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Start date'))
       ->setDescription(t('The beginning of the event.'))
@@ -179,9 +177,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('form', array(
         'type' => 'datetime_default',
         'weight' => 1,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['end_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('End date'))
       ->setDescription(t('The end of the event.'))
@@ -203,9 +199,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('form', array(
         'type' => 'datetime_default',
         'weight' => 1,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['location'] = BaseFieldDefinition::create('location')
       ->setLabel(t('Location'))
       ->setDescription(t('The location of the event.'))
@@ -222,9 +216,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('form', array(
         'type' => 'location_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
       ->setDescription(t('The description of the event.'))
@@ -239,9 +231,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('view', array(
         'type' => 'basic_string',
         'weight' => 2,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['tasks'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Tasks'))
       ->setDescription(t('The tasks to do before, under and after the event.'))
@@ -260,9 +250,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'allow_existing' => FALSE,
         ),
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['event_repeater'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Repeat'))
       ->setDescription(t('Repeat this event.'))
@@ -278,9 +266,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_simple',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))
       ->setRevisionable(TRUE)
@@ -298,9 +284,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'allow_existing' => TRUE,
         ),
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['activities'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Results'))
       ->setRevisionable(TRUE)
@@ -318,9 +302,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'allow_existing' => FALSE,
         ),
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['grouping'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Grouping'))
       ->setRevisionable(TRUE)
@@ -336,9 +318,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('form', array(
         'type' => 'grouping_selector',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Event entity.'))
@@ -361,9 +341,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Event is published.'))

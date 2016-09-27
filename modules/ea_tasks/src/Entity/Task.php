@@ -177,9 +177,7 @@ class Task extends RevisionableContentEntityBase implements TaskInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['type'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Type'))
       ->setDescription(t('The type of the Task.'))
@@ -197,9 +195,7 @@ class Task extends RevisionableContentEntityBase implements TaskInterface {
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))
       ->setRevisionable(TRUE)
@@ -217,9 +213,7 @@ class Task extends RevisionableContentEntityBase implements TaskInterface {
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Task is published.'))
@@ -232,8 +226,7 @@ class Task extends RevisionableContentEntityBase implements TaskInterface {
       ->setDisplayOptions('form', array(
         'type' => 'language_select',
         'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', TRUE);
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));
