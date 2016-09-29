@@ -39,7 +39,6 @@ use Drupal\user\UserInterface;
  *   base_table = "import",
  *   data_table = "import_field_data",
  *   revision_table = "import_revision",
- *   translatable = FALSE,
  *   admin_permission = "administer import entities",
  *   entity_keys = {
  *     "id" = "id",
