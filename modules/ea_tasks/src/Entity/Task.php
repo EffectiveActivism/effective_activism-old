@@ -151,10 +151,6 @@ class Task extends RevisionableContentEntityBase implements TaskInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
-    $fields['revision_id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Revision ID'))
-      ->setDescription(t('The Revision ID of the Task entity.'))
-      ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Task entity.'))
@@ -219,14 +215,6 @@ class Task extends RevisionableContentEntityBase implements TaskInterface {
       ->setDescription(t('A boolean indicating whether the Task is published.'))
       ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Task entity.'))
-      ->setRevisionable(TRUE)
-      ->setDisplayOptions('form', array(
-        'type' => 'language_select',
-        'weight' => 10,
-      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

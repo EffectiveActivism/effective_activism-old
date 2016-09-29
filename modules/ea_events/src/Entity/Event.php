@@ -135,10 +135,6 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
-    $fields['revision_id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Revision ID'))
-      ->setDescription(t('The Revision ID of the Event entity.'))
-      ->setReadOnly(TRUE);
     $fields['title'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Title'))
       ->setDescription(t('The title of the event.'))
@@ -347,17 +343,6 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDescription(t('A boolean indicating whether the Event is published.'))
       ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Event entity.'))
-      ->setRevisionable(TRUE)
-      ->setDisplayOptions('form', array(
-        'type' => 'language_select',
-        'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', array(
-        'weight' => 10,
-      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

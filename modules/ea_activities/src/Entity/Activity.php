@@ -144,10 +144,6 @@ class Activity extends RevisionableContentEntityBase implements ActivityInterfac
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
-    $fields['revision_id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Revision ID'))
-      ->setDescription(t('The Revision ID of the Activity entity.'))
-      ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Activity entity.'))
@@ -176,14 +172,6 @@ class Activity extends RevisionableContentEntityBase implements ActivityInterfac
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Activity is published.'))
       ->setDefaultValue(TRUE);
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setRevisionable(TRUE)
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Activity entity.'))
-      ->setDisplayOptions('form', array(
-        'type' => 'language_select',
-        'weight' => 10,
-      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

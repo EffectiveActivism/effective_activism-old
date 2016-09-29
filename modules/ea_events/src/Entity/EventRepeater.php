@@ -138,10 +138,6 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     $fields = parent::baseFieldDefinitions($entity_type);
-    $fields['revision_id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('Revision ID'))
-      ->setDescription(t('The Revision ID of the Event repeater entity.'))
-      ->setReadOnly(TRUE);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Event repeater entity.'))
@@ -440,14 +436,6 @@ class EventRepeater extends RevisionableContentEntityBase implements EventRepeat
       ->setDisplayOptions('form', array(
         'type' => 'datetime_default',
         'weight' => 1,
-      ));
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setRevisionable(TRUE)
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Event Repeater entity.'))
-      ->setDisplayOptions('form', array(
-        'type' => 'language_select',
-        'weight' => 10,
       ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
