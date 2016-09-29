@@ -55,7 +55,7 @@ class CSVImportTest extends ImportWebTestBase {
     $this->drupalGet('effectiveactivism/imports/add/csv');
     $this->assertResponse(200);
     $this->drupalPostForm(NULL, array(
-      'grouping[0][target_id]' => sprintf('%s (%d)', ImportWebTestBase::GROUPNAME, $this->grouping->id()),
+      'grouping[0][target_id]' => $this->grouping->id(),
       'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
       'files[field_file_csv_0]' => $this->container->get('file_system')->realpath(drupal_get_path('module', 'ea_imports') . '/src/Tests/sample.csv'),
     ), t('Save'));
