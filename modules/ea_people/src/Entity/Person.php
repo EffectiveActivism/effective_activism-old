@@ -4,7 +4,7 @@ namespace Drupal\ea_people\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\ea_people\PersonInterface;
@@ -35,9 +35,11 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "person",
+ *   revision_table = "person_revision",
  *   admin_permission = "administer person entities",
  *   entity_keys = {
  *     "id" = "id",
+ *     "revision" = "revision_id",
  *     "label" = "name",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
@@ -54,7 +56,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "person.settings"
  * )
  */
-class Person extends ContentEntityBase implements PersonInterface {
+class Person extends RevisionableContentEntityBase implements PersonInterface {
 
   use EntityChangedTrait;
 
@@ -147,14 +149,7 @@ class Person extends ContentEntityBase implements PersonInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields['id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('ID'))
-      ->setDescription(t('The ID of the Person entity.'))
-      ->setReadOnly(TRUE);
-    $fields['uuid'] = BaseFieldDefinition::create('uuid')
-      ->setLabel(t('UUID'))
-      ->setDescription(t('The UUID of the Person entity.'))
-      ->setReadOnly(TRUE);
+    $fields = parent::baseFieldDefinitions($entity_type);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Person entity.'))
@@ -177,12 +172,11 @@ class Person extends ContentEntityBase implements PersonInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['name'] = BaseFieldDefinition::create('string')
       ->setLabel(t('Name'))
       ->setDescription(t('The name of the Person entity.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -196,12 +190,11 @@ class Person extends ContentEntityBase implements PersonInterface {
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['mobile_phone_number'] = BaseFieldDefinition::create('telephone')
       ->setLabel(t('Mobile phone number'))
       ->setDescription(t('The mobile phone number of the person, prefixed by country code.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -215,12 +208,11 @@ class Person extends ContentEntityBase implements PersonInterface {
       ->setDisplayOptions('form', array(
         'type' => 'telephone_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['email_address'] = BaseFieldDefinition::create('email')
       ->setLabel(t('E-mail address'))
       ->setDescription(t('The e-mail address of the person.'))
+      ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
         'text_processing' => 0,
@@ -234,21 +226,12 @@ class Person extends ContentEntityBase implements PersonInterface {
       ->setDisplayOptions('form', array(
         'type' => 'email_default',
         'weight' => -4,
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
+      ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))
       ->setDescription(t('A boolean indicating whether the Person is published.'))
+      ->setRevisionable(TRUE)
       ->setDefaultValue(TRUE);
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Person entity.'))
-      ->setDisplayOptions('form', array(
-        'type' => 'language_select',
-        'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', TRUE);
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

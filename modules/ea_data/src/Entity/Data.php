@@ -4,7 +4,7 @@ namespace Drupal\ea_data\Entity;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
-use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\RevisionableContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\ea_data\DataInterface;
@@ -36,10 +36,12 @@ use Drupal\user\UserInterface;
  *     },
  *   },
  *   base_table = "data",
+ *   revision_table = "data_revision",
  *   admin_permission = "administer data entities",
  *   entity_keys = {
  *     "id" = "id",
  *     "bundle" = "type",
+ *     "revision" = "revision_id",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -56,7 +58,7 @@ use Drupal\user\UserInterface;
  *   field_ui_base_route = "entity.data_type.edit_form"
  * )
  */
-class Data extends ContentEntityBase implements DataInterface {
+class Data extends RevisionableContentEntityBase implements DataInterface {
 
   use EntityChangedTrait;
 
@@ -126,19 +128,7 @@ class Data extends ContentEntityBase implements DataInterface {
    * {@inheritdoc}
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
-    $fields['id'] = BaseFieldDefinition::create('integer')
-      ->setLabel(t('ID'))
-      ->setDescription(t('The ID of the Data entity.'))
-      ->setReadOnly(TRUE);
-    $fields['type'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Type'))
-      ->setDescription(t('The Data type/bundle.'))
-      ->setSetting('target_type', 'data_type')
-      ->setRequired(TRUE);
-    $fields['uuid'] = BaseFieldDefinition::create('uuid')
-      ->setLabel(t('UUID'))
-      ->setDescription(t('The UUID of the Data entity.'))
-      ->setReadOnly(TRUE);
+    $fields = parent::baseFieldDefinitions($entity_type);
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
       ->setDescription(t('The user ID of author of the Data entity.'))
@@ -161,17 +151,7 @@ class Data extends ContentEntityBase implements DataInterface {
           'autocomplete_type' => 'tags',
           'placeholder' => '',
         ),
-      ))
-      ->setDisplayConfigurable('form', TRUE)
-      ->setDisplayConfigurable('view', TRUE);
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'))
-      ->setDescription(t('The language code for the Data entity.'))
-      ->setDisplayOptions('form', array(
-        'type' => 'language_select',
-        'weight' => 10,
-      ))
-      ->setDisplayConfigurable('form', TRUE);
+      ));
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
       ->setDescription(t('The time that the entity was created.'));

@@ -240,7 +240,12 @@ class CSVParser {
     unset($fieldDefinitions['langcode']);
     unset($fieldDefinitions['created']);
     unset($fieldDefinitions['changed']);
-    // Do not include grouping field as this is set on the Import entity.
+    // Also exclude revision fields.
+    unset($fieldDefinitions['revision_id']);
+    unset($fieldDefinitions['revision_created']);
+    unset($fieldDefinitions['revision_user']);
+    unset($fieldDefinitions['revision_log_message']);
+    // Do not include grouping field as this is taken from the Import entity.
     unset($fieldDefinitions['grouping']);
     return $fieldDefinitions;
   }
