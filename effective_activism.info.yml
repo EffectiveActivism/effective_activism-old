@@ -6,7 +6,7 @@ package: Effective Activism
 dependencies:
   - ea_permissions
   - ea_groupings
-  - ea_activities
+  - ea_results
   - ea_data
   - ea_people
   - ea_locations

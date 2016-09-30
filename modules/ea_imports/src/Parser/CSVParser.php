@@ -6,7 +6,7 @@ use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_events\Entity\Event;
 use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\ea_data\Entity\Data;
-use Drupal\ea_activities\Entity\Activity;
+use Drupal\ea_results\Entity\Result;
 use Drupal\file\Entity\File;
 use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -142,7 +142,7 @@ class CSVParser {
           break;
 
         case PERMISSION_DENIED:
-          $this->errorMessage('The CSV file contains a row with an activity that is not permissable for this grouping at line @line, column @column', ['@line' => $this->line, '@column' => $this->column]);
+          $this->errorMessage('The CSV file contains a row with an result that is not permissable for this grouping at line @line, column @column', ['@line' => $this->line, '@column' => $this->column]);
           break;
 
         default:
@@ -345,7 +345,7 @@ class CSVParser {
         if (!empty($value)) {
           // Load the base field definitions of the referenced entity type.
           $referecedEntityType = $fieldDefinition->getItemDefinition()->getSetting('target_type');
-          if ($referecedEntityType === 'activity') {
+          if ($referecedEntityType === 'result') {
             // This is a special case: We need to ensure that the
             // data type is defined in the json array and set
             // the basefield definitions to match the specific data type.
@@ -356,20 +356,20 @@ class CSVParser {
               throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1);
             }
             // Validate array against field definitions.
-            foreach ($decoded_json as $activityEntityType => $dataEntityValues) {
-              if (empty($activityEntityType) || !is_string($activityEntityType)) {
+            foreach ($decoded_json as $resultEntityType => $dataEntityValues) {
+              if (empty($resultEntityType) || !is_string($resultEntityType)) {
                 throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1);
               }
-              $activityEntityTypeFieldDefinitions = $this->getFieldDefinitions('activity', $activityEntityType);
+              $resultEntityTypeFieldDefinitions = $this->getFieldDefinitions('result', $resultEntityType);
               if (!is_array($dataEntityValues)) {
-                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($activityEntityTypeFieldDefinitions)]));
+                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($resultEntityTypeFieldDefinitions)]));
               }
               // Set data entity type.
               $dataEntityValues = [
                 'type' => str_replace('field_', '', array_keys($dataEntityValues)[0]),
               ] + $dataEntityValues;
-              if (array_keys($dataEntityValues) !== array_keys($activityEntityTypeFieldDefinitions)) {
-                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($activityEntityTypeFieldDefinitions)]));
+              if (array_keys($dataEntityValues) !== array_keys($resultEntityTypeFieldDefinitions)) {
+                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($resultEntityTypeFieldDefinitions)]));
               }
             }
           }
@@ -447,8 +447,8 @@ class CSVParser {
             }
             break;
 
-          case 'activities':
-            foreach ($array as $activityType => $dataValues) {
+          case 'results':
+            foreach ($array as $resultType => $dataValues) {
               // Get data types and save corresponding data entities.
               $dataIds = [];
               foreach ($dataValues as $dataField => $dataValue) {
@@ -461,12 +461,12 @@ class CSVParser {
                   $dataIds[] = $dataEntity->id();
                 }
               }
-              $array['type'] = $activityType;
+              $array['type'] = $resultType;
               $array[$dataField] = $dataIds;
-              $activityEntity = Activity::create($array);
-              if ($activityEntity && $save) {
-                $activityEntity->save();
-                $ids[] = $activityEntity->id();
+              $resultEntity = Result::create($array);
+              if ($resultEntity && $save) {
+                $resultEntity->save();
+                $ids[] = $resultEntity->id();
               }
             }
             break;

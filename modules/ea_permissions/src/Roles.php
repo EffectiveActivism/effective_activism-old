@@ -22,10 +22,10 @@ class Roles {
     'view published person entities',
     // Grouping permissions.
     'view published grouping entities',
-    // Activity permissions.
-    'add activity entities',
-    'edit activity entities',
-    'view published activity entities',
+    // Result permissions.
+    'add result entities',
+    'edit result entities',
+    'view published result entities',
     // Data permissions.
     'add data entities',
     'edit data entities',
@@ -68,11 +68,11 @@ class Roles {
     // Grouping permissions.
     'add grouping entities',
     'view published grouping entities',
-    // Activity permissions.
-    'administer activity entities',
-    'add activity entities',
-    'edit activity entities',
-    'view published activity entities',
+    // Result permissions.
+    'administer result entities',
+    'add result entities',
+    'edit result entities',
+    'view published result entities',
     // Data permissions.
     'add data entities',
     'edit data entities',

@@ -9,6 +9,6 @@ dependencies:
   - ea_tasks
   - ea_permissions
   - ea_people
-  - ea_activities
+  - ea_results
   - file
   - link
