@@ -92,7 +92,7 @@ class DataTest extends WebTestBase {
   private function createDataEntity() {
     $this->drupalLogin($this->organizer);
     // Create a data entity using the data type.
-    $this->drupalGet('effectiveactivism/data/add');
+    $this->drupalGet('effectiveactivism/data/add/data_type_test');
     $this->assertResponse(200);
     $random_value = rand();
     $this->drupalPostForm(NULL, array(

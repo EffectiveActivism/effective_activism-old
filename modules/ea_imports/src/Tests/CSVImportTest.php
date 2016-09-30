@@ -4,7 +4,6 @@ namespace Drupal\ea_imports\Tests;
 
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_data\Entity\DataType;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
 
@@ -16,8 +15,6 @@ use Drupal\field\Entity\FieldConfig;
 class CSVImportTest extends ImportWebTestBase {
 
   private $grouping;
-
-  private $dataType;
 
   private $organizer;
 
@@ -33,7 +30,6 @@ class CSVImportTest extends ImportWebTestBase {
     $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
     $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
     $this->grouping = $this->createGrouping();
-    $this->dataType = $this->createLeafletDataType();
     $this->createResultType();
     // Create CSV file.
     $data = file_get_contents($this->container->get('file_system')->realpath(drupal_get_path('module', 'ea_imports') . '/src/Tests/sample.csv'));
@@ -79,62 +75,6 @@ class CSVImportTest extends ImportWebTestBase {
     ));
     $grouping->save();
     return $grouping;
-  }
-
-  /**
-   * Create leaflet data type.
-   *
-   * @return DataType
-   *   The created leaflet data type.
-   */
-  private function createLeafletDataType() {
-    $bundle = 'leaflets';
-    $label = 'Leaflets';
-    $entity_type_id = 'data';
-    $field_name = 'field_leaflets';
-    // Create data type.
-    $dataType = DataType::create(array(
-      'id' => $bundle,
-      'label' => $label,
-    ));
-    $dataType->save();
-    // Add an integer field to the data type.
-    $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
-    if (empty($field_storage)) {
-      $field_storage = FieldStorageConfig::create(array(
-        'field_name' => $field_name,
-        'entity_type' => $entity_type_id,
-        'type' => 'integer',
-        'cardinality' => 1,
-        'module' => 'core',
-        'settings' => ['min' => '0'],
-      ))->save();
-    }
-    $field = FieldConfig::loadByName($entity_type_id, $bundle, $field_name);
-    if (empty($field)) {
-      $field = FieldConfig::create(array(
-        'field_name' => $field_name,
-        'entity_type' => $entity_type_id,
-        'bundle' => $bundle,
-        'label' => $label,
-      ));
-      $field
-        ->setRequired(TRUE)
-        ->save();
-    }
-    // Form display settings for field_integer_input.
-    entity_get_form_display($entity_type_id, $bundle, 'default')
-      ->setComponent($field_name, array(
-        'type' => 'number',
-      ))
-      ->save();
-    // View display settings for field_integer_input.
-    entity_get_display($entity_type_id, $bundle, 'default')
-      ->setComponent($field_name, array(
-        'type' => 'number_integer',
-      ))
-      ->save();
-    return $dataType;
   }
 
   /**
