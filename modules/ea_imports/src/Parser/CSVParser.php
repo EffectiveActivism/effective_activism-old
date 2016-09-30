@@ -172,7 +172,7 @@ class CSVParser {
           switch ($this->fieldDefinitions[$name]->getType()) {
             case 'datetime':
               // Format datetime object.
-              $value = date(DATETIME_DATETIME_STORAGE_FORMAT, $row[$column]);
+              $value = date(DATETIME_DATETIME_STORAGE_FORMAT, strtotime($row[$column]));
               break;
 
             case 'location':
@@ -323,7 +323,14 @@ class CSVParser {
         break;
 
       case 'datetime':
-        if (!is_numeric($value)) {
+        $matches = [];
+        if (!preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) (2[0-3]|[01][0-9]):([0-5][0-9])$/', $value, $matches)) {
+          throw new ParserValidationException(WRONG_DATE_FORMAT, $this->line + 1, $this->column + 1);
+        }
+        if (empty($matches) || count($matches) < 4) {
+          throw new ParserValidationException(WRONG_DATE_FORMAT, $this->line + 1, $this->column + 1);
+        }
+        if (!checkdate($matches[2], $matches[3], $matches[1])) {
           throw new ParserValidationException(WRONG_DATE_FORMAT, $this->line + 1, $this->column + 1);
         }
         break;
