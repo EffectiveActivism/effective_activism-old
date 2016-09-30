@@ -4,8 +4,6 @@ namespace Drupal\ea_imports\Tests;
 
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\field\Entity\FieldConfig;
 
 /**
  * Function tests for ea_imports CSV import entity type.
