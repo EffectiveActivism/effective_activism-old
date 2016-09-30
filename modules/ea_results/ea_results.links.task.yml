@@ -1,0 +1,17 @@
+# Result routing definition
+entity.result.canonical:
+  route_name: entity.result.canonical
+  base_route: entity.result.canonical
+  title: 'View'
+
+entity.result.edit_form:
+  route_name: entity.result.edit_form
+  base_route: entity.result.canonical
+  title: Edit
+
+entity.result.delete_form:
+  route_name:  entity.result.delete_form
+  base_route:  entity.result.canonical
+  title: Delete
+  weight: 10
+
