@@ -1,0 +1,19 @@
+add result entities:
+  title: 'Create new Result entities'
+
+administer result entities:
+  title: 'Administer Result entities'
+  description: 'Allow to access the administration form to configure Result entities.'
+  restrict access: true
+
+delete result entities:
+  title: 'Delete Result entities'
+
+edit result entities:
+  title: 'Edit Result entities'
+
+view published result entities:
+  title: 'View published Result entities'
+
+view unpublished result entities:
+  title: 'View unpublished Result entities'

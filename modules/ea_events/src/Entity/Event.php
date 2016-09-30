@@ -281,10 +281,10 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
         ),
         'weight' => -4,
       ));
-    $fields['activities'] = BaseFieldDefinition::create('entity_reference')
+    $fields['results'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Results'))
       ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'activity')
+      ->setSetting('target_type', 'result')
       ->setSetting('handler', 'default')
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(

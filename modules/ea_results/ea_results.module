@@ -1,0 +1,162 @@
+<?php
+
+/**
+ * @file
+ * Contains ea_results.module.
+ */
+
+use Drupal\ea_results\Entity\ResultType;
+use Drupal\ea_data\Entity\DataType;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Form\FormStateInterface;
+
+/**
+ * Implements hook_help().
+ */
+function ea_results_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ea_results module.
+    case 'help.page.ea_results':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ea_results_theme() {
+  $theme = [];
+  $theme['result'] = [
+    'render element' => 'elements',
+    'file' => 'result.page.inc',
+    'template' => 'result',
+  ];
+  $theme['result_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'result.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Whether creating or updating a bundle, add fields as defined in the bundle
+ * settings. Hide fields that have been removed to avoid data loss for
+ * previously created entities.
+ */
+function ea_results_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'result_type_add_form' || $form_id === 'result_type_edit_form') {
+    foreach (array_keys($form['actions']) as $action) {
+      if (isset($form['actions'][$action]['#type']) && $form['actions'][$action]['#type'] === 'submit') {
+        $form['actions'][$action]['#submit'][] = '_ea_results_bundle_settings_submit';
+      }
+    }
+  }
+}
+
+/**
+ * Custom submit handler.
+ */
+function _ea_results_bundle_settings_submit($form, FormStateInterface $form_state) {
+  $bundle_id = $form_state->getFormObject()->getEntity()->id();
+  $entity_type_id = 'result';
+  $result_type = ResultType::load($bundle_id);
+  $enabled_fields = [];
+  if (isset($result_type->data_types) && !empty($result_type->data_types)) {
+    foreach ($result_type->data_types as $data_type) {
+      $field_name = 'field_' . $data_type['target_id'];
+      // Check if field exists and create as necessary.
+      $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
+      if (empty($field_storage)) {
+        $field_storage = FieldStorageConfig::create(array(
+          'field_name' => $field_name,
+          'entity_type' => $entity_type_id,
+          'type' => 'entity_reference',
+          'cardinality' => 1,
+          'module' => 'core',
+          'settings' => array('target_type' => 'data'),
+        ))->save();
+      }
+      // Check if instance exists and create as necessary.
+      $field = FieldConfig::loadByName($entity_type_id, $bundle_id, $field_name);
+      if (empty($field)) {
+        // Get label of DataType entity.
+        $data_type_entity = DataType::load($data_type['target_id']);
+        $label = $data_type_entity->label();
+        // Create field.
+        $field = FieldConfig::create(array(
+          'field_name' => $field_name,
+          'entity_type' => $entity_type_id,
+          'bundle' => $bundle_id,
+          'label' => $label,
+        ));
+        $field->setRequired(TRUE)
+          ->setSetting('target_type', 'data')
+          ->setSetting('handler', 'default')
+          ->setSetting('handler_settings', array(
+            'target_bundles' => array(
+              $data_type['target_id'] => $data_type['target_id'],
+            ),
+          ))->save();
+      }
+      // Unhide any fields that already exists.
+      _ea_results_enable_field_display($field);
+      // Add to enabled fields.
+      $enabled_fields[] = $field_name;
+    }
+  }
+  // Hide any fields that arent enabled.
+  foreach (\Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type_id, $bundle_id) as $field_name => $field_definition) {
+    if (strpos($field_name, 'field_') === 0 && !in_array($field_name, $enabled_fields)) {
+      $field = FieldConfig::loadByName($entity_type_id, $bundle_id, $field_name);
+      $field->setRequired(FALSE)->save();
+      _ea_results_disable_field_display($field);
+    }
+  }
+}
+
+/**
+ * Set field display to simple inline entity form and require field.
+ *
+ * @param FieldConfig $field
+ *   The field to enable.
+ */
+function _ea_results_enable_field_display(FieldConfig $field) {
+  // Set form display settings.
+  entity_get_form_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
+    ->setComponent($field->getName(), array(
+      'type' => 'inline_entity_form_simple',
+    ))
+    ->save();
+  // Set view display settings.
+  entity_get_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
+    ->setComponent($field->getName(), array(
+      'type' => 'entity_reference_entity_view',
+    ))
+    ->save();
+}
+
+/**
+ * Set field display to hidden and do not require field.
+ *
+ * @param FieldConfig $field
+ *   The field to disable.
+ */
+function _ea_results_disable_field_display(FieldConfig $field) {
+  // Set form display settings.
+  entity_get_form_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
+    ->removeComponent($field->getName())
+    ->save();
+  // Set view display settings.
+  entity_get_display($field->getTargetEntityTypeId(), $field->getTargetBundle(), 'default')
+    ->removeComponent($field->getName())
+    ->save();
+}

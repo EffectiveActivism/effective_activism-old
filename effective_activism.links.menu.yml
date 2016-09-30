@@ -6,20 +6,20 @@ effective_activism.overview:
   menu_name: effective_activism
   weight: 100
 
-# Activity menu items definition
-entity.activity.collection:
-  title: 'Activity list'
-  route_name: entity.activity.collection
-  description: 'List Activity entities'
+# Result menu items definition
+entity.result.collection:
+  title: 'Result list'
+  route_name: entity.result.collection
+  description: 'List Result entities'
   menu_name: effective_activism
   parent: effective_activism.overview
   weight: 100
 
-# Activity type menu items definition
-entity.activity_type.collection:
-  title: 'Activity type'
-  route_name: entity.activity_type.collection
-  description: 'List Activity type (bundles)'
+# Result type menu items definition
+entity.result_type.collection:
+  title: 'Result type'
+  route_name: entity.result_type.collection
+  description: 'List Result type (bundles)'
   menu_name: effective_activism
   parent: effective_activism.overview
   weight: 99

@@ -34,7 +34,7 @@ class CSVImportTest extends ImportWebTestBase {
     $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
     $this->grouping = $this->createGrouping();
     $this->dataType = $this->createLeafletDataType();
-    $this->createActivityType();
+    $this->createResultType();
     // Create CSV file.
     $data = file_get_contents($this->container->get('file_system')->realpath(drupal_get_path('module', 'ea_imports') . '/src/Tests/sample.csv'));
     $this->CSVFile = file_save_data($data, 'public://sample.csv', FILE_EXISTS_REPLACE);
@@ -138,28 +138,28 @@ class CSVImportTest extends ImportWebTestBase {
   }
 
   /**
-   * Create an activity type.
+   * Create an result type.
    */
-  private function createActivityType() {
+  private function createResultType() {
     $this->drupalLogin($this->manager);
-    $this->drupalGet('effectiveactivism/activity-types');
+    $this->drupalGet('effectiveactivism/result-types');
     $this->assertResponse(200);
-    $this->drupalGet('effectiveactivism/activity-types/add');
+    $this->drupalGet('effectiveactivism/result-types/add');
     $this->assertResponse(200);
-    // Create an activity type.
+    // Create an result type.
     $this->drupalPostAjaxForm(NULL, [
       'organization' => $this->grouping->id(),
     ], 'organization');
     $this->drupalPostForm(NULL, array(
       'label' => 'Leafleting',
       'id' => 'leafleting',
-      'description' => 'Sample activity',
+      'description' => 'Sample result',
       'data_types' => sprintf('%s (%s)', 'Leaflets', 'leaflets'),
       'organization' => $this->grouping->id(),
       'groupings[]' => [$this->grouping->id()],
     ), t('Save'));
     $this->assertResponse(200);
-    $this->assertText('Created the Leafleting Activity type.', 'Added a new activity type.');
+    $this->assertText('Created the Leafleting Result type.', 'Added a new result type.');
   }
 
 }

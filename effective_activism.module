@@ -50,7 +50,7 @@ function effective_activism_toolbar() {
     ),
     'results' => array(
       'title' => t('Results'),
-      'url' => Url::fromRoute('entity.activity.collection'),
+      'url' => Url::fromRoute('entity.result.collection'),
       'attributes' => array(
         'title' => t('Results'),
       ),
@@ -71,11 +71,11 @@ function effective_activism_toolbar() {
         'title' => t('Events'),
       ),
     ),
-    'ea_activities_types' => array(
-      'title' => t('Activity types'),
-      'url' => Url::fromRoute('entity.activity_type.collection'),
+    'ea_results_types' => array(
+      'title' => t('Result types'),
+      'url' => Url::fromRoute('entity.result_type.collection'),
       'attributes' => array(
-        'title' => t('Activity types'),
+        'title' => t('Result types'),
       ),
     ),
     'ea_imports' => array(
@@ -101,7 +101,7 @@ function effective_activism_toolbar() {
     ),
     'results' => array(
       'title' => t('Results'),
-      'url' => Url::fromRoute('entity.activity.collection'),
+      'url' => Url::fromRoute('entity.result.collection'),
       'attributes' => array(
         'title' => t('Results'),
       ),
