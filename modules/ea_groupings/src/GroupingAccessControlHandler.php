@@ -44,12 +44,7 @@ class GroupingAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    if (!empty(Grouping::getAllGroupingsByRole(Roles::MANAGER_ROLE, $account))) {
-      return AccessResult::allowed();
-    }
-    else {
-      return AccessResult::forbidden();
-    }
+    return Permission::allowedIfIsManagerInAnyGroupings($account);
   }
 
 }
