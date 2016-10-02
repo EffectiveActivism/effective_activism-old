@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_groupings;
 
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Routing\LinkGeneratorTrait;
@@ -29,17 +30,18 @@ class GroupingListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\ea_groupings\Entity\Grouping */
-    $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $entity->label(),
-      new Url(
-        'entity.grouping.edit_form', array(
-          'grouping' => $entity->id(),
+    if ($entity->access('view', \Drupal::currentUser())) {
+      $row['id'] = $entity->id();
+      $row['name'] = $this->l(
+        $entity->label(),
+        new Url(
+          'entity.grouping.edit_form', array(
+            'grouping' => $entity->id(),
+          )
         )
-      )
-    );
-    return $row + parent::buildRow($entity);
+      );
+      return $row + parent::buildRow($entity);
+    }
   }
 
 }
