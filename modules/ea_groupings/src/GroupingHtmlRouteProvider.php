@@ -50,8 +50,7 @@ class GroupingHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_list' => $entity_type_id,
           '_title' => "{$entity_type->getLabel()} list",
         ])
-        ->setRequirement('_permission', 'view published grouping entities')
-        ->setOption('_admin_route', TRUE);
+        ->setRequirement('_custom_access', '\Drupal\ea_permissions\Permission::allowedIfInAnyGroupings');
       return $route;
     }
   }
@@ -82,10 +81,8 @@ class GroupingHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_form' => "{$entity_type_id}.{$operation}",
           '_title' => "Add {$entity_type->getLabel()}",
         ])
-        ->setRequirement('_entity_create_access', $entity_type_id);
-      $route
-        ->setOption('parameters', $parameters)
-        ->setOption('_admin_route', TRUE);
+        ->setRequirement('_custom_access', '\Drupal\ea_permissions\Permission::allowedIfIsManagerInAnyGroupings')
+        ->setOption('parameters', $parameters);
       return $route;
     }
   }
