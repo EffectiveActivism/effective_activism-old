@@ -27,7 +27,7 @@ class ParentGroupingWidget extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $currentGrouping = $form_state->getFormObject()->getEntity();
     $currentId = !empty($currentGrouping) ? (int) $currentGrouping->id() : NULL;
-    $allowed_groupings = Grouping::getGroupings(FALSE, NULL, Roles::MANAGER_ROLE);
+    $allowed_groupings = Grouping::getAllOrganizationsByRole(Roles::MANAGER_ROLE);
     $options = [];
     foreach ($allowed_groupings as $gid => $grouping) {
       if ($gid !== $currentId) {
