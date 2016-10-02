@@ -3,16 +3,15 @@
 namespace Drupal\ea_results;
 
 use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\Routing\AdminHtmlRouteProvider;
+use Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider;
 use Symfony\Component\Routing\Route;
 
 /**
  * Provides routes for Result type entities.
  *
- * @see Drupal\Core\Entity\Routing\AdminHtmlRouteProvider
  * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
-class ResultTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
+class ResultTypeHtmlRouteProvider extends DefaultHtmlRouteProvider {
 
   /**
    * {@inheritdoc}
@@ -49,8 +48,7 @@ class ResultTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
           // TitleResolver translates this string again.
           '_title' => (string) $entity_type->getLabel(),
         ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
-        ->setOption('_admin_route', TRUE);
+        ->setRequirement('_custom_access', '\Drupal\ea_permissions\Permission::allowedIfInAnyGroupings');
       return $route;
     }
   }
@@ -78,11 +76,10 @@ class ResultTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_entity_form' => "{$entity_type_id}.{$operation}",
           '_title' => "Add {$entity_type->getLabel()}",
         ])
-        ->setRequirement('_entity_create_access', $entity_type_id)
+        ->setRequirement('_custom_access', '\Drupal\ea_permissions\Permission::allowedIfIsManagerInAnyGroupings')
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-        ])
-        ->setOption('_admin_route', TRUE);
+        ]);
       return $route;
     }
   }
