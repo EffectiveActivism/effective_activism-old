@@ -87,16 +87,38 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
   /**
    * Get groupings that a user is attached to.
    *
-   * @param bool $include_children
-   *   Whether to include child groupings or not.
    * @param \Drupal\Core\Session\AccountProxyInterface $user
    *   The user object to check relationship for.
-   * @param string $role
-   *   The user role to filter by.
    *
    * @return array
    *   An array of groupings that the user is attached to.
    */
-  public static function getGroupings($include_children, AccountProxyInterface $user, $role);
+  public static function getAllGroupingsByUser(AccountProxyInterface $user);
+
+  /**
+   * Get groupings that a user and role is attached to.
+   *
+   * @param string $role
+   *   The user role to filter by.
+   * @param \Drupal\Core\Session\AccountProxyInterface $user
+   *   The user object to check relationship for.
+   *
+   * @return array
+   *   An array of groupings that the user is attached to.
+   */
+  public static function getAllGroupingsByRole($role, AccountProxyInterface $user);
+
+  /**
+   * Get organizations that a user and role is attached to.
+   *
+   * @param string $role
+   *   The user role to filter by.
+   * @param \Drupal\Core\Session\AccountProxyInterface $user
+   *   The user object to check relationship for.
+   *
+   * @return array
+   *   An array of organizations that the user is attached to.
+   */
+  public static function getAllOrganizationsByRole($role, AccountProxyInterface $user);
 
 }
