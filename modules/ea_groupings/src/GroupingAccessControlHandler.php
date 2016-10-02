@@ -2,7 +2,9 @@
 
 namespace Drupal\ea_groupings;
 
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_permissions\Permission;
+use Drupal\ea_permissions\Roles;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -19,20 +21,19 @@ class GroupingAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\ea_groupings\GroupingInterface $entity */
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
           return Permission::allowedIfIsManager($account, $entity);
         }
         else {
-          return AccessResult::allowedIfHasPermission($account, 'view published grouping entities');
+          return Permission::allowedIfInGroupings($account, [$entity]);
         }
       case 'update':
         return Permission::allowedIfIsManager($account, $entity);
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete grouping entities');
+        return AccessResult::forbidden();
 
     }
     // Unknown operation, no opinion.
@@ -43,7 +44,12 @@ class GroupingAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add grouping entities');
+    if (!empty(Grouping::getAllGroupingsByRole(Roles::MANAGER_ROLE, $account))) {
+      return AccessResult::allowed();
+    }
+    else {
+      return AccessResult::forbidden();
+    }
   }
 
 }
