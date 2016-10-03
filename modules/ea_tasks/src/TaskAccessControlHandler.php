@@ -19,7 +19,6 @@ class TaskAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\ea_tasks\TaskInterface $entity */
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
