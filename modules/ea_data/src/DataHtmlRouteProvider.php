@@ -28,9 +28,6 @@ class DataHtmlRouteProvider extends AdminHtmlRouteProvider {
     }
     $add_page_route = $this->getAddPageRoute($entity_type);
     $collection->add("$entity_type_id.add_page", $add_page_route);
-    if ($settings_form_route = $this->getSettingsFormRoute($entity_type)) {
-      $collection->add("$entity_type_id.settings", $settings_form_route);
-    }
     return $collection;
   }
 
@@ -109,29 +106,6 @@ class DataHtmlRouteProvider extends AdminHtmlRouteProvider {
       ->setRequirement('_entity_create_access', $entity_type->id())
       ->setOption('_admin_route', TRUE);
     return $route;
-  }
-
-  /**
-   * Gets the settings form route.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   The entity type.
-   *
-   * @return \Symfony\Component\Routing\Route|null
-   *   The generated route, if available.
-   */
-  protected function getSettingsFormRoute(EntityTypeInterface $entity_type) {
-    if (!$entity_type->getBundleEntityType()) {
-      $route = new Route("/effectiveactivism/{$entity_type->id()}/settings");
-      $route
-        ->setDefaults([
-          '_form' => 'Drupal\ea_data\Form\DataSettingsForm',
-          '_title' => "{$entity_type->getLabel()} settings",
-        ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
-        ->setOption('_admin_route', TRUE);
-      return $route;
-    }
   }
 
 }

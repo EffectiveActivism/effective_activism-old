@@ -11,6 +11,3 @@ delete data entities:
 
 edit data entities:
   title: 'Edit Data entities'
-
-view data entities:
-  title: 'View Data entities'
