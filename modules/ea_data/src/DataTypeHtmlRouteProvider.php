@@ -49,8 +49,7 @@ class DataTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
           // TitleResolver translates this string again.
           '_title' => (string) $entity_type->getLabel(),
         ])
-        ->setRequirement('_permission', 'view data entities')
-        ->setOption('_admin_route', TRUE);
+        ->setRequirement('_permission', 'administer data entities');
       return $route;
     }
   }
@@ -81,8 +80,7 @@ class DataTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
         ->setRequirement('_entity_create_access', $entity_type_id)
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-        ])
-        ->setOption('_admin_route', TRUE);
+        ]);
       return $route;
     }
   }

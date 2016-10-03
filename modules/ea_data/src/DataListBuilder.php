@@ -29,18 +29,19 @@ class DataListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\ea_data\Entity\Data */
-    $entity_bundles = entity_get_bundles($entity->getEntityTypeId());
-    $row['id'] = $entity->id();
-    $row['type'] = $this->l(
-      $entity_bundles[$entity->bundle()]['label'],
-      new Url(
-        'entity.data.edit_form', array(
-          'data' => $entity->id(),
+    if ($entity->access('view', \Drupal::currentUser())) {
+      $entity_bundles = entity_get_bundles($entity->getEntityTypeId());
+      $row['id'] = $entity->id();
+      $row['type'] = $this->l(
+        $entity_bundles[$entity->bundle()]['label'],
+        new Url(
+          'entity.data.edit_form', array(
+            'data' => $entity->id(),
+          )
         )
-      )
-    );
-    return $row + parent::buildRow($entity);
+      );
+      return $row + parent::buildRow($entity);
+    }
   }
 
 }

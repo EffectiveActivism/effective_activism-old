@@ -25,10 +25,10 @@ class DataAccessControlHandler extends EntityAccessControlHandler {
         return Permission::allowedIfInAnyGroupings($account);
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit data entities');
+        return Permission::allowedIfInAnyGroupings($account);
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete data entities');
+        return AccessResult::forbidden();
 
     }
     // Unknown operation, no opinion.
@@ -39,7 +39,7 @@ class DataAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add data entities');
+    return Permission::allowedIfInAnyGroupings($account);
   }
 
 }
