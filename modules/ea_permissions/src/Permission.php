@@ -24,7 +24,12 @@ class Permission {
    *   Returns an access result.
    */
   public static function allowedIfIsOrganizer(AccountInterface $account, Grouping $grouping) {
-    return self::checkPermission($account, $grouping, Roles::ORGANIZER_ROLE);
+    if (self::checkPermission($account, $grouping, Roles::ORGANIZER_ROLE)) {
+      return new AccessResultAllowed();
+    }
+    else {
+      return new AccessResultForbidden();
+    }
   }
 
   /**
@@ -39,7 +44,73 @@ class Permission {
    *   Returns an access result.
    */
   public static function allowedIfIsManager(AccountInterface $account, Grouping $grouping) {
-    return self::checkPermission($account, $grouping, Roles::MANAGER_ROLE);
+    if (self::checkPermission($account, $grouping, Roles::MANAGER_ROLE)) {
+      return new AccessResultAllowed();
+    }
+    else {
+      return new AccessResultForbidden();
+    }
+  }
+
+  /**
+   * Determines access based on if the user is in any of the groupings.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account for which to check a permission.
+   * @param array $groupings
+   *   The groupings to check relationship for.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Returns an access result.
+   */
+  public static function allowedIfInGroupings(AccountInterface $account, $groupings) {
+    if (!empty($groupings)) {
+      foreach ($groupings as $grouping) {
+        if (
+          self::checkPermission($account, $grouping, Roles::ORGANIZER_ROLE) ||
+          self::checkPermission($account, $grouping, Roles::MANAGER_ROLE)
+        ) {
+          return new AccessResultAllowed();
+        }
+      }
+    }
+    return new AccessResultForbidden();
+  }
+
+  /**
+   * Determines access based on if the user is in any groupings.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account for which to check a permission.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Returns an access result.
+   */
+  public static function allowedIfInAnyGroupings(AccountInterface $account) {
+    if (!empty(Grouping::getAllGroupingsByUser($account))) {
+      return new AccessResultAllowed();
+    }
+    else {
+      return new AccessResultForbidden();
+    }
+  }
+
+  /**
+   * Determines access based on if the user is manager in any groupings.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account for which to check a permission.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Returns an access result.
+   */
+  public static function allowedIfIsManagerInAnyGroupings(AccountInterface $account) {
+    if (!empty(Grouping::getAllGroupingsByRole(Roles::MANAGER_ROLE, $account))) {
+      return new AccessResultAllowed();
+    }
+    else {
+      return new AccessResultForbidden();
+    }
   }
 
   /**
@@ -52,39 +123,33 @@ class Permission {
    * @param string $role
    *   The role to check for.
    *
-   * @return \Drupal\Core\Access\AccessResult
-   *   Returns an access result.
+   * @return bool
+   *   Whether or not user has access.
    */
   private static function checkPermission(AccountInterface $account, Grouping $grouping, $role) {
-    // Allow access for administrators.
-    if (in_array('administrator', $account->getRoles())) {
-      return new AccessResultAllowed();
-    }
-    // Default response is to deny access.
-    $access = new AccessResultForbidden();
     // Determine access based on role.
     switch ($role) {
       case Roles::ORGANIZER_ROLE:
         // Check if user is organizer of grouping.
         if (in_array(['target_id' => $account->id()], $grouping->get('organizers')->getValue())) {
-          return new AccessResultAllowed();
+          return TRUE;
         }
         break;
 
       case Roles::MANAGER_ROLE:
         // Check if user is manager of grouping.
         if (in_array(['target_id' => $account->id()], $grouping->get('managers')->getValue())) {
-          return new AccessResultAllowed();
+          return TRUE;
         }
         // Check if user is manager of parent grouping, if any.
         if (isset($grouping->get('parent')->entity)) {
           $parent = $grouping->get('parent')->entity;
           if (in_array(['target_id' => $account->id()], $parent->get('managers')->getValue())) {
-            return new AccessResultAllowed();
+            return TRUE;
           }
         }
     }
-    return $access;
+    return FALSE;
   }
 
 }
