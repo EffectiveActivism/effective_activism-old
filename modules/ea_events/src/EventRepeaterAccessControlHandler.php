@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_events;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -18,16 +19,15 @@ class EventRepeaterAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\ea_events\Entity\EventRepeaterInterface $entity */
     switch ($operation) {
       case 'view':
-        return AccessResult::allowedIfHasPermission($account, 'view event repeater entities');
+        return Permission::allowedIfInAnyGroupings($account);
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit event repeater entities');
+        return Permission::allowedIfInAnyGroupings($account);
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete event repeater entities');
+        return AccessResult::forbidden();
     }
 
     // Unknown operation, no opinion.
@@ -38,7 +38,7 @@ class EventRepeaterAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add event repeater entities');
+    return Permission::allowedIfInAnyGroupings($account);
   }
 
 }
