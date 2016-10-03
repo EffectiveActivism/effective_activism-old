@@ -11,20 +11,17 @@ use Symfony\Component\Routing\Route;
  *
  * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
-class ImportHtmlRouteProvider extends AdminHtmlRouteProvider {
+class ImportHtmlRouteProvider extends DefaultHtmlRouteProvider {
 
   /**
    * {@inheritdoc}
    */
   public function getRoutes(EntityTypeInterface $entity_type) {
     $collection = parent::getRoutes($entity_type);
-
     $entity_type_id = $entity_type->id();
-
     if ($collection_route = $this->getCollectionRoute($entity_type)) {
       $collection->add("entity.{$entity_type_id}.collection", $collection_route);
     }
-
     return $collection;
   }
 
@@ -47,7 +44,6 @@ class ImportHtmlRouteProvider extends AdminHtmlRouteProvider {
           '_title' => "{$entity_type->getLabel()} list",
         ])
         ->setRequirement('_custom_access', '\Drupal\ea_permissions\Permission::allowedIfInAnyGroupings');
-
       return $route;
     }
   }
