@@ -274,7 +274,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
         'weight' => -4,
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'inline_entity_form_complex',
+        'type' => 'people_selector',
         'settings' => array(
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
