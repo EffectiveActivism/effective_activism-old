@@ -2,9 +2,7 @@
 
 namespace Drupal\ea_results;
 
-use Drupal\ea_results\Entity\ResultType;
 use Drupal\ea_permissions\Permission;
-use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;

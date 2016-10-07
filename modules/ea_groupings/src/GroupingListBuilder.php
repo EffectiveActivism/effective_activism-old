@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_groupings;
 
-use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Routing\LinkGeneratorTrait;

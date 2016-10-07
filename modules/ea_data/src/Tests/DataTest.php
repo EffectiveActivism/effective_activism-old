@@ -4,7 +4,6 @@ namespace Drupal\ea_data\Tests;
 
 use Drupal\ea_data\Entity\Data;
 use Drupal\ea_data\Entity\DataType;
-use Drupal\ea_permissions\Roles;
 use Drupal\simpletest\WebTestBase;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;

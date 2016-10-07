@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_events;
 
-use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider;
 use Symfony\Component\Routing\Route;

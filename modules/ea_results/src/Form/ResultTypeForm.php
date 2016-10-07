@@ -134,7 +134,7 @@ class ResultTypeForm extends EntityForm {
    * @param FormStateInterface $form_state
    *   The form state.
    *
-   * @return $array
+   * @return array
    *   The form array.
    */
   public function updateAvailableGroupings(array &$form, FormStateInterface $form_state) {

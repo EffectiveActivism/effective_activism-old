@@ -39,7 +39,7 @@ class EventForm extends ContentEntityForm {
         $gid = $form['grouping']['widget'][0]['target_id']['#default_value'];
       }
       if (!empty($gid)) {
-        foreach($form['results']['widget']['actions']['bundle']['#options'] as $machineName => $humanName) {
+        foreach ($form['results']['widget']['actions']['bundle']['#options'] as $machineName => $humanName) {
           $resultType = ResultType::load($machineName);
           if (!empty($resultType)) {
             $allowedGids = $resultType->get('groupings');
@@ -49,7 +49,7 @@ class EventForm extends ContentEntityForm {
           }
         }
       }
-      // If the event is not attached to a grouping, do not allow adding results.
+      // If the event is not attached to grouping, do not allow adding results.
       else {
         unset($form['results']);
       }
@@ -116,7 +116,7 @@ class EventForm extends ContentEntityForm {
    * @param FormStateInterface $form_state
    *   The form state.
    *
-   * @return $array
+   * @return array
    *   The form array.
    */
   public function updateAvailableResultTypes(array &$form, FormStateInterface $form_state) {

@@ -3,10 +3,8 @@
 namespace Drupal\ea_events\Plugin\Field\FieldWidget;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_people\Entity\Person;
 use Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex;
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 
 /**
@@ -53,11 +51,11 @@ class EventParticipantsWidget extends InlineEntityFormComplex {
    * Adds the specified entity to the IEF form state.
    *
    * @param array $form
-   *  The entity form.
+   *   The entity form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state of the form.
    */
-  static function addGroupMembers($form, FormStateInterface $form_state) {
+  static public function addGroupMembers($form, FormStateInterface $form_state) {
     $ief_id = $form['participants']['widget']['#ief_id'];
     $event_grouping = $form_state->getValue('grouping');
     // Load the group members.
@@ -89,4 +87,5 @@ class EventParticipantsWidget extends InlineEntityFormComplex {
     }
     return $form['participants'];
   }
+
 }
