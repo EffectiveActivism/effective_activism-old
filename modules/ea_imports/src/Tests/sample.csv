@@ -1,2 +1,2 @@
 title,start_date,end_date,location,description,tasks,event_repeater,participants,results
-My custom title,2016-12-13 11:00,2016-12-13 12:00,"{""address"":""Kultorvet, Copenhagen, Denmark"",""extra_information"":""By the fountain""}",My custom protest description,,,,"{""leafleting"":{""field_leaflets"":1000}}"
+My custom title,2016-12-13 11:00,2016-12-13 12:00,"{""address"":""Kultorvet, Copenhagen, Denmark"",""extra_information"":""By the fountain""}",My custom protest description,,,,"{""leafleting"":{""participant_count"":4,""duration_minutes"":0,""duration_hours"":1,""duration_days"":0,""field_leaflets"":1000}}"
