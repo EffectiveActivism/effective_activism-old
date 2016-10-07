@@ -33,11 +33,25 @@ class EventTest extends WebTestBase {
 
   const ENDTIME = '12:00';
 
-  // Entities.
+  /**
+   * Contains the event repeater for the event.
+   *
+   * @var EventRepeater
+   */
   private $eventRepeater;
 
+  /**
+   * Container for the organizer user.
+   *
+   * @var Drupal\user\Entity\User
+   */
   private $organizer;
 
+  /**
+   * Container for the manager user.
+   *
+   * @var Drupal\user\Entity\User
+   */
   private $manager;
 
   /**
