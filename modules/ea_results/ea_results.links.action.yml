@@ -3,9 +3,9 @@ entity.result.add_form:
   title: 'Add Result'
   appears_on:
     - entity.result.collection
+
 entity.result_type.add_form:
   route_name: 'entity.result_type.add_form'
   title: 'Add Result type'
   appears_on:
     - entity.result_type.collection
-

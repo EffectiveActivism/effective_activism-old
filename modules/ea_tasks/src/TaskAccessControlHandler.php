@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_tasks;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -18,19 +19,18 @@ class TaskAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\ea_tasks\TaskInterface $entity */
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished task entities');
+          return Permission::allowedIfIsManagerInAnyGroupings($account);
         }
-        return AccessResult::allowedIfHasPermission($account, 'view published task entities');
+        return Permission::allowedIfInAnyGroupings($account);
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit task entities');
+        return Permission::allowedIfInAnyGroupings($account);
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete task entities');
+        return AccessResult::forbidden();
 
     }
     // Unknown operation, no opinion.
@@ -41,7 +41,7 @@ class TaskAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add task entities');
+    return Permission::allowedIfInAnyGroupings($account);
   }
 
 }

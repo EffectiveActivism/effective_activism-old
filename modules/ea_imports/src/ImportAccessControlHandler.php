@@ -7,7 +7,6 @@ use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultAllowed;
 
 /**
  * Access controller for the Import entity.
@@ -20,32 +19,19 @@ class ImportAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
-    /** @var \Drupal\ea_imports\Entity\ImportInterface $entity */
+    $grouping = $entity->get('grouping')->entity;
     switch ($operation) {
       case 'view':
-        if (!$entity->isPublished() &&
-          (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed())) {
-          return new AccessResultAllowed();
+        if (!$entity->isPublished()) {
+          return Permission::allowedIfIsManager($account, $grouping);
         }
-        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed()) {
-          return new AccessResultAllowed();
-        }
-        break;
+        return Permission::allowedIfInGroupings($account, [$grouping]);
 
       case 'update':
-        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed()) {
-          return new AccessResultAllowed();
-        }
-        break;
+        return Permission::allowedIfInGroupings($account, [$grouping]);
 
       case 'delete':
-        if (Permission::allowedIfIsOrganizer($account, $entity->get('grouping')->entity)->isAllowed() ||
-          Permission::allowedIfIsManager($account, $entity->get('grouping')->entity)->isAllowed()) {
-          return new AccessResultAllowed();
-        }
+        return AccessResult::forbidden();
     }
     // Unknown operation, no opinion.
     return AccessResult::neutral();
@@ -55,7 +41,7 @@ class ImportAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add import entities');
+    return Permission::allowedIfInAnyGroupings($account);
   }
 
 }

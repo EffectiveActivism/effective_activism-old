@@ -13,8 +13,8 @@ use Drupal\Core\Form\FormStateInterface;
  * Control visibility for Event Repeater entities.
  */
 function ea_events_form_alter(&$form, FormStateInterface $form_state, $form_id) {
-  if ($form_id === 'event_repeater_edit_form' || $form_id === 'event_repeater_add_form') {
-    _ea_events_get_states($form);
+  if ($form_id === 'event_repeater_add_form' || $form_id === 'event_repeater_edit_form') {
+    _ea_events_get_event_repeater_states($form);
   }
 }
 
@@ -25,7 +25,7 @@ function ea_events_form_alter(&$form, FormStateInterface $form_state, $form_id) 
  */
 function ea_events_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
   if ($entity_form['#entity_type'] === 'event_repeater') {
-    _ea_events_get_states($entity_form, 'event_repeater[0][inline_entity_form]');
+    _ea_events_get_event_repeater_states($entity_form, 'event_repeater[0][inline_entity_form]');
   }
 }
 
@@ -37,7 +37,7 @@ function ea_events_inline_entity_form_entity_form_alter(&$entity_form, FormState
  * @param string $extra_identifier
  *   An optional string to identify inputs.
  */
-function _ea_events_get_states(&$form, $extra_identifier = NULL) {
+function _ea_events_get_event_repeater_states(&$form, $extra_identifier = NULL) {
   $startBracket = strlen($extra_identifier) > 0 ? '[' : '';
   $endBracket = strlen($extra_identifier) > 0 ? ']' : '';
   $form['event_interval']['#states'] = array(

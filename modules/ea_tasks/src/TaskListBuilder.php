@@ -29,17 +29,18 @@ class TaskListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\ea_tasks\Entity\Task */
-    $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $entity->label(),
-      new Url(
-        'entity.task.edit_form', array(
-          'task' => $entity->id(),
+    if ($entity->access('view', \Drupal::currentUser())) {
+      $row['id'] = $entity->id();
+      $row['name'] = $this->l(
+        $entity->label(),
+        new Url(
+          'entity.task.edit_form', array(
+            'task' => $entity->id(),
+          )
         )
-      )
-    );
-    return $row + parent::buildRow($entity);
+      );
+      return $row + parent::buildRow($entity);
+    }
   }
 
 }

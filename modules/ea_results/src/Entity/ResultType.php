@@ -18,6 +18,7 @@ use Drupal\ea_results\ResultTypeInterface;
  *       "edit" = "Drupal\ea_results\Form\ResultTypeForm",
  *       "delete" = "Drupal\ea_results\Form\ResultTypeDeleteForm"
  *     },
+ *     "access" = "Drupal\ea_results\ResultTypeAccessControlHandler",
  *     "route_provider" = {
  *       "html" = "Drupal\ea_results\ResultTypeHtmlRouteProvider",
  *     },

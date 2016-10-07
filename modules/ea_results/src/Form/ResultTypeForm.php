@@ -32,7 +32,7 @@ class ResultTypeForm extends EntityForm {
     }
     // Get organizations.
     $organizations = array();
-    $organizations = array_reduce(Grouping::getGroupings(FALSE, NULL, Roles::MANAGER_ROLE), function ($result, $grouping) {
+    $organizations = array_reduce(Grouping::getAllOrganizationsByRole(Roles::MANAGER_ROLE), function ($result, $grouping) {
       $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
       return $result;
     }, array());
@@ -128,6 +128,14 @@ class ResultTypeForm extends EntityForm {
 
   /**
    * Populates the groupings #options element.
+   *
+   * @param array $form
+   *   The form array.
+   * @param FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return array
+   *   The form array.
    */
   public function updateAvailableGroupings(array &$form, FormStateInterface $form_state) {
     return $form;

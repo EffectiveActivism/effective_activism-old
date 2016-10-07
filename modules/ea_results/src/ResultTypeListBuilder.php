@@ -23,10 +23,11 @@ class ResultTypeListBuilder extends ConfigEntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    $row['label'] = $entity->label();
-    $row['id'] = $entity->id();
-    // You probably want a few more properties here...
-    return $row + parent::buildRow($entity);
+    if ($entity->access('view', \Drupal::currentUser())) {
+      $row['label'] = $entity->label();
+      $row['id'] = $entity->id();
+      return $row + parent::buildRow($entity);
+    }
   }
 
 }

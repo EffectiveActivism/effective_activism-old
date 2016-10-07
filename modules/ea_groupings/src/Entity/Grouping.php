@@ -175,30 +175,87 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
   /**
    * {@inheritdoc}
    */
-  public static function getGroupings($include_children = TRUE, AccountProxyInterface $user = NULL, $role = NULL) {
-    $groupings = [];
+  public static function getAllGroupingsByUser(AccountProxyInterface $user) {
+    // Add all groupings that the user is manager of.
+    $query = \Drupal::entityQuery('grouping');
+    $result = $query
+      ->condition('managers', $user->id())
+      ->execute();
+    // Also include groupings that are children to the managers groupings.
+    if (!empty($result)) {
+      $query = \Drupal::entityQuery('grouping');
+      $result += $query
+        ->condition('parent', $result, 'IN')
+        ->execute();
+    }
+    // Finally, add all groupings that the user is organizer of.
+    $query = \Drupal::entityQuery('grouping');
+    $result += $query
+      ->condition('organizers', $user->id())
+      ->execute();
+    return Grouping::loadMultiple($result);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getAllGroupingsByRole($role, AccountProxyInterface $user = NULL) {
+    $result = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
     }
-    $query = \Drupal::entityQuery('grouping');
-    if (!$include_children) {
-      $query->notExists('parent');
-    }
     switch ($role) {
-      case Roles::MANAGER_ROLE:
-        $query->condition('managers', $user->id());
+      case Roles::ORGANIZER_ROLE:
+        $query = \Drupal::entityQuery('grouping');
+        $result = $query
+          ->condition('organizers', $user->id())
+          ->execute();
         break;
 
-      case Roles::ORGANIZER_ROLE:
-        $query->condition('organizers', $user->id());
-
-      default:
-        $group = $query->orConditionGroup()
+      case Roles::MANAGER_ROLE:
+        $query = \Drupal::entityQuery('grouping');
+        $result = $query
           ->condition('managers', $user->id())
-          ->condition('organizers', $user->id());
-        $result = $query->condition($group);
+          ->execute();
+        // Also include groupings that are children to the managers groupings.
+        if (!empty($result)) {
+          $query = \Drupal::entityQuery('grouping');
+          $result += $query
+            ->condition('parent', $result, 'IN')
+            ->execute();
+        }
+        break;
+
     }
-    $result = $query->execute();
+    return Grouping::loadMultiple($result);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getAllOrganizationsByRole($role, AccountProxyInterface $user = NULL) {
+    $result = [];
+    if (empty($user)) {
+      $user = \Drupal::currentUser();
+    }
+    switch ($role) {
+      case Roles::ORGANIZER_ROLE:
+        $query = \Drupal::entityQuery('grouping');
+        $result = $query
+          ->notExists('parent')
+          ->condition('organizers', $user->id())
+          ->execute();
+        break;
+
+      case Roles::MANAGER_ROLE:
+        $query = \Drupal::entityQuery('grouping');
+        $result = $query
+          ->notExists('parent')
+          ->condition('managers', $user->id())
+          ->execute();
+        break;
+
+    }
     return Grouping::loadMultiple($result);
   }
 

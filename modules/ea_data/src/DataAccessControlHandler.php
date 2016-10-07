@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_data;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -21,13 +22,13 @@ class DataAccessControlHandler extends EntityAccessControlHandler {
     /** @var \Drupal\ea_data\DataInterface $entity */
     switch ($operation) {
       case 'view':
-        return AccessResult::allowedIfHasPermission($account, 'view data entities');
+        return Permission::allowedIfInAnyGroupings($account);
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit data entities');
+        return Permission::allowedIfInAnyGroupings($account);
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete data entities');
+        return AccessResult::forbidden();
 
     }
     // Unknown operation, no opinion.
@@ -38,7 +39,7 @@ class DataAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add data entities');
+    return Permission::allowedIfInAnyGroupings($account);
   }
 
 }
