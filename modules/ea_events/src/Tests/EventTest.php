@@ -2,21 +2,10 @@
 
 namespace Drupal\ea_events\Tests;
 
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_permissions\Roles;
 use Drupal\simpletest\WebTestBase;
 use Drupal\ea_events\Entity\EventRepeater;
-
-/**
- * Test values.
- */
-define(__NAMESPACE__ . '\GROUPNAME', 'Test group');
-define(__NAMESPACE__ . '\DESCRIPTION', 'Example text for an event description');
-define(__NAMESPACE__ . '\STARTDATE', '2016-01-01');
-define(__NAMESPACE__ . '\STARTDATEFORMATTED', '01/01/2016');
-define(__NAMESPACE__ . '\STARTTIME', '11:00');
-define(__NAMESPACE__ . '\ENDDATE', '2016-01-01');
-define(__NAMESPACE__ . '\ENDDATEFORMATTED', '01/01/2016');
-define(__NAMESPACE__ . '\ENDTIME', '12:00');
 
 /**
  * Function tests for ea_events.
@@ -27,6 +16,24 @@ class EventTest extends WebTestBase {
 
   public static $modules = array('effective_activism');
 
+  // Test values.
+  const GROUPNAME = 'Test group';
+
+  const DESCRIPTION = 'Example text for an event description';
+
+  const STARTDATE = '2016-01-01';
+
+  const STARTDATEFORMATTED = '01/01/2016';
+
+  const STARTTIME = '11:00';
+
+  const ENDDATE = '2016-01-01';
+
+  const ENDDATEFORMATTED = '01/01/2016';
+
+  const ENDTIME = '12:00';
+
+  // Entities.
   private $eventRepeater;
 
   private $organizer;
@@ -48,28 +55,27 @@ class EventTest extends WebTestBase {
    * Test event entities.
    */
   public function testEvents() {
-    $this->drupalLogin($this->manager);
-    $this->createGroupingEntity();
+    $this->createGrouping();
     $this->drupalLogin($this->organizer);
     $this->createEventEntity();
   }
 
   /**
-   * Creates a grouping entity.
+   * Create grouping.
+   *
+   * @return Grouping
+   *   The created grouping.
    */
-  private function createGroupingEntity() {
-    // Create a grouping entity.
-    $this->drupalGet('effectiveactivism/groupings/add');
-    $this->assertResponse(200);
-    $this->drupalPostAjaxForm(NULL, [], $this->getButtonName('//input[@type="submit" and @value="Add existing user" and @data-drupal-selector="edit-organizers-actions-ief-add-existing"]'));
-    $this->drupalPostForm(NULL, array(
-      'user_id[0][target_id]' => sprintf('%s (%d)', $this->manager->getAccountName(), $this->manager->id()),
-      'name[0][value]' => GROUPNAME,
+  private function createGrouping() {
+    $grouping = Grouping::create(array(
+      'user_id' => $this->manager->id(),
+      'name' => self::GROUPNAME,
       'timezone' => \Drupal::config('system.date')->get('timezone.default'),
-      'organizers[form][entity_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-    ), t('Save'));
-    $this->assertResponse(200);
-    $this->assertText(sprintf('Created the %s Grouping.', GROUPNAME), 'Added a new grouping entity.');
+      'managers' => $this->manager->id(),
+      'organizers' => $this->organizer->id(),
+    ));
+    $grouping->save();
+    return $grouping;
   }
 
   /**
@@ -82,20 +88,20 @@ class EventTest extends WebTestBase {
     $random_value = rand();
     $this->drupalPostForm(NULL, array(
       'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'description[0][value]' => DESCRIPTION,
-      'start_date[0][value][date]' => STARTDATE,
-      'start_date[0][value][time]' => STARTTIME,
-      'end_date[0][value][date]' => ENDDATE,
-      'end_date[0][value][time]' => ENDTIME,
+      'description[0][value]' => self::DESCRIPTION,
+      'start_date[0][value][date]' => self::STARTDATE,
+      'start_date[0][value][time]' => self::STARTTIME,
+      'end_date[0][value][date]' => self::ENDDATE,
+      'end_date[0][value][time]' => self::ENDTIME,
       'grouping[0][target_id]' => 1,
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created event.', 'Added a new event entity.');
-    $this->assertText(DESCRIPTION, 'Confirmed description was saved.');
-    $this->assertText(STARTDATEFORMATTED, 'Confirmed start date was saved.');
-    $this->assertText(STARTTIME, 'Confirmed start time was saved.');
-    $this->assertText(ENDDATEFORMATTED, 'Confirmed end date was saved.');
-    $this->assertText(ENDTIME, 'Confirmed end time was saved.');
+    $this->assertText(self::DESCRIPTION, 'Confirmed description was saved.');
+    $this->assertText(self::STARTDATEFORMATTED, 'Confirmed start date was saved.');
+    $this->assertText(self::STARTTIME, 'Confirmed start time was saved.');
+    $this->assertText(self::ENDDATEFORMATTED, 'Confirmed end date was saved.');
+    $this->assertText(self::ENDTIME, 'Confirmed end time was saved.');
   }
 
   /**
