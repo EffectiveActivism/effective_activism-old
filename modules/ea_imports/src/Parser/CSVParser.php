@@ -5,6 +5,7 @@ namespace Drupal\ea_imports\Parser;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_events\Entity\Event;
 use Drupal\ea_events\Entity\EventRepeater;
+use Drupal\ea_tasks\Entity\Task;
 use Drupal\ea_data\Entity\Data;
 use Drupal\ea_results\Entity\Result;
 use Drupal\file\Entity\File;
@@ -14,7 +15,9 @@ use Drupal\Core\Field\BaseFieldDefinition;
 /**
  * Parses ICalendar.
  */
-class CSVParser {
+class CSVParser implements ParserInterface {
+
+  const BATCHSIZE = 10;
 
   /**
    * CSV file.
@@ -156,12 +159,33 @@ class CSVParser {
   /**
    * {@inheritdoc}
    */
-  public function import() {
+  public function getCount() {
+    $count = 1;
     if (($handle = fopen($this->file->getFileUri(), "r")) !== FALSE) {
       $this->line = 0;
       while (($row = fgetcsv($handle)) !== FALSE) {
         // Skip headers.
         if ($this->line === 0) {
+          $this->line++;
+          continue;
+        }
+        $count++;
+      }
+      fclose($handle);
+    }
+    return $count;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getItems($currentItem = 0) {
+    $items = [];
+    if (($handle = fopen($this->file->getFileUri(), "r")) !== FALSE) {
+      $this->line = 0;
+      while (($row = fgetcsv($handle)) !== FALSE) {
+        // Skip headers and move $line to current line.
+        if ($this->line === 0 || $this->line < $currentItem) {
           $this->line++;
           continue;
         }
@@ -194,17 +218,29 @@ class CSVParser {
         }
         // Add parent grouping to event.
         $values['grouping'] = $this->grouping->id();
-        // Create event.
-        try {
-          $event = Event::create($values);
-          $event->save();
-        }
-        catch (EntityStorageException $exception) {
-          drupal_set_message(t('The CSV file contains a row that failed to import at line @line', ['@line' => $this->line]), 'error');
-        }
+        $items[] = $values;
+        // Go to next row.
         $this->line++;
+        // If next line is starting a new batch, return items.
+        if ($this->line % self::BATCHSIZE === 0) {
+          break;
+        }
       }
       fclose($handle);
+    }
+    return $items;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function import($values) {
+    try {
+      $event = Event::create($values);
+      return $event->save();
+    }
+    catch (EntityStorageException $exception) {
+      drupal_set_message(t('The CSV file contains a row that failed to import at line @line', ['@line' => $this->line]), 'error');
     }
   }
 

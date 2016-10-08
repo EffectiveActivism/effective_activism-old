@@ -167,8 +167,20 @@ function ea_imports_import_insert(EntityInterface $entity) {
     $grouping = $entity->get('grouping')->getValue();
     $gid = $grouping[0]['target_id'];
     // Get CSV file.
-    $parsed_csv = new CSVParser($field_file_csv[0]['target_id'], $gid);
-    $parsed_csv->import();
+    $csvParser = new CSVParser($field_file_csv[0]['target_id'], $gid);
+    $batch = [
+      'title' => t('Importing...'),
+      'operations' => [
+        [
+          'Drupal\ea_imports\BatchProcess::import',
+          [
+            $csvParser,
+          ],
+        ],
+      ],
+      'finished' => 'Drupal\ea_imports\BatchProcess::finished',
+    ];
+    batch_set($batch);
   }
   // If the import is an ICalendar file, import the content of it.
   elseif ($entity->bundle() === EA_IMPORTS_BUNDLE_ICALENDAR) {
