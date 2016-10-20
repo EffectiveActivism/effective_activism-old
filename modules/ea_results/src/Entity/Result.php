@@ -190,7 +190,7 @@ class Result extends RevisionableContentEntityBase implements ResultInterface {
       ->setDefaultValue(0)
       ->setSettings(array(
         'allowed_values' => array(
-          '0' => '-',
+          '0' => '0',
           '1' => '1',
           '2' => '2',
           '3' => '3',
@@ -268,7 +268,7 @@ class Result extends RevisionableContentEntityBase implements ResultInterface {
       ->setDefaultValue(0)
       ->setSettings(array(
         'allowed_values' => array(
-          '0' => '-',
+          '0' => '0',
           '1' => '1',
           '2' => '2',
           '3' => '3',
@@ -310,7 +310,7 @@ class Result extends RevisionableContentEntityBase implements ResultInterface {
       ->setDefaultValue(0)
       ->setSettings(array(
         'allowed_values' => array(
-          '0' => '-',
+          '0' => '0',
           '1' => '1',
           '2' => '2',
           '3' => '3',
