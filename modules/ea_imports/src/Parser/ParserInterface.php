@@ -10,31 +10,23 @@ namespace Drupal\ea_imports\Parser;
 interface ParserInterface {
 
   /**
-   * Validates data against object format.
-   *
-   * @return bool
-   *   Whether or not data is valid.
-   */
-  public function validate();
-
-  /**
    * Get the number of items to be imported.
    *
    * @return int
    *   The number of items to import.
    */
-  public function getCount();
+  public function getItemCount();
 
   /**
    * Get the items to be imported.
    *
-   * @param int $currentItem
-   *   The item number to start import from.
+   * @param array $position
+   *   The position to start from.
    *
    * @return array
    *   The items to import.
    */
-  public function getItems($currentItem);
+  public function getNextBatch($position);
 
   /**
    * Imports parsed items.
@@ -45,14 +37,6 @@ interface ParserInterface {
    * @return bool
    *   Whether the import was successful or not.
    */
-  public function import($values);
-
-  /**
-   * Returns a translated error message, if any.
-   *
-   * @return string
-   *   The error message.
-   */
-  public function getErrorMessage();
+  public function importItem($values);
 
 }

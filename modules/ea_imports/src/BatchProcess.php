@@ -21,15 +21,14 @@ class BatchProcess {
     // Set inital batch values.
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 1;
-      $context['sandbox']['max'] = $parser->getCount();
     }
     $context['message'] = t('Importing items...');
-    foreach ($parser->getItems($context['sandbox']['progress']) as $item) {
-      $context['results'][] = $parser->import($item);
+    foreach ($parser->getNextBatch($context['sandbox']['progress']) as $item) {
+      $context['results'][] = $parser->importItem($item);
       $context['sandbox']['progress']++;
     }
     // Inform batch about progess.
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['finished'] = $context['sandbox']['progress'] / $parser->getItemCount();
   }
 
   /**
@@ -45,7 +44,7 @@ class BatchProcess {
   public static function finished($success, $results, $operations) {
     if ($success) {
       drupal_set_message(\Drupal::translation()->formatPlural(
-        count($results),
+        count(array_unique($results, SORT_NUMERIC)),
         'One item imported.',
         '@count items imported.'
       ));

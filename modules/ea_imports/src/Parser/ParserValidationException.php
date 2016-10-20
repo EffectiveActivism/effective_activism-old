@@ -4,26 +4,35 @@ namespace Drupal\ea_imports\Parser;
 
 use \Exception;
 
-const WRONG_COLUMN_COUNT = -1;
+const INVALID_HEADERS = -1;
 
-const INVALID_HEADERS = -2;
+const INVALID_DATE = -2;
 
-const REQUIRED_VALUE = -3;
+const INVALID_PARTICIPANT = -3;
 
-const WRONG_INT_FORMAT = -4;
+const INVALID_RRULE = -4;
 
-const WRONG_DATE_FORMAT = -5;
+const INVALID_RESULT = -5;
 
-const WRONG_LOCATION_FORMAT = -6;
+const INVALID_DATA = -6;
 
-const WRONG_ENTITY_FORMAT = -7;
+const INVALID_EVENT = -7;
 
-const PERMISSION_DENIED = -8;
+const WRONG_ROW_COUNT = -8;
+
+const PERMISSION_DENIED = -9;
 
 /**
  * Exception for parser validation errors.
  */
 class ParserValidationException extends Exception {
+
+  /**
+   * Error code.
+   *
+   * @var int
+   */
+  private $errorCode;
 
   /**
    * Data line number.
@@ -40,17 +49,10 @@ class ParserValidationException extends Exception {
   private $dataColumn;
 
   /**
-   * Additional information.
-   *
-   * @var string
-   */
-  private $additionalInformation;
-
-  /**
    * Constructs a ParserValidationException.
    *
-   * @param string $message
-   *   The exception message.
+   * @param int $errorCode
+   *   The exception error code.
    * @param int $line
    *   The line of the data file where the exception was thrown.
    * @param int $column
@@ -58,22 +60,21 @@ class ParserValidationException extends Exception {
    * @param string $additionalInformation
    *   Any extra information that needs to be passed as a variable.
    */
-  public function __construct($message, $line = NULL, $column = NULL, $additionalInformation = NULL) {
+  public function __construct($errorCode, $line = NULL, $column = NULL) {
+    $this->errorCode = $errorCode;
     $this->dataLine = $line;
     $this->dataColumn = $column;
-    $this->additionalInformation = $additionalInformation;
-    parent::__construct($message);
+    parent::__construct();
   }
 
   /**
-   * Set the current line of the data file.
+   * Returns the error code.
    *
-   * @param int $dataLine
-   *   The current line of the file.
+   * @return int
+   *   The error code.
    */
-  public function setDataLine($dataLine) {
-    $this->dataLine = $dataLine;
-    return $this;
+  public function getErrorCode() {
+    return $this->errorCode;
   }
 
   /**
@@ -87,17 +88,6 @@ class ParserValidationException extends Exception {
   }
 
   /**
-   * Set the current column of the data file.
-   *
-   * @param int $dataColumn
-   *   The current column of the file.
-   */
-  public function setDataColumn($dataColumn) {
-    $this->dataColumn = $dataColumn;
-    return $this;
-  }
-
-  /**
    * Returns the column of the data file where the exception was registered.
    *
    * @return int
@@ -105,27 +95,6 @@ class ParserValidationException extends Exception {
    */
   public function getDataColumn() {
     return $this->dataColumn;
-  }
-
-  /**
-   * Set the additional information.
-   *
-   * @param int $additionalInformation
-   *   The current column of the file.
-   */
-  public function setAdditionalInformation($additionalInformation) {
-    $this->additionalInformation = $additionalInformation;
-    return $this;
-  }
-
-  /**
-   * Returns the additional information.
-   *
-   * @return string
-   *   The additional information.
-   */
-  public function getAdditionalInformation() {
-    return $this->additionalInformation;
   }
 
 }

@@ -168,6 +168,7 @@ function ea_imports_import_insert(EntityInterface $entity) {
     $gid = $grouping[0]['target_id'];
     // Get CSV file.
     $csvParser = new CSVParser($field_file_csv[0]['target_id'], $gid);
+    $csvParser->setItemCount();
     $batch = [
       'title' => t('Importing...'),
       'operations' => [
