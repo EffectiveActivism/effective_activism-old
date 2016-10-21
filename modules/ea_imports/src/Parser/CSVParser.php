@@ -339,7 +339,7 @@ class CSVParser extends EntityParser implements ParserInterface {
         $this->latestTask = $this->importTask($values[array_search('tasks', self::CSVHEADERFORMAT)]);
         $taskId = !empty($this->latestTask) ? $this->latestTask->id() : NULL;
       }
-      $eventRepeater = !empty($values[array_search('event_repeater', self::CSVHEADERFORMAT)]) ? $this->importEventRepeater($values[array_search('event_repeater', self::CSVHEADERFORMAT)]) : $this->importDefaultEventRepeater();
+      $eventRepeater = !empty($values[array_search('repeat', self::CSVHEADERFORMAT)]) ? $this->importEventRepeater($values[array_search('repeat', self::CSVHEADERFORMAT)]) : $this->importDefaultEventRepeater();
       $eventRepeaterId = !empty($eventRepeater) ? $eventRepeater->id() : NULL;
       $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
       $participantId = !empty($participant) ? $participant->id() : NULL;
