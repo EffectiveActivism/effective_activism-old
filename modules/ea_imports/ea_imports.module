@@ -67,97 +67,6 @@ function ea_imports_theme_suggestions_import(array $variables) {
 }
 
 /**
- * Implements hook_entity_presave().
- */
-function ea_imports_entity_presave(EntityInterface $entity) {
-  // If the import is an ICalendar file, validate the content of it.
-  if ($entity->bundle() === EA_IMPORTS_BUNDLE_ICALENDAR) {
-    $field_url = $entity->get('field_url')->getValue();
-    $grouping = $entity->get('grouping')->getValue();
-    $filter_title = $entity->get('field_filter_title')->getValue();
-    $filter_description = $entity->get('field_filter_title')->getValue();
-    $filter_date_start = $entity->get('field_filter_date_start')->getValue();
-    $filter_date_end = $entity->get('field_filter_date_end')->getValue();
-    $gid = $grouping[0]['target_id'];
-    // Validate filter fields.
-    if (
-      !empty($filter_date_start[0]['value']) &&
-      !empty($filter_date_end[0]['value']) &&
-      $filter_date_start[0]['value'] > $filter_date_end[0]['value']
-    ) {
-      throw new Exception(t('The start date must be before the end date.'));
-    }
-    // Add filters.
-    $filters = [];
-    $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
-    $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
-    $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
-    $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
-    // Get ICalendar file.
-    $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters);
-    // Validate ICalendar headers.
-    if (!$parsed_icalendar->validateHeaders()) {
-      throw new Exception(t('The ICalendar header not formatted properly.'));
-    }
-    // Iterate events.
-    $count = 0;
-    foreach ($parsed_icalendar->getEvents() as $parsed_event) {
-      $count++;
-      // Get UID.
-      $uid = $parsed_event['uid'];
-      unset($parsed_event['uid']);
-      // Get RRULE.
-      $rrule = $parsed_event['rrule'];
-      unset($parsed_event['rrule']);
-      // Validate RRULE.
-      if (!empty($rrule)) {
-        $rruleParser = new RruleParser($rrule);
-        $event_repeater = EventRepeater::create($rruleParser->getEventRepeaterValues());
-        // Raise error on validation failure.
-        $event_repeater_errors = $event_repeater->validate();
-        if ($event_repeater_errors->count() > 0) {
-          $event_repeater_error_list = [];
-          foreach ($event_repeater_errors as $error) {
-            $event_repeater_error_list[] = strip_tags($error->getMessage());
-          }
-          throw new Exception(t('Errors found in row @row: The RRULE is not formatted properly. @errors', array(
-            '@row' => $count,
-            '@errors' => implode(', ', $event_repeater_error_list),
-          )));
-        }
-      }
-      // Create event.
-      $parsed_event['grouping'] = $gid;
-      $parsed_event['user_id'] = \Drupal::currentUser()->id();
-      $event = Event::create($parsed_event);
-      // Raise error on validation failure.
-      $errors = $event->validate();
-      if ($errors->count() > 0) {
-        $error_list = [];
-        $error_count = 0;
-        foreach ($errors as $error) {
-          $error_message = strip_tags($error->getMessage());
-          // Skip missing EventRepeater entity error.
-          if ($error_message !== (string) t('This value should not be null.')) {
-            $error_list[] = $error_message;
-            $error_count++;
-          }
-          if ($error_count > EA_IMPORTS_MAX_ERRORS) {
-            break;
-          }
-        }
-        if ($error_count > 0) {
-          throw new Exception(t('Errors found in row @row: @errors', array(
-            '@row' => $count,
-            '@errors' => implode(', ', $error_list),
-          )));
-        }
-      }
-    }
-  }
-}
-
-/**
  * Implements hook_ENTITY_TYPE_insert().
  */
 function ea_imports_import_insert(EntityInterface $entity) {
@@ -168,7 +77,6 @@ function ea_imports_import_insert(EntityInterface $entity) {
     $gid = $grouping[0]['target_id'];
     // Get CSV file.
     $csvParser = new CSVParser($field_file_csv[0]['target_id'], $gid);
-    $csvParser->setItemCount();
     $batch = [
       'title' => t('Importing...'),
       'operations' => [
@@ -199,57 +107,23 @@ function ea_imports_import_insert(EntityInterface $entity) {
     $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
     $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
     // Get ICalendar file.
-    $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters);
+    $parsedICalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
     // Iterate events.
     $count = 0;
     $duplicate_count = 0;
-    foreach ($parsed_icalendar->getEvents() as $parsed_event) {
-      // Get UID.
-      $uid = $parsed_event['uid'];
-      unset($parsed_event['uid']);
-      // Get RRULE.
-      $rrule = $parsed_event['rrule'];
-      unset($parsed_event['rrule']);
-      // Save event if UID is not found within grouping scope.
-      if (!_ea_imports_uid_exists($gid, $uid)) {
-        $count++;
-        // If RRULE exists, create event repeater entity.
-        if (!empty($rrule)) {
-          $rruleParser = new RruleParser($rrule);
-          $event_repeater = EventRepeater::create($rruleParser->getEventRepeaterValues());
-          $event_repeater->save();
-          $parsed_event['event_repeater'] = $event_repeater->id();
-        }
-        // Create event.
-        $parsed_event['grouping'] = $gid;
-        $parsed_event['user_id'] = \Drupal::currentUser()->id();
-        $event = Event::create($parsed_event);
-        $event->save();
-        // Add event to import entity reference field.
-        $entity->events->appendItem($event->id());
-        $entity->save();
-        // Insert UID/gid pair.
-        _ea_imports_uid_insert($uid, $gid, $event->id());
-      }
-      else {
-        $duplicate_count++;
-      }
-    }
-    if ($count > 1) {
-      drupal_set_message(t('@count events imported', array('@count' => $count)));
-    }
-    elseif ($count === 1) {
-      drupal_set_message(t('One event imported'));
-    }
-    else {
-      drupal_set_message(t('No events imported'), 'warning');
-    }
-    if ($duplicate_count > 1) {
-      drupal_set_message(t('@count duplicate events skipped', array('@count' => $duplicate_count)), 'warning');
-    }
-    elseif ($duplicate_count === 1) {
-      drupal_set_message(t('One duplicate event skipped'));
-    }
+    $batch = [
+      'title' => t('Importing...'),
+      'operations' => [
+        [
+          'Drupal\ea_imports\BatchProcess::import',
+          [
+            $parsedICalendar,
+          ],
+        ],
+      ],
+      'finished' => 'Drupal\ea_imports\BatchProcess::finished',
+    ];
+    batch_set($batch);
   }
 }
 
@@ -291,7 +165,7 @@ function ea_imports_cron() {
         $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
         $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
         // Get ICalendar file.
-        $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters);
+        $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
         // Iterate events.
         foreach ($parsed_icalendar->getEvents() as $parsed_event) {
           // Get UID.
@@ -342,7 +216,8 @@ function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id)
   if ($form_id === 'import_csv_add_form') {
     $form['#validate'][] = '_ea_imports_validate_csv';
   }
-  elseif ($form_id === 'import_icalendar_edit_form') {
+  elseif ($form_id === 'import_icalendar_add_form') {
+    $form['#validate'][] = '_ea_imports_validate_icalendar';
     $form['field_url']['#access'] = 0;
   }
 }
@@ -367,6 +242,45 @@ function _ea_imports_validate_csv(&$form, FormStateInterface $form_state) {
         $form_state->setErrorByName('field_file_csv', $parsed_csv->getErrorMessage());
       }
     }
+  }
+}
+
+/**
+ * Validation function for the ICalendar import form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param FormStateInterface $form_state
+ *   The form state to validate.
+ */
+function _ea_imports_validate_icalendar(&$form, FormStateInterface $form_state) {
+  $field_url = $form_state->getValue('field_url');
+  $grouping = $form_state->getValue('grouping');
+  $filter_title = $form_state->getValue('field_filter_title');
+  $filter_description = $form_state->getValue('field_filter_title');
+  $filter_date_start = $form_state->getValue('field_filter_date_start');
+  $filter_date_end = $form_state->getValue('field_filter_date_end');
+  $gid = $grouping[0]['target_id'];
+  // Validate filter fields.
+  if (
+    !empty($filter_date_start[0]['value']) &&
+    !empty($filter_date_end[0]['value']) &&
+    $filter_date_start[0]['value'] > $filter_date_end[0]['value']
+  ) {
+    $form_state->setErrorByName('field_url', 'The start date must be before the end date.');
+    return;
+  }
+  // Add filters.
+  $filters = [];
+  $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
+  $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
+  $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
+  $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
+  // Get ICalendar file.
+  $parsedICalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
+  // Validate ICalendar headers.
+  if (!$parsedICalendar->validate()) {
+    $form_state->setErrorByName('field_url', $parsedICalendar->getErrorMessage());
   }
 }
 
