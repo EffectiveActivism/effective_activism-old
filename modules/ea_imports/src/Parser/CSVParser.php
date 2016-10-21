@@ -353,7 +353,8 @@ class CSVParser extends EntityParser implements ParserInterface {
         ];
         $this->latestTask->save();
       }
-      $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($this->getValue($values, 'results'), reset($this->getValue($values, 'results'))) : NULL;
+      $resultValues = $this->getValue($values, 'results');
+      $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($resultValues, reset($resultValues)) : NULL;
       $resultId = !empty($result) ? $result->id() : NULL;
       $this->latestEvent = $this->importEvent([
         $values[array_search('title', self::CSVHEADERFORMAT)],
@@ -408,7 +409,8 @@ class CSVParser extends EntityParser implements ParserInterface {
       }
       // Create result, if any.
       if (!empty($values[array_search('results', self::CSVHEADERFORMAT)]) && !empty($this->latestEvent)) {
-        $entity = $this->importResult($this->getValue($values, 'results'), reset($this->getValue($values, 'results')));
+        $resultValues = $this->getValue($values, 'results');
+        $entity = $this->importResult($resultValues, reset($resultValues));
         if ($entity) {
           // Attach to latest event.
           $this->latestEvent->results[] = [
