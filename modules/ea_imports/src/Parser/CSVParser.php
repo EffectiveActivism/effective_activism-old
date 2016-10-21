@@ -334,15 +334,25 @@ class CSVParser extends EntityParser implements ParserInterface {
   public function importItem($values) {
     // Create event, if any.
     if ($this->isEvent($values)) {
+      $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
+      $participantId = !empty($participant) ? $participant->id() : NULL;
+      $eventRepeater = !empty($values[array_search('repeat', self::CSVHEADERFORMAT)]) ? $this->importEventRepeater($values[array_search('repeat', self::CSVHEADERFORMAT)]) : $this->importDefaultEventRepeater();
+      $eventRepeaterId = !empty($eventRepeater) ? $eventRepeater->id() : NULL;
+      // Add 
       $taskId = NULL;
       if (!empty($values[array_search('tasks', self::CSVHEADERFORMAT)])) {
         $this->latestTask = $this->importTask($values[array_search('tasks', self::CSVHEADERFORMAT)]);
         $taskId = !empty($this->latestTask) ? $this->latestTask->id() : NULL;
       }
-      $eventRepeater = !empty($values[array_search('repeat', self::CSVHEADERFORMAT)]) ? $this->importEventRepeater($values[array_search('repeat', self::CSVHEADERFORMAT)]) : $this->importDefaultEventRepeater();
-      $eventRepeaterId = !empty($eventRepeater) ? $eventRepeater->id() : NULL;
-      $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
-      $participantId = !empty($participant) ? $participant->id() : NULL;
+      // Add task participants to latest task, if any.
+      if (!empty($this->latestTask) && !empty($values[array_search('task_participants', self::CSVHEADERFORMAT)])) {
+        $participant = $this->importParticipant($this->getValue($values, 'task_participants'));
+        // Attach to latest task.
+        $this->latestTask->participants[] = [
+          'target_id' => $participant->id(),
+        ];
+        $this->latestTask->save();
+      }
       $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($this->getValue($values, 'results'), reset($this->getValue($values, 'results'))) : NULL;
       $resultId = !empty($result) ? $result->id() : NULL;
       $this->latestEvent = $this->importEvent([
@@ -387,13 +397,13 @@ class CSVParser extends EntityParser implements ParserInterface {
       }
       // Create task participant, if any.
       if (!empty($values[array_search('task_participants', self::CSVHEADERFORMAT)]) && !empty($this->latestTask)) {
-        $entity = $this->importTask($this->getValue($values, 'task_participants'));
+        $entity = $this->importParticipant($this->getValue($values, 'task_participants'));
         if ($entity) {
-          // Attach to latest event.
-          $this->latestTask->tasks[] = [
+          // Attach to latest task.
+          $this->latestTask->participants[] = [
             'target_id' => $entity->id(),
           ];
-          $this->latestEvent->save();
+          $this->latestTask->save();
         }
       }
       // Create result, if any.
