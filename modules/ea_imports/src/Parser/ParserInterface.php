@@ -39,4 +39,20 @@ interface ParserInterface {
    */
   public function importItem($values);
 
+  /**
+   * Validates items.
+   *
+   * @return bool
+   *   Whether the items are valid or not.
+   */
+  public function validate();
+
+  /**
+   * Returns a validation error message, if any.
+   *
+   * @return string|null
+   *   The validation error message.
+   */
+  public function getErrorMessage();
+
 }
