@@ -200,10 +200,8 @@ class EntityParser {
    *   The event repeater id or FALSE if import failed.
    */
   public function importEventRepeater($rrule) {
-    $fields = $this->getFields('event_repeater');
     $rruleParser = new RruleParser($rrule);
-    $values = $rruleParser->getEventRepeaterValues();
-    $data = array_combine($fields, $values);
+    $data = $rruleParser->getEventRepeaterValues();
     $entity = EventRepeater::create($data);
     if ($entity->save()) {
       return $entity;
