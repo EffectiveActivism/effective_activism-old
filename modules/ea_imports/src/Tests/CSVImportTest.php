@@ -55,6 +55,7 @@ class CSVImportTest extends ImportWebTestBase {
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created the import.', 'Added a new import entity.');
+    $this->assertText('One item imported', 'Successfully imported event');
   }
 
   /**
@@ -98,7 +99,6 @@ class CSVImportTest extends ImportWebTestBase {
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created the Leafleting Result type.', 'Added a new result type.');
-    $this->assertText('One item imported', 'Successfully imported event');
   }
 
 }
