@@ -84,6 +84,7 @@ function ea_imports_import_insert(EntityInterface $entity) {
           'Drupal\ea_imports\BatchProcess::import',
           [
             $csvParser,
+            $entity,
           ],
         ],
       ],
@@ -118,6 +119,7 @@ function ea_imports_import_insert(EntityInterface $entity) {
           'Drupal\ea_imports\BatchProcess::import',
           [
             $parsedICalendar,
+            $entity,
           ],
         ],
       ],
@@ -281,62 +283,5 @@ function _ea_imports_validate_icalendar(&$form, FormStateInterface $form_state) 
   // Validate ICalendar headers.
   if (!$parsedICalendar->validate()) {
     $form_state->setErrorByName('field_url', $parsedICalendar->getErrorMessage());
-  }
-}
-
-/**
- * Check for matching gid/uid pair.
- *
- * @param int $gid
- *   The grouping id.
- * @param string $uid
- *   The unique id.
- *
- * @return bool
- *   Returns TRUE if gid/uid match found.
- */
-function _ea_imports_uid_exists($gid, $uid) {
-  $count = NULL;
-  try {
-    $count = (boolean) db_select('ea_imports_uids', 'id')
-      ->fields('id')
-      ->condition('gid', $gid)
-      ->condition('uid', $uid)
-      ->countQuery()
-      ->execute()
-      ->fetchField();
-  }
-  catch (Exception $exception) {
-    \Drupal::logger('ea_imports')->notice(t('Database operation failed. Message = %message', array(
-      '%message' => $exception->getMessage(),
-    )));
-  }
-  return $count;
-}
-
-/**
- * Insert gid/uid pair.
- *
- * @param string $uid
- *   The unique id.
- * @param int $gid
- *   The grouping id.
- * @param int $eid
- *   The event id.
- */
-function _ea_imports_uid_insert($uid, $gid, $eid) {
-  try {
-    $result = db_insert('ea_imports_uids')
-      ->fields(array(
-        'uid' => $uid,
-        'gid' => $gid,
-        'eid' => $eid,
-      ))
-      ->execute();
-  }
-  catch (Exception $exception) {
-    \Drupal::logger('ea_imports')->notice(t('Database operation failed. Message = %message', array(
-      '%message' => $exception->getMessage(),
-    )));
   }
 }
