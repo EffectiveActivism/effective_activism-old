@@ -58,7 +58,7 @@ class ICalendarImportTest extends ImportWebTestBase {
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created the import.', 'Added a new import entity.');
-    $this->assertText('One event imported', 'Successfully imported event');
+    $this->assertText('One item imported', 'Successfully imported event');
   }
 
 }
