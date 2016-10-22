@@ -102,12 +102,22 @@ class RruleParser {
           break;
 
         case 'BYDAY':
-          // Assuming FREQ comes before BYDAY.
-          if ($this->eventRepeaterValues['event_freq'] !== 'WEEKLY') {
-            $this->eventRepeaterValues['event_byday'] = $componentArray[1];
+          // BYDAY may designate day of month.
+          $matches = [];
+          $byday = '';
+          if (preg_match('/(-{0,1}[0-9])([A-Z]{2})/', $componentArray[1], $matches)) {
+            $this->eventRepeaterValues['event_bysetpos'] = $matches[1];
+            $byday = $matches[2];
           }
           else {
-            $this->eventRepeaterValues['event_byday_multiple'] = $componentArray[1];
+            $byday = $componentArray[1];
+          }
+          // Assuming FREQ comes before BYDAY.
+          if ($this->eventRepeaterValues['event_freq'] !== 'WEEKLY') {
+            $this->eventRepeaterValues['event_byday'] = $byday;
+          }
+          else {
+            $this->eventRepeaterValues['event_byday_multiple'] = $byday;
           }
           break;
 
@@ -186,6 +196,41 @@ class RruleParser {
     }
     $this->rrule = $rrule;
     return $this;
+  }
+
+  /**
+   * Validate RRULE.
+   *
+   * @param string $rrule
+   *   The RRULE to validate.
+   *
+   * @return bool
+   *   Whether the rrule is valid or not.
+   */
+  public static function validateRrule($rrule) {
+    $isValid = TRUE;
+    $rruleComponents = explode(';', $rrule);
+    foreach ($rruleComponents as $rruleComponent) {
+      $components = explode('=', $rruleComponent);
+      if (count($components) !== 2) {
+        $isValid = FALSE;
+        break;
+      }
+      elseif (!in_array(reset($components), [
+        'FREQ',
+        'COUNT',
+        'UNTIL',
+        'INTERVAL',
+        'BYMONTH',
+        'BYMONTHDAY',
+        'BYDAY',
+        'BYSETPOS',
+      ])) {
+        $isValid = FALSE;
+        break;
+      }
+    }
+    return $isValid;
   }
 
   /**

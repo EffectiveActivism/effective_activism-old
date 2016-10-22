@@ -3,6 +3,7 @@
 namespace Drupal\ea_imports;
 
 use Drupal\ea_imports\Parser\ParserInterface;
+use Drupal\ea_imports\Entity\Import;
 
 /**
  * Processes batches of item imports.
@@ -14,22 +15,28 @@ class BatchProcess {
    *
    * @param Drupal\ea_imports\Parser\ParserInterface $parser
    *   The parser object to import items with.
+   * @param Drupal\ea_imports\Entity\Import $entity
+   *   The import entity to add event references to.
    * @param array $context
    *   The context.
    */
-  public static function import(ParserInterface $parser, &$context) {
+  public static function import(ParserInterface $parser, Import $entity, &$context) {
     // Set inital batch values.
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 1;
-      $context['sandbox']['max'] = $parser->getCount();
     }
     $context['message'] = t('Importing items...');
-    foreach ($parser->getItems($context['sandbox']['progress']) as $item) {
-      $context['results'][] = $parser->import($item);
+    foreach ($parser->getNextBatch($context['sandbox']['progress']) as $item) {
+      $itemId = $parser->importItem($item);
+      if (intval($itemId) > 0 && !in_array($itemId, $context['results'])) {
+        $entity->events->appendItem($itemId);
+      }
+      $context['results'][] = $itemId;
       $context['sandbox']['progress']++;
     }
+    $entity->save();
     // Inform batch about progess.
-    $context['finished'] = $context['sandbox']['progress'] / $context['sandbox']['max'];
+    $context['finished'] = $context['sandbox']['progress'] / $parser->getItemCount();
   }
 
   /**
@@ -45,7 +52,7 @@ class BatchProcess {
   public static function finished($success, $results, $operations) {
     if ($success) {
       drupal_set_message(\Drupal::translation()->formatPlural(
-        count($results),
+        count(array_unique($results, SORT_NUMERIC)),
         'One item imported.',
         '@count items imported.'
       ));

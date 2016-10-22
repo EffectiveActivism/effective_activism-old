@@ -3,28 +3,49 @@
 namespace Drupal\ea_imports\Parser;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_events\Entity\Event;
-use Drupal\ea_events\Entity\EventRepeater;
-use Drupal\ea_tasks\Entity\Task;
-use Drupal\ea_data\Entity\Data;
-use Drupal\ea_results\Entity\Result;
 use Drupal\file\Entity\File;
-use Drupal\Core\Entity\EntityStorageException;
-use Drupal\Core\Field\BaseFieldDefinition;
 
 /**
  * Parses ICalendar.
  */
-class CSVParser implements ParserInterface {
+class CSVParser extends EntityParser implements ParserInterface {
 
-  const BATCHSIZE = 10;
+  const BATCHSIZE = 50;
+
+  const CSVHEADERFORMAT = array(
+    'start_date',
+    'end_date',
+    'repeat',
+    'address',
+    'address_extra_information',
+    'title',
+    'description',
+    'participants',
+    'tasks',
+    'task_participants',
+    'results',
+  );
+
+  /**
+   * CSV filepath.
+   *
+   * @var string
+   */
+  private $filePath;
 
   /**
    * CSV file.
    *
-   * @var FileInterface
+   * @var resource
    */
-  private $file;
+  private $fileHandle;
+
+  /**
+   * Item count.
+   *
+   * @var int
+   */
+  private $itemCount;
 
   /**
    * Parent grouping.
@@ -34,32 +55,39 @@ class CSVParser implements ParserInterface {
   private $grouping;
 
   /**
-   * The current line number.
+   * The current row number.
    *
    * @var int
    */
-  private $line;
+  private $row = 0;
 
   /**
    * The current column number.
    *
    * @var int
    */
-  private $column;
+  private $column = 0;
 
   /**
-   * The event entity field definitions.
+   * Tracks the latest read event.
    *
-   * @var array
+   * @var Event
    */
-  private $fieldDefinitions;
+  private $latestEvent;
 
   /**
-   * The parsed data.
+   * Tracks the latest read task.
    *
-   * @var array
+   * @var Task
    */
-  private $data;
+  private $latestTask;
+
+  /**
+   * Tracks the latest read result.
+   *
+   * @var Result
+   */
+  private $latestResult;
 
   /**
    * Any validation error message.
@@ -77,16 +105,9 @@ class CSVParser implements ParserInterface {
    *   The parent grouping id of the events.
    */
   public function __construct($file, $gid) {
-    if (empty($file)) {
-      return FALSE;
-    }
-    // Load file entity.
-    $csv_file = File::load($file);
-    $this->file = $csv_file;
-    // Load the grouping.
+    $this->filePath = File::load($file)->getFileUri();
     $this->grouping = Grouping::load($gid);
-    // Set basefield definitions.
-    $this->fieldDefinitions = $this->getFieldDefinitions('event');
+    $this->setItemCount();
     return $this;
   }
 
@@ -94,154 +115,55 @@ class CSVParser implements ParserInterface {
    * {@inheritdoc}
    */
   public function validate() {
+    $isValid = TRUE;
     try {
-      $this->validateColumnNames();
-      $this->validateData();
+      $this->fileHandle = fopen($this->filePath, "r");
+      $this->validateHeader();
+      $this->validateRows();
+      fclose($this->fileHandle);
     }
     catch (ParserValidationException $exception) {
-      switch ($exception->getMessage()) {
-        case WRONG_COLUMN_COUNT:
-          $this->errorMessage = t('The CSV file does not have the correct number of columns. Column names should be "@column_names_format"', ['@column_names_format' => implode(', ', array_keys($this->fieldDefinitions))]);
-          break;
-
+      $isValid = FALSE;
+      switch ($exception->getErrorCode()) {
         case INVALID_HEADERS:
-          $this->errorMessage = t('The CSV file does not contain valid column names. Column names should be "@column_names_format"', ['@column_names_format' => implode(', ', array_keys($this->fieldDefinitions))]);
+          $this->errorMessage = t('The CSV file does not contain valid column names. Column names should be "@column_names_format"', ['@column_names_format' => implode(',', self::CSVHEADERFORMAT)]);
           break;
 
-        case REQUIRED_VALUE:
-          $this->errorMessage = t('The CSV file contains a required value that is missing at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+        case INVALID_DATE:
+          $this->errorMessage = t('The CSV file contains a row with an incorrect date at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
           break;
 
-        case WRONG_INT_FORMAT:
-          $this->errorMessage = t('The CSV file contains a value that is not formatted properly at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+        case INVALID_PARTICIPANT:
+          $this->errorMessage = t('The CSV file contains a row with an incorrect participant at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
           break;
 
-        case WRONG_DATE_FORMAT:
-          $this->errorMessage = t('The CSV file contains a date that is not formatted properly at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+        case INVALID_RRULE:
+          $this->errorMessage = t('The CSV file contains a row with an incorrect rrule at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
           break;
 
-        case WRONG_LOCATION_FORMAT:
-          $this->errorMessage = $this->errorMessage = t('The CSV file contains a location that is not formatted properly at line @line, column @column. Location should be formatted as @valid_format', [
-            '@line' => $exception->getDataLine(),
-            '@column' => $exception->getDataColumn(),
-            '@valid_format' => $exception->getAdditionalInformation(),
-          ]);
+        case INVALID_RESULT:
+          $this->errorMessage = t('The CSV file contains a row with an incorrect result at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
           break;
 
-        case WRONG_ENTITY_FORMAT:
-          if (!empty($exception->getAdditionalInformation())) {
-            $this->errorMessage = t('The CSV file contains a value that is not formatted properly at line @line, column @column. Value should be formatted as @valid_format', [
-              '@line' => $exception->getDataLine(),
-              '@column' => $exception->getDataColumn(),
-              '@valid_format' => $exception->getAdditionalInformation(),
-            ]);
-          }
-          else {
-            $this->errorMessage = t('The CSV file contains a value that is not formatted properly at line @line, column @column.', [
-              '@line' => $exception->getDataLine(),
-              '@column' => $exception->getDataColumn(),
-            ]);
-          }
+        case INVALID_DATA:
+          $this->errorMessage = t('The CSV file contains a row with incorrect data at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+          break;
+
+        case INVALID_EVENT:
+          $this->errorMessage = t('The CSV file contains a row with an incorrect event at line @line.', ['@line' => $exception->getDataLine()]);
+          break;
+
+        case WRONG_ROW_COUNT:
+          $this->errorMessage = t('The CSV file contains a row with incorrect number of columns at line @line.', ['@line' => $exception->getDataLine()]);
           break;
 
         case PERMISSION_DENIED:
-          $this->errorMessage('The CSV file contains a row with an result that is not permissable for this grouping at line @line, column @column', ['@line' => $this->line, '@column' => $this->column]);
+          $this->errorMessage = t('The CSV file contains a row with an inaccessable value at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
           break;
 
-        default:
-          $this->errorMessage = t('The CSV file failed to validate.');
       }
-      return FALSE;
     }
-    return TRUE;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCount() {
-    $count = 1;
-    if (($handle = fopen($this->file->getFileUri(), "r")) !== FALSE) {
-      $this->line = 0;
-      while (($row = fgetcsv($handle)) !== FALSE) {
-        // Skip headers.
-        if ($this->line === 0) {
-          $this->line++;
-          continue;
-        }
-        $count++;
-      }
-      fclose($handle);
-    }
-    return $count;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getItems($currentItem = 0) {
-    $items = [];
-    if (($handle = fopen($this->file->getFileUri(), "r")) !== FALSE) {
-      $this->line = 0;
-      while (($row = fgetcsv($handle)) !== FALSE) {
-        // Skip headers and move $line to current line.
-        if ($this->line === 0 || $this->line < $currentItem) {
-          $this->line++;
-          continue;
-        }
-        $columnNames = array_keys($this->fieldDefinitions);
-        $values = [];
-        foreach ($columnNames as $column => $name) {
-          $this->column = $column;
-          switch ($this->fieldDefinitions[$name]->getType()) {
-            case 'datetime':
-              // Format datetime object.
-              $value = date(DATETIME_DATETIME_STORAGE_FORMAT, strtotime($row[$column]));
-              break;
-
-            case 'location':
-              // Format location field.
-              $value = json_decode($row[$column], TRUE);
-              break;
-
-            case 'entity_reference':
-              // Unpack entity reference.
-              $value = $this->unpackEntityReference($name, $row[$column], TRUE);
-              break;
-
-            default:
-              $value = $row[$column];
-          }
-          if (!empty($value)) {
-            $values[$name] = $value;
-          }
-        }
-        // Add parent grouping to event.
-        $values['grouping'] = $this->grouping->id();
-        $items[] = $values;
-        // Go to next row.
-        $this->line++;
-        // If next line is starting a new batch, return items.
-        if ($this->line % self::BATCHSIZE === 0) {
-          break;
-        }
-      }
-      fclose($handle);
-    }
-    return $items;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function import($values) {
-    try {
-      $event = Event::create($values);
-      return $event->save();
-    }
-    catch (EntityStorageException $exception) {
-      drupal_set_message(t('The CSV file contains a row that failed to import at line @line', ['@line' => $this->line]), 'error');
-    }
+    return $isValid;
   }
 
   /**
@@ -252,277 +174,291 @@ class CSVParser implements ParserInterface {
   }
 
   /**
-   * Filters definitions from the entity basefield definitions.
+   * Validates the CSV header.
+   */
+  private function validateHeader() {
+    $this->row++;
+    if (fgetcsv($this->fileHandle) !== self::CSVHEADERFORMAT) {
+      throw new ParserValidationException(INVALID_HEADERS, $this->row, $this->convertColumn($this->column));
+    }
+  }
+
+  /**
+   * Validates the CSV data.
+   */
+  private function validateRows() {
+    while (($row = fgetcsv($this->fileHandle)) !== FALSE) {
+      // Skip header.
+      if ($this->row === 0) {
+        $this->row++;
+        continue;
+      }
+      $this->validateRow($row);
+      $this->row++;
+    }
+  }
+
+  /**
+   * Validate row.
    *
-   * @param string $type
-   *   The entity type.
-   * @param string $bundle
-   *   The entity bundle.
+   * @param array $row
+   *   The row to validate.
+   */
+  private function validateRow($row) {
+    foreach ($row as $column => $data) {
+      $this->column = $column;
+      switch (self::CSVHEADERFORMAT[$column]) {
+        case 'start_date':
+        case 'end_date':
+          if (!empty($data)) {
+            $date = \DateTime::createFromFormat('Y-m-d H:i', $data);
+            if (!$date || $date->format('Y-m-d H:i') !== $data) {
+              throw new ParserValidationException(INVALID_DATE, $this->row, $this->convertColumn($this->column));
+            }
+          }
+          break;
+
+        case 'tasks':
+          if (!empty($data) && !$this->validateTask($data)) {
+            throw new ParserValidationException(INVALID_TASK, $this->row, $this->convertColumn($this->column));
+          }
+          break;
+
+        case 'repeat':
+          if (!empty($data) && (!RruleParser::validateRrule($data) || !$this->validateEventRepeater($data))) {
+            throw new ParserValidationException(INVALID_RRULE, $this->row, $this->convertColumn($this->column));
+          }
+          break;
+
+        case 'task_participants':
+        case 'participants':
+          if (!empty($data) && (count(explode('|', $data)) !== 3 || !$this->validateParticipant(array_map('trim', explode('|', $data))))) {
+            throw new ParserValidationException(INVALID_PARTICIPANT, $this->row, $this->convertColumn($this->column));
+          }
+          break;
+
+        case 'results':
+          $dataArray = array_map('trim', explode('|', $data));
+          if (!empty($data) && (count(explode('|', $data)) < 5 || !$this->validateResult($dataArray, reset($dataArray)))) {
+            throw new ParserValidationException(INVALID_RESULT, $this->row, $this->convertColumn($this->column));
+          }
+          break;
+
+        case 'result_data':
+          if (!empty($data) && (count(explode('|', $data)) !== 2 || !$this->validateData(array_map('trim', explode('|', $data)), reset(array_map('trim', explode('|', $data)))))) {
+            throw new ParserValidationException(INVALID_DATA, $this->row, $this->convertColumn($this->column));
+          }
+          break;
+
+      }
+    }
+    // Validate event if required fields are present.
+    if ($this->isEvent($row)) {
+      $values = [
+        $row[array_search('title', self::CSVHEADERFORMAT)],
+        $row[array_search('start_date', self::CSVHEADERFORMAT)],
+        $row[array_search('end_date', self::CSVHEADERFORMAT)],
+        [
+          'address' => $row[array_search('address', self::CSVHEADERFORMAT)],
+          'extra_information' => $row[array_search('address_extra_information', self::CSVHEADERFORMAT)],
+        ],
+        $row[array_search('description', self::CSVHEADERFORMAT)],
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        $this->grouping->id(),
+      ];
+      if (!$this->validateEvent($values)) {
+        throw new ParserValidationException(INVALID_EVENT, $this->row, NULL);
+      }
+    }
+  }
+
+  /**
+   * Set the number of items to be imported.
+   */
+  private function setItemCount() {
+    $this->itemCount = 0;
+    $this->fileHandle = fopen($this->filePath, "r");
+    while (fgetcsv($this->fileHandle) !== FALSE) {
+      $this->itemCount++;
+    }
+    fclose($this->fileHandle);
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getItemCount() {
+    return $this->itemCount;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getNextBatch($position) {
+    $this->fileHandle = fopen($this->filePath, "r");
+    $this->row = 0;
+    $itemCount = 0;
+    $items = [];
+    while (($row = fgetcsv($this->fileHandle)) !== FALSE) {
+      // Skip to current row.
+      if ($this->row === 0 || $this->row < $position) {
+        $this->row++;
+        continue;
+      }
+      $items[] = $row;
+      $itemCount++;
+      $this->row++;
+      if ($itemCount === self::BATCHSIZE) {
+        break;
+      }
+    }
+    fclose($this->fileHandle);
+    return $items;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importItem($values) {
+    // Create event, if any.
+    if ($this->isEvent($values)) {
+      $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
+      $participantId = !empty($participant) ? $participant->id() : NULL;
+      $eventRepeater = !empty($values[array_search('repeat', self::CSVHEADERFORMAT)]) ? $this->importEventRepeater($values[array_search('repeat', self::CSVHEADERFORMAT)]) : $this->importDefaultEventRepeater();
+      $eventRepeaterId = !empty($eventRepeater) ? $eventRepeater->id() : NULL;
+      // Create task, if any.
+      $taskId = NULL;
+      if (!empty($values[array_search('tasks', self::CSVHEADERFORMAT)])) {
+        $this->latestTask = $this->importTask($values[array_search('tasks', self::CSVHEADERFORMAT)]);
+        $taskId = !empty($this->latestTask) ? $this->latestTask->id() : NULL;
+      }
+      // Add task participants to latest task, if any.
+      if (!empty($this->latestTask) && !empty($values[array_search('task_participants', self::CSVHEADERFORMAT)])) {
+        $participant = $this->importParticipant($this->getValue($values, 'task_participants'));
+        // Attach to latest task.
+        $this->latestTask->participants[] = [
+          'target_id' => $participant->id(),
+        ];
+        $this->latestTask->save();
+      }
+      // Create result, if any.
+      $resultValues = $this->getValue($values, 'results');
+      $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($resultValues, reset($resultValues)) : NULL;
+      $resultId = !empty($result) ? $result->id() : NULL;
+      // Create event.
+      $this->latestEvent = $this->importEvent([
+        $values[array_search('title', self::CSVHEADERFORMAT)],
+        \DateTime::createFromFormat('Y-m-d H:i', $values[array_search('start_date', self::CSVHEADERFORMAT)])->format(DATETIME_DATETIME_STORAGE_FORMAT),
+        \DateTime::createFromFormat('Y-m-d H:i', $values[array_search('end_date', self::CSVHEADERFORMAT)])->format(DATETIME_DATETIME_STORAGE_FORMAT),
+        [
+          'address' => $values[array_search('address', self::CSVHEADERFORMAT)],
+          'extra_information' => $values[array_search('address_extra_information', self::CSVHEADERFORMAT)],
+        ],
+        $values[array_search('description', self::CSVHEADERFORMAT)],
+        $taskId,
+        $eventRepeaterId,
+        $participantId,
+        $resultId,
+        $this->grouping->id(),
+      ]);
+    }
+    // Otherwise, create and add extra entities.
+    elseif (!empty($this->latestEvent)) {
+      // Create participant, if any.
+      if (!empty($values[array_search('participants', self::CSVHEADERFORMAT)]) && !empty($this->latestEvent)) {
+        $entity = $this->importParticipant($this->getValue($values, 'participants'));
+        if ($entity) {
+          // Attach to latest event.
+          $this->latestEvent->participants[] = [
+            'target_id' => $entity->id(),
+          ];
+          $this->latestEvent->save();
+        }
+      }
+      // Create task, if any.
+      if (!empty($values[array_search('tasks', self::CSVHEADERFORMAT)]) && !empty($this->latestEvent)) {
+        $this->latestTask = $this->importTask(reset($this->getValue($values, 'tasks')));
+        if ($this->latestTask) {
+          // Attach to latest event.
+          $this->latestEvent->tasks[] = [
+            'target_id' => $this->latestTask->id(),
+          ];
+          $this->latestEvent->save();
+        }
+      }
+      // Create task participant, if any.
+      if (!empty($values[array_search('task_participants', self::CSVHEADERFORMAT)]) && !empty($this->latestTask)) {
+        $entity = $this->importParticipant($this->getValue($values, 'task_participants'));
+        if ($entity) {
+          // Attach to latest task.
+          $this->latestTask->participants[] = [
+            'target_id' => $entity->id(),
+          ];
+          $this->latestTask->save();
+        }
+      }
+      // Create result, if any.
+      if (!empty($values[array_search('results', self::CSVHEADERFORMAT)]) && !empty($this->latestEvent)) {
+        $resultValues = $this->getValue($values, 'results');
+        $entity = $this->importResult($resultValues, reset($resultValues));
+        if ($entity) {
+          // Attach to latest event.
+          $this->latestEvent->results[] = [
+            'target_id' => $entity->id(),
+          ];
+          $this->latestEvent->save();
+        }
+      }
+    }
+    return $this->latestEvent->id();
+  }
+
+  /**
+   * Checks if row contains an event.
+   *
+   * @param array $row
+   *   The row to check.
+   *
+   * @return bool
+   *   Whether or not the row contains an event.
+   */
+  private function isEvent($row) {
+    return !empty($row[array_search('start_date', self::CSVHEADERFORMAT)]);
+  }
+
+  /**
+   * Returns trimmed values from the corresponding column.
+   *
+   * @param array $row
+   *   The row to search value in.
+   * @param string $columnName
+   *   The column name.
    *
    * @return array
-   *   An array of field definitions for the entity type.
+   *   Return values.
    */
-  private function getFieldDefinitions($type, $bundle = NULL) {
-    if (empty($bundle)) {
-      // For entities without bundles, set the bundle to the type.
-      $bundle = $type;
-    }
-    $fieldDefinitions = \Drupal::entityManager()->getFieldDefinitions($type, $bundle);
-    // Do not include standard fields.
-    unset($fieldDefinitions['id']);
-    unset($fieldDefinitions['uuid']);
-    unset($fieldDefinitions['user_id']);
-    unset($fieldDefinitions['status']);
-    unset($fieldDefinitions['langcode']);
-    unset($fieldDefinitions['created']);
-    unset($fieldDefinitions['changed']);
-    // Also exclude revision fields.
-    unset($fieldDefinitions['revision_id']);
-    unset($fieldDefinitions['revision_created']);
-    unset($fieldDefinitions['revision_user']);
-    unset($fieldDefinitions['revision_log_message']);
-    // Do not include grouping field as this is taken from the Import entity.
-    unset($fieldDefinitions['grouping']);
-    return $fieldDefinitions;
+  private function getValue($row, $columnName) {
+    return array_map('trim', explode('|', $row[array_search($columnName, self::CSVHEADERFORMAT)]));
   }
 
   /**
-   * Validates column names.
-   */
-  private function validateColumnNames() {
-    if (($handle = fopen($this->file->getFileUri(), "r")) !== FALSE) {
-      $column_names = fgetcsv($handle);
-      fclose($handle);
-      if (count($column_names) < count($this->fieldDefinitions)) {
-        throw new ParserValidationException(WRONG_COLUMN_COUNT);
-      }
-      elseif ($column_names !== array_keys($this->fieldDefinitions)) {
-        throw new ParserValidationException(INVALID_HEADERS);
-      }
-    }
-    else {
-      throw new ParserValidationException();
-    }
-  }
-
-  /**
-   * Validate data.
-   */
-  private function validateData() {
-    if (($handle = fopen($this->file->getFileUri(), "r")) !== FALSE) {
-      $this->line = 0;
-      // Run through every row to validate it.
-      while (($row = fgetcsv($handle)) !== FALSE) {
-        // Skip column names.
-        if ($this->line === 0) {
-          $this->line++;
-          continue;
-        }
-        $this->column = 0;
-        foreach ($row as $cell) {
-          // Validate by field definition.
-          $this->validateValue($cell, $this->fieldDefinitions[array_keys($this->fieldDefinitions)[$this->column]]);
-          $this->column++;
-        }
-        $this->line++;
-      }
-      fclose($handle);
-    }
-    else {
-      throw new ParserValidationException();
-    }
-  }
-
-  /**
-   * Validate a value by the corresponding field definition.
+   * Converts a column number to Excel-format column.
    *
-   * @param string $value
-   *   A value to validate.
-   * @param BaseFieldDefinition $fieldDefinition
-   *   The field definition to validate against.
-   */
-  private function validateValue($value, BaseFieldDefinition $fieldDefinition = NULL) {
-    if (empty($fieldDefinition)) {
-      throw new ParserValidationException(INVALID_HEADERS);
-    }
-    if (empty($value) && $fieldDefinition->isRequired()) {
-      // Allow event repeater value to be empty.
-      if ($fieldDefinition->getName() !== 'event_repeater') {
-        throw new ParserValidationException(REQUIRED_VALUE, $this->line + 1, $this->column + 1);
-      }
-    }
-    switch ($fieldDefinition->getType()) {
-      case 'integer':
-        if (!is_int($value)) {
-          throw new ParserValidationException(WRONG_INT_FORMAT, $this->line + 1, $this->column + 1);
-        }
-        break;
-
-      case 'datetime':
-        $matches = [];
-        if (!preg_match('/^([0-9]{4})-([0-9]{2})-([0-9]{2}) (2[0-3]|[01][0-9]):([0-5][0-9])$/', $value, $matches)) {
-          throw new ParserValidationException(WRONG_DATE_FORMAT, $this->line + 1, $this->column + 1);
-        }
-        if (empty($matches) || count($matches) < 4) {
-          throw new ParserValidationException(WRONG_DATE_FORMAT, $this->line + 1, $this->column + 1);
-        }
-        if (!checkdate($matches[2], $matches[3], $matches[1])) {
-          throw new ParserValidationException(WRONG_DATE_FORMAT, $this->line + 1, $this->column + 1);
-        }
-        break;
-
-      case 'location':
-        if (!empty($value)) {
-          $location_format = ['address', 'extra_information'];
-          $location = json_decode($value, TRUE);
-          if (empty($location) || !is_array($location)) {
-            throw new ParserValidationException(WRONG_LOCATION_FORMAT, $this->line + 1, $this->column + 1, json_encode($location_format));
-          }
-          if (array_keys($location) !== $location_format) {
-            throw new ParserValidationException(WRONG_LOCATION_FORMAT, $this->line + 1, $this->column + 1, json_encode($location_format));
-          }
-        }
-        break;
-
-      case 'entity_reference':
-        if (!empty($value)) {
-          // Load the base field definitions of the referenced entity type.
-          $referecedEntityType = $fieldDefinition->getItemDefinition()->getSetting('target_type');
-          if ($referecedEntityType === 'result') {
-            // This is a special case: We need to ensure that the
-            // data type is defined in the json array and set
-            // the basefield definitions to match the specific data type.
-            // Verify the json.
-            // Verify the decoded array.
-            $decoded_json = json_decode($value, TRUE);
-            if (empty($decoded_json)) {
-              throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1);
-            }
-            // Validate array against field definitions.
-            foreach ($decoded_json as $resultEntityType => $dataEntityValues) {
-              if (empty($resultEntityType) || !is_string($resultEntityType)) {
-                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1);
-              }
-              $resultEntityTypeFieldDefinitions = $this->getFieldDefinitions('result', $resultEntityType);
-              if (!is_array($dataEntityValues)) {
-                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($resultEntityTypeFieldDefinitions)]));
-              }
-              // Set data entity type.
-              $dataEntityValues = [
-                'type' => str_replace('field_', '', array_keys($dataEntityValues)[0]),
-              ] + $dataEntityValues;
-              if (array_keys($dataEntityValues) !== array_keys($resultEntityTypeFieldDefinitions)) {
-                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($resultEntityTypeFieldDefinitions)]));
-              }
-            }
-          }
-          else {
-            $referencedEntityFieldDefinitions = $this->getFieldDefinitions($referecedEntityType);
-            // Verify the json.
-            if (!preg_match('/[^,:{}\\[\\]0-9.\\-+Eaeflnr-u \\n\\r\\t]/', preg_replace('/"(\\.|[^"\\\\])*"/', '', $value))) {
-              throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($referencedEntityFieldDefinitions)]));
-            }
-            // Verify the decoded array.
-            $decoded_json = json_decode($value, TRUE);
-            if (!is_array($decoded_json) || empty($decoded_json)) {
-              throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($referencedEntityFieldDefinitions)]));
-            }
-            // Validate array against field definitions.
-            foreach ($decoded_json as $entityValues) {
-              if (!is_array($entityValues)) {
-                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($referencedEntityFieldDefinitions)]));
-              }
-              if (array_keys($entityValues) !== array_keys($referencedEntityFieldDefinitions)) {
-                throw new ParserValidationException(WRONG_ENTITY_FORMAT, $this->line + 1, $this->column + 1, json_encode([array_keys($referencedEntityFieldDefinitions)]));
-              }
-            }
-          }
-        }
-        break;
-
-      default:
-    }
-  }
-
-  /**
-   * Unpacks a json-formatted array into an entity.
+   * @param int $column
+   *   The column number to convert.
    *
-   * @param string $type
-   *   The entity type to expect.
-   * @param string $json
-   *   A json-formatted string defining an entity.
-   * @param bool $save
-   *   Whether or not the entity should be saved.
-   *
-   * @return array
-   *   The unpacked entity id(s).
+   * @return string
+   *   The corresponding column name.
    */
-  private function unpackEntityReference($type, $json = NULL, $save = FALSE) {
-    $ids = array();
-    if (!empty($json)) {
-      $array = json_decode($json, TRUE);
-      try {
-        switch ($type) {
-          case 'tasks':
-            $taskEntity = Task::create($array);
-            if ($taskEntity && $save) {
-              $taskEntity->save();
-              $ids[] = $taskEntity->id();
-              break;
-            }
-            break;
-
-          case 'event_repeater':
-            $eventRepeaterEntity = EventRepeater::create($array);
-            if ($eventRepeaterEntity && $save) {
-              $eventRepeaterEntity->save();
-              $ids[] = $eventRepeaterEntity->id();
-            }
-            break;
-
-          case 'participants':
-            foreach ($array as $item) {
-              $participantEntity = Participant::create($item);
-              if ($participantEntity && $save) {
-                $participantEntity->save();
-                $ids[] = $participantEntity->id();
-              }
-            }
-            break;
-
-          case 'results':
-            foreach ($array as $resultType => $dataValues) {
-              // Get data types and save corresponding data entities.
-              $dataIds = [];
-              foreach ($dataValues as $dataField => $dataValue) {
-                $dataEntity = Data::create([
-                  'type' => str_replace('field_', '', $dataField),
-                  $dataField => $dataValue,
-                ]);
-                if ($dataEntity && $save) {
-                  $dataEntity->save();
-                  $dataIds[] = $dataEntity->id();
-                }
-              }
-              $array['type'] = $resultType;
-              $array[$dataField] = $dataIds;
-              $resultEntity = Result::create($array);
-              if ($resultEntity && $save) {
-                $resultEntity->save();
-                $ids[] = $resultEntity->id();
-              }
-            }
-            break;
-
-          default:
-        }
-      }
-      catch (EntityStorageException $exception) {
-        drupal_set_message($exception->getMessage());
-        drupal_set_message(t('The CSV file contains a row that failed to parse a value at line @line, column @column', ['@line' => $this->line, '@column' => $this->column]), 'error');
-      }
+  private function convertColumn($column) {
+    for ($name = ""; $column >= 0; $column = intval($column / 26) - 1) {
+      $name = chr($column % 26 + 0x41) . $name;
     }
-    return $ids;
+    return $name;
   }
 
 }

@@ -2,12 +2,24 @@
 
 namespace Drupal\ea_imports\Parser;
 
+use Drupal\ea_groupings\Entity\Grouping;
+
 /**
  * Parses ICalendar.
  *
  * Rewritten from https://github.com/MartinThoma/ics-parser/.
  */
-class ICalendarParser {
+class ICalendarParser extends EntityParser implements ParserInterface {
+
+  const BATCHSIZE = 50;
+  const ICALENDAR_DATETIME_FORMAT = 'Ymd\THis';
+
+  /**
+   * Parent grouping.
+   *
+   * @var Grouping
+   */
+  private $grouping;
 
   /**
    * The raw calendar.
@@ -45,6 +57,13 @@ class ICalendarParser {
   private $filters;
 
   /**
+   * Any validation error message.
+   *
+   * @var array
+   */
+  private $errorMessage;
+
+  /**
    * Creates the ICalendarParser Object.
    *
    * @param string $url
@@ -52,7 +71,7 @@ class ICalendarParser {
    * @param array $filters
    *   Filters to apply.
    */
-  public function __construct($url, array $filters) {
+  public function __construct($url, array $filters, $gid) {
     if (empty($url)) {
       return FALSE;
     }
@@ -66,18 +85,57 @@ class ICalendarParser {
     $this->filters = $filters;
     $lines = explode("\n", $this->raw);
     $this->initLines($lines);
+    $this->grouping = Grouping::load($gid);
     return $this;
   }
 
   /**
-   * Return parsed events.
-   *
-   * @return array
-   *   List of event data.
+   * {@inheritdoc}
    */
-  public function getEvents() {
-    $events = [];
-    if (isset($this->cal['VEVENT']) && !empty($this->cal['VEVENT'])) {
+  public function validate() {
+    $isValid = TRUE;
+    try {
+      $this->validateHeader();
+      $this->validateItems();
+    }
+    catch (ParserValidationException $exception) {
+      $isValid = FALSE;
+      switch ($exception->getErrorCode()) {
+        case INVALID_HEADERS:
+          $this->errorMessage = t('The ICalendar file is not recognized.');
+          break;
+
+        case INVALID_DATE:
+          $this->errorMessage = t('The ICalendar file contains an event with an incorrect date.');
+          break;
+
+        case INVALID_RRULE:
+          $this->errorMessage = t('The ICalendar file contains an event with an incorrect rrule.');
+          break;
+
+        case INVALID_EVENT:
+          $this->errorMessage = t('The ICalendar file contains an incorrect event.');
+          break;
+
+      }
+    }
+    return $isValid;
+  }
+
+  /**
+   * Validate headers.
+   */
+  public function validateHeader() {
+    if (!preg_match("/BEGIN:VCALENDAR.*VERSION:[12]\.0.*END:VCALENDAR/s", $this->raw)) {
+      throw new ParserValidationException(INVALID_HEADERS);
+    }
+  }
+
+  /**
+   * Validate items.
+   */
+  private function validateItems() {
+    if (!empty($this->cal['VEVENT'])) {
       foreach ($this->cal['VEVENT'] as $event) {
         // Apply filters, if any.
         if ((
@@ -107,30 +165,167 @@ class ICalendarParser {
           // ... Then skip event.
           continue;
         }
-        // Create event.
-        $events[] = array(
-          'title' => !empty($event['SUMMARY']) ? $event['SUMMARY'] : NULL,
-          'description' => !empty($event['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $event['DESCRIPTION']) : NULL,
-          'start_date' => !empty($event['DTSTART']) ? date(DATETIME_DATETIME_STORAGE_FORMAT, (int) strtotime($event['DTSTART'])) : NULL,
-          'end_date' => !empty($event['DTEND']) ? date(DATETIME_DATETIME_STORAGE_FORMAT, (int) strtotime($event['DTEND'])) : NULL,
-          'location' => !empty($event['LOCATION']) ? $event['LOCATION'] : NULL,
-          'uid' => !empty($event['UID']) ? $event['UID'] : NULL,
-          'rrule' => !empty($event['RRULE']) ? $event['RRULE'] : NULL,
-        );
+        $this->validateItem($event);
       }
     }
-    return $events;
   }
 
   /**
-   * Validate headers.
+   * Validate items.
+   *
+   * @param array $values
+   *   The values to validate.
+   */
+  private function validateItem($values) {
+    foreach ($values as $key => $value) {
+      switch ($key) {
+        case 'DTSTART':
+        case 'DTEND':
+          $date = \DateTime::createFromFormat(self::ICALENDAR_DATETIME_FORMAT, $value);
+          if (!$date || $date->format(self::ICALENDAR_DATETIME_FORMAT) !== $value) {
+            throw new ParserValidationException(INVALID_DATE);
+          }
+          break;
+
+        case 'RRULE':
+          if (!empty($value) && (!RruleParser::validateRrule($value) || !$this->validateEventRepeater($value))) {
+            throw new ParserValidationException(INVALID_RRULE);
+          }
+          break;
+      }
+    }
+    // Validate event if required fields are present.
+    if ($this->isEvent($values)) {
+      $values = [
+        !empty($values['SUMMARY']) ? $values['SUMMARY'] : NULL,
+        \DateTime::createFromFormat(self::ICALENDAR_DATETIME_FORMAT, $values['DTSTART'])->format(DATETIME_DATETIME_STORAGE_FORMAT),
+        \DateTime::createFromFormat(self::ICALENDAR_DATETIME_FORMAT, $values['DTEND'])->format(DATETIME_DATETIME_STORAGE_FORMAT),
+        [
+          'address' => !empty($values['LOCATION']) ? $values['LOCATION'] : NULL,
+          'extra_information' => NULL,
+        ],
+        !empty($values['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $values['DESCRIPTION']) : NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        $this->grouping->id(),
+      ];
+      if (!$this->validateEvent($values)) {
+        throw new ParserValidationException(INVALID_EVENT);
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getErrorMessage() {
+    return $this->errorMessage;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getItemCount() {
+    return $this->eventCount;
+  }
+
+  /**
+   * Checks if values contains an event.
+   *
+   * @param array $values
+   *   The values to check.
    *
    * @return bool
-   *   Whether or not ICalendar headers are valid.
+   *   Whether or not the values contains an event.
    */
-  public function validateHeaders() {
-    return preg_match("
-      /BEGIN:VCALENDAR.*VERSION:[12]\.0.*END:VCALENDAR/s", $this->raw);
+  private function isEvent($values) {
+    return !empty($values['DTSTART']);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getNextBatch($position) {
+    $itemCount = 1;
+    $items = [];
+    if (!empty($this->cal['VEVENT'])) {
+      foreach ($this->cal['VEVENT'] as $event) {
+        // Skip to current event.
+        if ($itemCount < $position) {
+          $itemCount++;
+          continue;
+        }
+        // Apply filters, if any.
+        if ((
+          // If title doesn't contain string from title filter.
+          !empty($this->filters['title']) &&
+          !empty($event['SUMMARY']) &&
+          strstr($event['SUMMARY'], $this->filters['title']) === FALSE
+        ) ||
+        (
+          // Or description doesn't contain string from description filter.
+          !empty($this->filters['description']) &&
+          !empty($event['DESCRIPTION']) &&
+          strstr($event['DESCRIPTION'], $this->filters['description']) === FALSE
+        ) ||
+        (
+          // Or start date is older than start date filter.
+          !empty($this->filters['date_start']) &&
+          !empty($event['DSTART']) &&
+          strtotime($this->filters['date_start']) < strtotime($event['DTSTART'])
+        ) ||
+        (
+          // Or end date is newer than end date filter.
+          !empty($this->filters['date_end']) &&
+          !empty($event['DEND']) &&
+          strtotime($this->filters['date_end']) > strtotime($event['DEND'])
+        )) {
+          // ... Then skip event.
+          continue;
+        }
+        // Otherwise, add event.
+        $items[] = $event;
+        $itemCount++;
+        if ($itemCount === $position + self::BATCHSIZE) {
+          break;
+        }
+      }
+    }
+    return $items;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function importItem($values) {
+    // Only import item if it doesn't exist already for the selected grouping.
+    $uid = !empty($values['UID']) ? $values['UID'] : NULL;
+    if (!empty($uid) && !$this->uidExists($uid)) {
+      $eventRepeater = !empty($values['RRULE']) ? $this->importEventRepeater($values['RRULE']) : $this->importDefaultEventRepeater();
+      $event = $this->importEvent([
+        !empty($values['SUMMARY']) ? $values['SUMMARY'] : NULL,
+        \DateTime::createFromFormat(self::ICALENDAR_DATETIME_FORMAT, $values['DTSTART'])->format(DATETIME_DATETIME_STORAGE_FORMAT),
+        \DateTime::createFromFormat(self::ICALENDAR_DATETIME_FORMAT, $values['DTEND'])->format(DATETIME_DATETIME_STORAGE_FORMAT),
+        [
+          'address' => !empty($values['LOCATION']) ? $values['LOCATION'] : NULL,
+          'extra_information' => NULL,
+        ],
+        !empty($values['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $values['DESCRIPTION']) : NULL,
+        NULL,
+        $eventRepeater->id(),
+        NULL,
+        NULL,
+        $this->grouping->id(),
+      ]);
+      // Insert UID/gid pair.
+      $this->uidInsert($uid, $event->id());
+      return $event->id();
+    }
+    else {
+      return FALSE;
+    }
   }
 
   /**
@@ -207,6 +402,59 @@ class ICalendarParser {
           }
         }
       }
+    }
+  }
+
+  /**
+   * Check for matching gid/uid pair.
+   *
+   * @param string $uid
+   *   The unique id.
+   *
+   * @return bool
+   *   Returns TRUE if gid/uid match found.
+   */
+  private function uidExists($uid) {
+    $exists = NULL;
+    try {
+      $exists = (boolean) db_select('ea_imports_uids', 'id')
+        ->fields('id')
+        ->condition('gid', $this->grouping->id())
+        ->condition('uid', $uid)
+        ->countQuery()
+        ->execute()
+        ->fetchField();
+    }
+    catch (Exception $exception) {
+      \Drupal::logger('ea_imports')->notice(t('Database operation failed. Message = %message', array(
+        '%message' => $exception->getMessage(),
+      )));
+    }
+    return $exists;
+  }
+
+  /**
+   * Insert gid/uid pair.
+   *
+   * @param string $uid
+   *   The unique id.
+   * @param int $id
+   *   The item id.
+   */
+  private function uidInsert($uid, $id) {
+    try {
+      $result = db_insert('ea_imports_uids')
+        ->fields(array(
+          'uid' => $uid,
+          'gid' => $this->grouping->id(),
+          'eid' => $id,
+        ))
+        ->execute();
+    }
+    catch (Exception $exception) {
+      \Drupal::logger('ea_imports')->notice(t('Database operation failed. Message = %message', array(
+        '%message' => $exception->getMessage(),
+      )));
     }
   }
 
