@@ -34,8 +34,8 @@ interface ParserInterface {
    * @param array $values
    *   The values to map to an entity.
    *
-   * @return bool
-   *   Whether the import was successful or not.
+   * @return int|bool
+   *   Returns item entity id or FALSE if import failed.
    */
   public function importItem($values);
 
