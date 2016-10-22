@@ -2,14 +2,13 @@
 
 namespace Drupal\ea_imports\Parser;
 
-use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_events\Entity\Event;
 use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\ea_tasks\Entity\Task;
 use Drupal\ea_people\Entity\Person;
 use Drupal\ea_data\Entity\Data;
 use Drupal\ea_results\Entity\Result;
-use Drupal\file\Entity\File;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
  * Entity parsing functions.
@@ -21,7 +20,6 @@ class EntityParser {
    *
    * @param string $type
    *   The entity type.
-   *
    * @param string $bundle
    *   The entity bundle.
    *
@@ -54,16 +52,15 @@ class EntityParser {
   /**
    * Validates an entity.
    *
-   * @param Entity $entity
+   * @param EntityInterface $entity
    *   Entity to validate.
-   *
-   * @param array $ignoreErrors
+   * @param array $fieldsToIgnore
    *   Validation errors to ignore.
    *
    * @return bool
    *   TRUE if entity has no violations, FALSE otherwise.
    */
-  private function validateEntity($entity, $fieldsToIgnore = []) {
+  private function validateEntity(EntityInterface $entity, $fieldsToIgnore = []) {
     $isValid = TRUE;
     if ($entity) {
       $this->errorMessages = [];
@@ -178,8 +175,8 @@ class EntityParser {
   /**
    * Validates an event entity.
    *
-   * @param array $data
-   *   Data to validate as an event entity.
+   * @param array $values
+   *   Values to validate as an event entity.
    *
    * @return bool
    *   TRUE if event is valid, FALSE otherwise.
@@ -279,6 +276,8 @@ class EntityParser {
    *
    * @param array $values
    *   Values to import as a result entity.
+   * @param string $bundle
+   *   The bundle of the result entity.
    *
    * @return int|bool
    *   The participants id or FALSE if import failed.
@@ -307,8 +306,10 @@ class EntityParser {
   /**
    * Imports a data entity.
    *
-   * @param array $values
-   *   Values to import as a data entity.
+   * @param array $dataValue
+   *   The data value.
+   * @param string $bundle
+   *   The bundle of the result entity.
    *
    * @return int|bool
    *   The participants id or FALSE if import failed.

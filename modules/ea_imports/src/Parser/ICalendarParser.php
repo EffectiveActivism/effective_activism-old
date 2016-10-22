@@ -3,13 +3,6 @@
 namespace Drupal\ea_imports\Parser;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_events\Entity\Event;
-use Drupal\ea_events\Entity\EventRepeater;
-use Drupal\ea_tasks\Entity\Task;
-use Drupal\ea_people\Entity\Person;
-use Drupal\ea_data\Entity\Data;
-use Drupal\ea_results\Entity\Result;
-use Drupal\file\Entity\File;
 
 /**
  * Parses ICalendar.
@@ -131,9 +124,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
 
   /**
    * Validate headers.
-   *
-   * @return bool
-   *   Whether or not ICalendar headers are valid.
    */
   public function validateHeader() {
     if (!preg_match("/BEGIN:VCALENDAR.*VERSION:[12]\.0.*END:VCALENDAR/s", $this->raw)) {
@@ -183,8 +173,8 @@ class ICalendarParser extends EntityParser implements ParserInterface {
   /**
    * Validate items.
    *
-   * @param array $event
-   *   The event to validate.
+   * @param array $values
+   *   The values to validate.
    */
   private function validateItem($values) {
     foreach ($values as $key => $value) {

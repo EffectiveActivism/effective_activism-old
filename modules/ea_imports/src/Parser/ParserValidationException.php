@@ -57,8 +57,6 @@ class ParserValidationException extends Exception {
    *   The line of the data file where the exception was thrown.
    * @param int $column
    *   The column of the data file where the exception was thrown.
-   * @param string $additionalInformation
-   *   Any extra information that needs to be passed as a variable.
    */
   public function __construct($errorCode, $line = NULL, $column = NULL) {
     $this->errorCode = $errorCode;

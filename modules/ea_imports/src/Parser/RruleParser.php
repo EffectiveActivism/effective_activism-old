@@ -210,7 +210,7 @@ class RruleParser {
   public static function validateRrule($rrule) {
     $isValid = TRUE;
     $rruleComponents = explode(';', $rrule);
-    foreach($rruleComponents as $rruleComponent) {
+    foreach ($rruleComponents as $rruleComponent) {
       $components = explode('=', $rruleComponent);
       if (count($components) !== 2) {
         $isValid = FALSE;

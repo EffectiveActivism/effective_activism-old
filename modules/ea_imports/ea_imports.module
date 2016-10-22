@@ -7,7 +7,6 @@
 
 use Drupal\ea_imports\Parser\CSVParser;
 use Drupal\ea_imports\Parser\ICalendarParser;
-use Drupal\ea_imports\Parser\RruleParser;
 use Drupal\ea_events\Entity\Event;
 use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\Core\Routing\RouteMatchInterface;

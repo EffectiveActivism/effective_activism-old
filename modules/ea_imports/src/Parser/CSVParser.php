@@ -3,12 +3,6 @@
 namespace Drupal\ea_imports\Parser;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_events\Entity\Event;
-use Drupal\ea_events\Entity\EventRepeater;
-use Drupal\ea_tasks\Entity\Task;
-use Drupal\ea_people\Entity\Person;
-use Drupal\ea_data\Entity\Data;
-use Drupal\ea_results\Entity\Result;
 use Drupal\file\Entity\File;
 
 /**
@@ -211,7 +205,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    *   The row to validate.
    */
   private function validateRow($row) {
-    foreach($row as $column => $data) {
+    foreach ($row as $column => $data) {
       $this->column = $column;
       switch (self::CSVHEADERFORMAT[$column]) {
         case 'start_date':
@@ -336,7 +330,7 @@ class CSVParser extends EntityParser implements ParserInterface {
       $participantId = !empty($participant) ? $participant->id() : NULL;
       $eventRepeater = !empty($values[array_search('repeat', self::CSVHEADERFORMAT)]) ? $this->importEventRepeater($values[array_search('repeat', self::CSVHEADERFORMAT)]) : $this->importDefaultEventRepeater();
       $eventRepeaterId = !empty($eventRepeater) ? $eventRepeater->id() : NULL;
-      // Add 
+      // Create task, if any.
       $taskId = NULL;
       if (!empty($values[array_search('tasks', self::CSVHEADERFORMAT)])) {
         $this->latestTask = $this->importTask($values[array_search('tasks', self::CSVHEADERFORMAT)]);
@@ -351,9 +345,11 @@ class CSVParser extends EntityParser implements ParserInterface {
         ];
         $this->latestTask->save();
       }
+      // Create result, if any.
       $resultValues = $this->getValue($values, 'results');
       $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($resultValues, reset($resultValues)) : NULL;
       $resultId = !empty($result) ? $result->id() : NULL;
+      // Create event.
       $this->latestEvent = $this->importEvent([
         $values[array_search('title', self::CSVHEADERFORMAT)],
         \DateTime::createFromFormat('Y-m-d H:i', $values[array_search('start_date', self::CSVHEADERFORMAT)])->format(DATETIME_DATETIME_STORAGE_FORMAT),
@@ -439,7 +435,6 @@ class CSVParser extends EntityParser implements ParserInterface {
    *
    * @param array $row
    *   The row to search value in.
-   *
    * @param string $columnName
    *   The column name.
    *
@@ -460,7 +455,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    *   The corresponding column name.
    */
   private function convertColumn($column) {
-    for($name = ""; $column >= 0; $column = intval($column / 26) - 1) {
+    for ($name = ""; $column >= 0; $column = intval($column / 26) - 1) {
       $name = chr($column % 26 + 0x41) . $name;
     }
     return $name;

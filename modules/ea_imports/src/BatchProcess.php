@@ -17,7 +17,6 @@ class BatchProcess {
    *   The parser object to import items with.
    * @param Drupal\ea_imports\Entity\Import $entity
    *   The import entity to add event references to.
-   *
    * @param array $context
    *   The context.
    */
