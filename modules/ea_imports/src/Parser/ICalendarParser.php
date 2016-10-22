@@ -258,7 +258,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
    * {@inheritdoc}
    */
   public function getNextBatch($position) {
-    $events = [];
     $itemCount = 1;
     $items = [];
     if (!empty($this->cal['VEVENT'])) {
@@ -313,7 +312,7 @@ class ICalendarParser extends EntityParser implements ParserInterface {
   public function importItem($values) {
     // Only import item if it doesn't exist already for the selected grouping.
     $uid = !empty($values['UID']) ? $values['UID'] : NULL;
-    if (!empty($uid) && !_ea_imports_uid_exists($this->grouping->id(), $uid)) {
+    if (!empty($uid) && !$this->uidExists($uid)) {
       $eventRepeater = !empty($values['RRULE']) ? $this->importEventRepeater($values['RRULE']) : $this->importDefaultEventRepeater();
       $event = $this->importEvent([
         !empty($values['SUMMARY']) ? $values['SUMMARY'] : NULL,
@@ -331,7 +330,11 @@ class ICalendarParser extends EntityParser implements ParserInterface {
         $this->grouping->id(),
       ]);
       // Insert UID/gid pair.
-      _ea_imports_uid_insert($uid, $gid, $event->id());
+      $this->uidInsert($uid, $event->id());
+      return $event->id();
+    }
+    else {
+      return FALSE;
     }
   }
 
@@ -409,6 +412,59 @@ class ICalendarParser extends EntityParser implements ParserInterface {
           }
         }
       }
+    }
+  }
+
+  /**
+   * Check for matching gid/uid pair.
+   *
+   * @param string $uid
+   *   The unique id.
+   *
+   * @return bool
+   *   Returns TRUE if gid/uid match found.
+   */
+  private function uidExists($uid) {
+    $exists = NULL;
+    try {
+      $exists = (boolean) db_select('ea_imports_uids', 'id')
+        ->fields('id')
+        ->condition('gid', $this->grouping->id())
+        ->condition('uid', $uid)
+        ->countQuery()
+        ->execute()
+        ->fetchField();
+    }
+    catch (Exception $exception) {
+      \Drupal::logger('ea_imports')->notice(t('Database operation failed. Message = %message', array(
+        '%message' => $exception->getMessage(),
+      )));
+    }
+    return $exists;
+  }
+
+  /**
+   * Insert gid/uid pair.
+   *
+   * @param string $uid
+   *   The unique id.
+   * @param int $id
+   *   The item id.
+   */
+  private function uidInsert($uid, $id) {
+    try {
+      $result = db_insert('ea_imports_uids')
+        ->fields(array(
+          'uid' => $uid,
+          'gid' => $this->grouping->id(),
+          'eid' => $id,
+        ))
+        ->execute();
+    }
+    catch (Exception $exception) {
+      \Drupal::logger('ea_imports')->notice(t('Database operation failed. Message = %message', array(
+        '%message' => $exception->getMessage(),
+      )));
     }
   }
 
