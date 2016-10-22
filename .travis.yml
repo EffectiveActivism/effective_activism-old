@@ -107,6 +107,7 @@ install:
   - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
 
 before_script:
+  - drupal-ti --include .travis_scripts/inline_entity_form.sh
   - drupal-ti before_script
 
 script:
