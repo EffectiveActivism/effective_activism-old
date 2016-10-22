@@ -12,12 +12,10 @@ sudo: false
 
 php:
   - 7
-  - hhvm
 
 matrix:
   fast_finish: true
   allow_failures:
-    - php: hhvm
 
 env:
   global:
@@ -109,7 +107,6 @@ install:
   - phpcs --config-set installed_paths ~/.composer/vendor/drupal/coder/coder_sniffer
 
 before_script:
-  - drupal-ti --include .travis_scripts/inline_entity_form.sh
   - drupal-ti before_script
 
 script:
