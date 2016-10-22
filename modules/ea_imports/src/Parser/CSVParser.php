@@ -113,6 +113,7 @@ class CSVParser extends EntityParser implements ParserInterface {
   public function __construct($file, $gid) {
     $this->filePath = File::load($file)->getFileUri();
     $this->grouping = Grouping::load($gid);
+    $this->setItemCount();
     return $this;
   }
 
@@ -207,10 +208,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    * Validate row.
    *
    * @param array $row
-   *   The row to validate
-   *
-   * @return bool
-   *   Whether or not the row is valid.
+   *   The row to validate.
    */
   private function validateRow($row) {
     foreach($row as $column => $data) {
@@ -220,7 +218,7 @@ class CSVParser extends EntityParser implements ParserInterface {
         case 'end_date':
           if (!empty($data)) {
             $date = \DateTime::createFromFormat('Y-m-d H:i', $data);
-            if ($date && $date->format('Y-m-d H:i') !== $data) {
+            if (!$date || $date->format('Y-m-d H:i') !== $data) {
               throw new ParserValidationException(INVALID_DATE, $this->row, $this->convertColumn($this->column));
             }
           }
@@ -284,9 +282,9 @@ class CSVParser extends EntityParser implements ParserInterface {
   }
 
   /**
-   * {@inheritdoc}
+   * Set the number of items to be imported.
    */
-  public function setItemCount() {
+  private function setItemCount() {
     $this->itemCount = 0;
     $this->fileHandle = fopen($this->filePath, "r");
     while (fgetcsv($this->fileHandle) !== FALSE) {
