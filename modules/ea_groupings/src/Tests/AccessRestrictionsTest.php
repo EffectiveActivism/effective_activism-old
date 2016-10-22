@@ -5,7 +5,7 @@ namespace Drupal\ea_groupings\Tests;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_permissions\Roles;
 use Drupal\simpletest\WebTestBase;
-use Drupal\ea_events\Entity\EventRepeater;
+use Drupal\user\Entity\User;
 
 /**
  * Function tests for ea_groupings.
@@ -123,7 +123,7 @@ class AccessRestrictionsTest extends WebTestBase {
    * @param Drupal\user\Entity\User $user
    *   The user to test with.
    */
-  private function performGroupingManagement($grouping, $user) {
+  private function performGroupingManagement(Grouping $grouping, User $user) {
     // User has access to grouping overview page.
     $this->drupalGet('effectiveactivism/groupings');
     $this->assertResponse(200);
@@ -154,7 +154,7 @@ class AccessRestrictionsTest extends WebTestBase {
    * @param Grouping $grouping
    *   The grouping to test with.
    */
-  private function failGroupingManagement($grouping) {
+  private function failGroupingManagement(Grouping $grouping) {
     // User doesn't have access to grouping page.
     $this->drupalGet(sprintf('effectiveactivism/groupings/%d', $grouping->id()));
     $this->assertResponse(403);
@@ -171,7 +171,7 @@ class AccessRestrictionsTest extends WebTestBase {
    * @param Drupal\user\Entity\User $user
    *   The user to test with.
    */
-  private function performEventManagement($grouping, $user) {
+  private function performEventManagement(Grouping $grouping, User $user) {
     // User has access to event overview page.
     $this->drupalGet('effectiveactivism/events');
     $this->assertResponse(200);
@@ -223,7 +223,7 @@ class AccessRestrictionsTest extends WebTestBase {
    * @param Drupal\user\Entity\User $manager
    *   The manager to add.
    */
-  private function addManagertoGrouping($grouping, $manager) {
+  private function addManagertoGrouping(Grouping $grouping, User $manager) {
     $grouping->managers->appendItem($manager->id());
     $grouping->save();
     $this->assertEqual($grouping->get('managers')->getValue()[1]['target_id'], $manager->id());
@@ -242,7 +242,7 @@ class AccessRestrictionsTest extends WebTestBase {
    * @return Grouping
    *   The created grouping.
    */
-  private function createGrouping($groupName, $manager, $organizer) {
+  private function createGrouping($groupName, User $manager, User $organizer) {
     $grouping = Grouping::create(array(
       'user_id' => $manager->id(),
       'name' => $groupName,
