@@ -22,9 +22,9 @@ class ResultTypeForm extends EntityForm {
     $form = parent::form($form, $form_state);
     $selectedOrganization = $this->entity->organization;
     $selectedGroupings = $this->entity->groupings;
-    $selectedDataTypes = array_filter(array_values($this->entity->data_types), function ($value) {
+    $selectedDataTypes = !empty($this->entity->data_types) ? array_filter(array_values($this->entity->data_types), function ($value) {
       return $value !== 0;
-    });
+    }) : [];
     // Get available organizations.
     $availableOrganizations = array_reduce(Grouping::getAllOrganizationsByRole(Roles::MANAGER_ROLE), function ($result, $grouping) {
       $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
