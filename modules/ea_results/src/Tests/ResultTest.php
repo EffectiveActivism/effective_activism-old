@@ -121,7 +121,7 @@ class ResultTest extends WebTestBase {
       'label' => 'Test',
       'id' => 'result_type_test',
       'description' => 'Test result type description',
-      'data_types' => sprintf('%s (%s)', 'Test', 'data_type_test'),
+      'datatypes[data_type_test]' => 'data_type_test',
       'organization' => $this->organization->id(),
       'groupings[]' => [$this->organization->id()],
     ), t('Save'));

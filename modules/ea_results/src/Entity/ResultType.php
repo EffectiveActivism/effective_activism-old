@@ -68,7 +68,7 @@ class ResultType extends ConfigEntityBundleBase implements ResultTypeInterface {
    *
    * @var array
    */
-  public $dataTypes;
+  public $datatypes;
 
   /**
    * The Result type organization.

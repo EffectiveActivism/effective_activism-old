@@ -22,8 +22,8 @@ class ResultTypeAccessControlHandler extends EntityAccessControlHandler {
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     switch ($operation) {
       case 'view':
-        $gids = $entity->get('groupings');
-        $groupings = empty($gids) ? [] : Grouping::loadMultiple(array_keys($gids));
+        $gids = array_merge(array_keys($entity->get('groupings')), [$entity->get('organization')]);
+        $groupings = empty($gids) ? [] : Grouping::loadMultiple($gids);
         return Permission::allowedIfInGroupings($account, $groupings);
 
       case 'update':
