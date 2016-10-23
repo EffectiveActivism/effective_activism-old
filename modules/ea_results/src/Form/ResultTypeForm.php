@@ -20,74 +20,71 @@ class ResultTypeForm extends EntityForm {
    */
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
-    $result_type = $this->entity;
-    $organization = $result_type->organization;
-    $groupings = $result_type->groupings;
-    // Get data types.
-    $data_types = array();
-    if (!empty($result_type->data_types)) {
-      $data_types = array_map(function ($data_type) {
-        return DataType::load($data_type['target_id']);
-      }, $result_type->data_types);
-    }
-    // Get organizations.
-    $organizations = array();
-    $organizations = array_reduce(Grouping::getAllOrganizationsByRole(Roles::MANAGER_ROLE), function ($result, $grouping) {
+    $selectedOrganization = $this->entity->organization;
+    $selectedGroupings = $this->entity->groupings;
+    $selectedDataTypes = array_filter(array_values($this->entity->data_types), function ($value) {
+      return $value !== 0;
+    });
+    // Get available organizations.
+    $availableOrganizations = array_reduce(Grouping::getAllOrganizationsByRole(Roles::MANAGER_ROLE), function ($result, $grouping) {
       $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
       return $result;
-    }, array());
+    }, []);
     // Get available groupings.
-    $available_groupings = array();
-    if (!empty($organization)) {
-      $available_groupings = array_reduce(Grouping::load($organization)->getRelatives(TRUE), function ($result, $grouping) {
-        $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
-        return $result;
-      }, array());
+    $availableGroupings = !empty($selectedOrganization) ? array_reduce(Grouping::load($selectedOrganization)->getRelatives(TRUE), function ($result, $grouping) {
+      $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
+      return $result;
+    }, []) : [];
+    // Get available data types.
+    $dataBundles = \Drupal::entityManager()->getBundleInfo('data');
+    $availableDataTypes = [];
+    foreach ($dataBundles as $bundleName => $bundleInfo) {
+      $availableDataTypes[$bundleName] = $bundleInfo['label'];
     }
+    // Build form.
     $form['#prefix'] = '<div id="ajax">';
     $form['#suffix'] = '</div>';
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
       '#maxlength' => 255,
-      '#default_value' => $result_type->label(),
+      '#default_value' => $this->entity->label(),
       '#description' => $this->t("Label for the Result type."),
       '#required' => TRUE,
     );
     $form['id'] = array(
       '#type' => 'machine_name',
-      '#default_value' => $result_type->id(),
+      '#default_value' => $this->entity->id(),
       '#machine_name' => array(
         'exists' => '\Drupal\ea_results\Entity\ResultType::load',
       ),
-      '#disabled' => !$result_type->isNew(),
+      '#disabled' => !$this->entity->isNew(),
     );
     $form['description'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Description'),
       '#maxlength' => 255,
-      '#default_value' => $result_type->description,
+      '#default_value' => $this->entity->description,
       '#description' => $this->t("Description for the Result type."),
       '#required' => FALSE,
     );
     $form['data_types'] = array(
-      '#type' => 'entity_autocomplete',
-      '#target_type' => 'data_type',
+      '#type' => 'checkboxes',
       '#title' => $this->t('Data types'),
-      '#default_value' => $data_types,
-      '#tags' => TRUE,
+      '#default_value' => empty($selectedDataTypes) ? [] : $selectedDataTypes,
+      '#options' => $availableDataTypes,
       '#description' => $this->t("Data types available for the Result type."),
-      '#required' => FALSE,
+      '#required' => TRUE,
     );
     $form['organization'] = array(
       '#type' => 'select',
       '#title' => $this->t('Organization'),
-      '#default_value' => $organization,
+      '#default_value' => $selectedOrganization,
       '#tags' => TRUE,
       '#description' => $this->t("The organization that the Result type is available for. Once this option is saved, it cannot be changed."),
-      '#options' => $organizations,
+      '#options' => $availableOrganizations,
       '#required' => TRUE,
-      '#disabled' => $result_type->isNew() ? FALSE : TRUE,
+      '#disabled' => $this->entity->isNew() ? FALSE : TRUE,
       '#ajax' => [
         'callback' => [$this, 'updateAvailableGroupings'],
         'wrapper' => 'ajax',
@@ -96,9 +93,9 @@ class ResultTypeForm extends EntityForm {
     $form['groupings'] = array(
       '#type' => 'select',
       '#title' => $this->t('Groupings'),
-      '#default_value' => $groupings,
+      '#default_value' => $selectedGroupings,
       '#description' => $this->t("The groupings the Result type is available for."),
-      '#options' => $available_groupings,
+      '#options' => $availableGroupings,
       '#multiple' => TRUE,
       '#required' => FALSE,
     );
@@ -109,21 +106,20 @@ class ResultTypeForm extends EntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
-    $result_type = $this->entity;
-    $status = $result_type->save();
+    $status = $this->entity->save();
     switch ($status) {
       case SAVED_NEW:
         drupal_set_message($this->t('Created the %label Result type.', [
-          '%label' => $result_type->label(),
+          '%label' => $this->entity->label(),
         ]));
         break;
 
       default:
         drupal_set_message($this->t('Saved the %label Result type.', [
-          '%label' => $result_type->label(),
+          '%label' => $this->entity->label(),
         ]));
     }
-    $form_state->setRedirectUrl($result_type->urlInfo('collection'));
+    $form_state->setRedirectUrl($this->entity->urlInfo('collection'));
   }
 
   /**
