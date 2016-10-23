@@ -15,10 +15,7 @@ ea_results.result_type.*:
       type: sequence
       label: 'Data types'
       sequence:
-        type: mapping
-        mapping:
-          target_id:
-           type: string
+        type: string
     organization:
       type: integer
       label: 'Data types'
