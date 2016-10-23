@@ -93,7 +93,7 @@ class CSVImportTest extends ImportWebTestBase {
       'label' => 'Leafleting',
       'id' => 'leafleting',
       'description' => 'Sample result',
-      'data_types' => sprintf('%s (%s)', 'Leaflets', 'leaflets'),
+      'data_types[leaflets]' => 'leaflets',
       'organization' => $this->grouping->id(),
       'groupings[]' => [$this->grouping->id()],
     ), t('Save'));
