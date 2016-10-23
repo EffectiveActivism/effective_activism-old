@@ -11,7 +11,7 @@ ea_results.result_type.*:
     description:
       type: string
       label: 'Description'
-    data_types:
+    datatypes:
       type: sequence
       label: 'Data types'
       sequence:

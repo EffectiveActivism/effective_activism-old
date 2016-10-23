@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_results\Form;
 
-use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_permissions\Roles;
 use Drupal\Core\Entity\EntityForm;
@@ -22,7 +21,7 @@ class ResultTypeForm extends EntityForm {
     $form = parent::form($form, $form_state);
     $selectedOrganization = $this->entity->organization;
     $selectedGroupings = $this->entity->groupings;
-    $selectedDataTypes = !empty($this->entity->data_types) ? array_filter(array_values($this->entity->data_types), function ($value) {
+    $selectedDataTypes = !empty($this->entity->datatypes) ? array_filter(array_values($this->entity->datatypes), function ($value) {
       return $value !== 0;
     }) : [];
     // Get available organizations.
@@ -68,7 +67,7 @@ class ResultTypeForm extends EntityForm {
       '#description' => $this->t("Description for the Result type."),
       '#required' => FALSE,
     );
-    $form['data_types'] = array(
+    $form['datatypes'] = array(
       '#type' => 'checkboxes',
       '#title' => $this->t('Data types'),
       '#default_value' => empty($selectedDataTypes) ? [] : $selectedDataTypes,

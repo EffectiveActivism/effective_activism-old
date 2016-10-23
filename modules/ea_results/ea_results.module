@@ -70,8 +70,8 @@ function _ea_results_bundle_settings_submit($form, FormStateInterface $form_stat
   $entity_type_id = 'result';
   $result_type = ResultType::load($bundle_id);
   $enabled_fields = [];
-  if (isset($result_type->data_types) && !empty($result_type->data_types)) {
-    foreach ($result_type->data_types as $data_type => $enabled) {
+  if (isset($result_type->datatypes) && !empty($result_type->datatypes)) {
+    foreach ($result_type->datatypes as $data_type => $enabled) {
       if ((bool) $enabled) {
         $field_name = 'field_' . $data_type;
         // Check if field exists and create as necessary.
