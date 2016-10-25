@@ -26,28 +26,32 @@ class LocationWidget extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $address = isset($items[$delta]->address) ? $items[$delta]->address : '';
     $extra_information = isset($items[$delta]->extra_information) ? $items[$delta]->extra_information : '';
-    $element['address'] = array(
+    $element['location'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Location'),
+    ];
+    $element['location']['address'] = [
       '#title' => $this->t('Address'),
       '#type' => 'textfield',
       '#default_value' => $address,
       '#autocomplete_route_name' => 'ea_locations.autocomplete',
-      '#autocomplete_route_parameters' => array(),
+      '#autocomplete_route_parameters' => [],
       '#size' => 30,
       '#maxlength' => 255,
-      '#element_validate' => array(
-        array($this, 'validateAddress'),
-      ),
+      '#element_validate' => [
+        [$this, 'validateAddress'],
+      ],
       '#attached' => [
         'library' => ['ea_locations/autocomplete'],
       ],
-    );
-    $element['extra_information'] = array(
+    ];
+    $element['location']['extra_information'] = [
       '#title' => $this->t('Extra information'),
       '#type' => 'textfield',
       '#default_value' => $extra_information,
       '#size' => 30,
       '#maxlength' => 255,
-    );
+    ];
     return $element;
   }
 
