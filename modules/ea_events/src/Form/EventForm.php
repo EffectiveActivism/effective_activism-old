@@ -54,6 +54,9 @@ class EventForm extends ContentEntityForm {
         unset($form['results']);
       }
     }
+    // Hide fields.
+    $form['user_id']['#attributes']['class'][] = 'hidden';
+    $form['revision_log_message']['#attributes']['class'][] = 'hidden';
     return $form;
   }
 

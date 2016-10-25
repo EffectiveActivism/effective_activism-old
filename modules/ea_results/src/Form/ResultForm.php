@@ -29,6 +29,9 @@ class ResultForm extends ContentEntityForm {
       '#title' => $this->t('Description'),
       '#description' => $result_type->description,
     );
+    // Hide fields.
+    $form['user_id']['#attributes']['class'][] = 'hidden';
+    $form['revision_log_message']['#attributes']['class'][] = 'hidden';
     return $form;
   }
 

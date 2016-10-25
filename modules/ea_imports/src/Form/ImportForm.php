@@ -25,6 +25,9 @@ class ImportForm extends ContentEntityForm {
       '#title' => $this->t('Timezones and dates'),
       '#description' => $this->t('The dates of imported events will be imported relative to the selected grouping timezone. For example, if the imported event has a start time of 11:00 am, and the grouping selected for the import has the timezone "Europe/Copenhagen (UTC +1)", the start time will be 11:00 am (UTC +1)'),
     ];
+    // Hide fields.
+    $form['user_id']['#attributes']['class'][] = 'hidden';
+    $form['revision_log_message']['#attributes']['class'][] = 'hidden';
     return $form;
   }
 

@@ -19,6 +19,9 @@ class DataForm extends ContentEntityForm {
     /* @var $entity \Drupal\ea_data\Entity\Data */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
+    // Hide fields.
+    $form['user_id']['#attributes']['class'][] = 'hidden';
+    $form['revision_log_message']['#attributes']['class'][] = 'hidden';
     return $form;
   }
 
