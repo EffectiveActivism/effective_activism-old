@@ -63,6 +63,17 @@ function ea_results_form_alter(&$form, FormStateInterface $form_state, $form_id)
 }
 
 /**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ */
+function ea_results_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
+  if ($entity_form['#entity_type'] === 'result') {
+    // Hide revision and user fields.
+    $entity_form['user_id']['#attributes']['class'][] = 'hidden';
+    $entity_form['revision_log_message']['#attributes']['class'][] = 'hidden';
+  }
+}
+
+/**
  * Custom submit handler.
  */
 function _ea_results_bundle_settings_submit($form, FormStateInterface $form_state) {
