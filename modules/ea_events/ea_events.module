@@ -20,12 +20,14 @@ function ea_events_form_alter(&$form, FormStateInterface $form_state, $form_id) 
 
 /**
  * Implements hook_inline_entity_form_entity_form_alter().
- *
- * Control visibility for inline Event Repeater entities.
  */
 function ea_events_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
   if ($entity_form['#entity_type'] === 'event_repeater') {
+    // Control visibility for inline Event Repeater entities.
     _ea_events_get_event_repeater_states($entity_form, 'event_repeater[0][inline_entity_form]');
+    // Hide revision and user fields.
+    $entity_form['user_id']['#attributes']['class'][] = 'hidden';
+    $entity_form['revision_log_message']['#attributes']['class'][] = 'hidden';
   }
 }
 

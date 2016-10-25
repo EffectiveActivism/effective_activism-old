@@ -42,7 +42,7 @@ class LocationWidget extends WidgetBase {
       ],
     );
     $element['extra_information'] = array(
-      '#title' => $this->t('Extra information'),
+      '#title' => $this->t('Other location information'),
       '#type' => 'textfield',
       '#default_value' => $extra_information,
       '#size' => 30,

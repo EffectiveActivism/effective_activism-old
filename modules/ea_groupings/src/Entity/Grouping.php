@@ -63,6 +63,20 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
 
   use EntityChangedTrait;
 
+  const WEIGHTS = [
+    'user_id',
+    'name',
+    'description',
+    'parent',
+    'phone_number',
+    'email_address',
+    'location',
+    'timezone',
+    'managers',
+    'organizers',
+    'members',
+  ];
+
   /**
    * {@inheritdoc}
    */
@@ -275,11 +289,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
         'type' => 'author',
-        'weight' => 0,
+        'weight' => array_search('user_id', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
+        'weight' => array_search('user_id', self::WEIGHTS),
         'settings' => array(
           'match_operator' => 'CONTAINS',
           'size' => '60',
@@ -300,11 +314,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('name', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
-        'weight' => -4,
+        'weight' => array_search('name', self::WEIGHTS),
       ));
     $fields['phone_number'] = BaseFieldDefinition::create('telephone')
       ->setLabel(t('Phone number'))
@@ -318,11 +332,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('phone_number', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'telephone_default',
-        'weight' => -4,
+        'weight' => array_search('phone_number', self::WEIGHTS),
       ));
     $fields['email_address'] = BaseFieldDefinition::create('email')
       ->setLabel(t('E-mail address'))
@@ -336,11 +350,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('email_address', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'email_default',
-        'weight' => -4,
+        'weight' => array_search('email_address', self::WEIGHTS),
       ));
     $fields['location'] = BaseFieldDefinition::create('location')
       ->setLabel(t('Location'))
@@ -354,11 +368,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'location_default',
-        'weight' => -4,
+        'weight' => array_search('location', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'location_default',
-        'weight' => -4,
+        'weight' => array_search('location', self::WEIGHTS),
       ));
     $fields['timezone'] = BaseFieldDefinition::create('list_string')
       ->setLabel(t('Timezone'))
@@ -371,11 +385,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('timezone', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'options_select',
-        'weight' => -4,
+        'weight' => array_search('timezone', self::WEIGHTS),
       ));
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
@@ -383,14 +397,14 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setRevisionable(TRUE)
       ->setDisplayOptions('form', array(
         'type' => 'string_textarea',
-        'weight' => 2,
+        'weight' => array_search('description', self::WEIGHTS),
         'settings' => array(
           'rows' => 6,
         ),
       ))
       ->setDisplayOptions('view', array(
         'type' => 'basic_string',
-        'weight' => 2,
+        'weight' => array_search('description', self::WEIGHTS),
       ));
     $fields['members'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Members'))
@@ -400,7 +414,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => 2,
+        'weight' => array_search('members', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -408,7 +422,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
-        'weight' => 2,
+        'weight' => array_search('members', self::WEIGHTS),
       ));
     $fields['organizers'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Organizers'))
@@ -418,7 +432,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => 2,
+        'weight' => array_search('organizers', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -426,7 +440,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
-        'weight' => -4,
+        'weight' => array_search('organizers', self::WEIGHTS),
       ));
     $fields['managers'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Managers'))
@@ -436,7 +450,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => 2,
+        'weight' => array_search('managers', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -444,7 +458,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
-        'weight' => -4,
+        'weight' => array_search('managers', self::WEIGHTS),
       ));
     $fields['parent'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Parent grouping'))
@@ -454,11 +468,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setCardinality(1)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => 2,
+        'weight' => array_search('parent', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'parent_grouping_selector',
-        'weight' => -4,
+        'weight' => array_search('parent', self::WEIGHTS),
       ));
     $fields['status'] = BaseFieldDefinition::create('boolean')
       ->setLabel(t('Publishing status'))

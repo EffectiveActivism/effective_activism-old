@@ -60,6 +60,20 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
 
   use EntityChangedTrait;
 
+  const WEIGHTS = [
+    'title',
+    'description',
+    'grouping',
+    'start_date',
+    'end_date',
+    'event_repeater',
+    'location',
+    'participants',
+    'tasks',
+    'results',
+    'user_id',
+  ];
+
   /**
    * {@inheritdoc}
    */
@@ -146,11 +160,11 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('title', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
-        'weight' => -4,
+        'weight' => array_search('title', self::WEIGHTS),
       ));
     $fields['start_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('Start date'))
@@ -168,11 +182,11 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ))
       ->setDisplayOptions('view', array(
         'type' => 'datetime_default',
-        'weight' => 0,
+        'weight' => array_search('start_date', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'datetime_default',
-        'weight' => 1,
+        'weight' => array_search('start_date', self::WEIGHTS),
       ));
     $fields['end_date'] = BaseFieldDefinition::create('datetime')
       ->setLabel(t('End date'))
@@ -190,11 +204,11 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ))
       ->setDisplayOptions('view', array(
         'type' => 'datetime_default',
-        'weight' => 0,
+        'weight' => array_search('end_date', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'datetime_default',
-        'weight' => 1,
+        'weight' => array_search('end_date', self::WEIGHTS),
       ));
     $fields['location'] = BaseFieldDefinition::create('location')
       ->setLabel(t('Location'))
@@ -207,11 +221,11 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'location_default',
-        'weight' => -4,
+        'weight' => array_search('location', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'location_default',
-        'weight' => -4,
+        'weight' => array_search('location', self::WEIGHTS),
       ));
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
@@ -219,14 +233,14 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setRevisionable(TRUE)
       ->setDisplayOptions('form', array(
         'type' => 'string_textarea',
-        'weight' => 2,
+        'weight' => array_search('description', self::WEIGHTS),
         'settings' => array(
           'rows' => 6,
         ),
       ))
       ->setDisplayOptions('view', array(
         'type' => 'basic_string',
-        'weight' => 2,
+        'weight' => array_search('description', self::WEIGHTS),
       ));
     $fields['tasks'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Tasks'))
@@ -237,7 +251,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('tasks', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -245,7 +259,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'allow_new' => TRUE,
           'allow_existing' => FALSE,
         ),
-        'weight' => -4,
+        'weight' => array_search('tasks', self::WEIGHTS),
       ));
     $fields['event_repeater'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Repeat'))
@@ -257,11 +271,11 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setRequired(TRUE)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('event_repeater', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_simple',
-        'weight' => -4,
+        'weight' => array_search('event_repeater', self::WEIGHTS),
       ));
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))
@@ -271,7 +285,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('participants', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'event_participants',
@@ -279,7 +293,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'allow_new' => TRUE,
           'allow_existing' => TRUE,
         ),
-        'weight' => -4,
+        'weight' => array_search('participants', self::WEIGHTS),
       ));
     $fields['results'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Results'))
@@ -289,7 +303,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('results', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'inline_entity_form_complex',
@@ -297,7 +311,7 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'allow_new' => TRUE,
           'allow_existing' => FALSE,
         ),
-        'weight' => -4,
+        'weight' => array_search('results', self::WEIGHTS),
       ));
     $fields['grouping'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Grouping'))
@@ -309,11 +323,11 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setRequired(TRUE)
       ->setDisplayOptions('view', array(
         'type' => 'string',
-        'weight' => -4,
+        'weight' => array_search('grouping', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'grouping_selector',
-        'weight' => -4,
+        'weight' => array_search('grouping', self::WEIGHTS),
       ));
     $fields['user_id'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Authored by'))
@@ -325,12 +339,11 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setTranslatable(TRUE)
       ->setDisplayOptions('view', array(
         'label' => 'hidden',
-        'type' => 'author',
-        'weight' => 0,
+        'type' => 'hidden',
       ))
       ->setDisplayOptions('form', array(
         'type' => 'entity_reference_autocomplete',
-        'weight' => 5,
+        'weight' => array_search('user_id', self::WEIGHTS),
         'settings' => array(
           'match_operator' => 'CONTAINS',
           'size' => '60',
