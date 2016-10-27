@@ -4,6 +4,7 @@ namespace Drupal\ea_results\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\ea_results\ResultTypeInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Defines the Result type entity.
@@ -57,6 +58,13 @@ class ResultType extends ConfigEntityBundleBase implements ResultTypeInterface {
   protected $label;
 
   /**
+   * The Result type name formatted as a machine name for use with importing.
+   *
+   * @var string
+   */
+  protected $importname;
+
+  /**
    * The Result type description.
    *
    * @var string
@@ -83,5 +91,98 @@ class ResultType extends ConfigEntityBundleBase implements ResultTypeInterface {
    * @var array
    */
   public $groupings;
+
+  /**
+   * Returns the import name.
+   */
+  public function importname() {
+    return $this->importname;
+  }
+
+  /**
+   * Load a result type by machine name and organization.
+   *
+   * @param string $value
+   *   The value as typed by the user.
+   * @param array $elements
+   *   An array of form elements.
+   * @param FormStateInterface $form_state
+   *   The form state.
+   *
+   * @return bool
+   *   Whether the machine name exists within the organization or not.
+   */
+  public static function checkTypedImportNameExists($value, $elements, FormStateInterface $form_state) {
+    $organizationId = $form_state->getValue('organization');
+    return !empty($organizationId) ? !self::isUniqueImportName($value, $organizationId) : NULL;
+  }
+
+  /**
+   * Check if an import name is unique within an organization.
+   *
+   * @param string $importName
+   *   The import name to check.
+   * @param int $organizationId
+   *   The organization id.
+   *
+   * @return bool
+   *   Whether the import name exists within the organization or not.
+   */
+  public static function isUniqueImportName($importName, $organizationId) {
+    $query = \Drupal::entityQuery('result_type');
+    $result = $query
+      ->condition('organization', $organizationId)
+      ->condition('importname', $importName)
+      ->count()
+      ->execute();
+    return $result === 0 ? TRUE : FALSE;
+  }
+
+  /**
+   * Return a unique id based on an import name.
+   *
+   * @param string $importName
+   *   The import name to base the id on.
+   *
+   * @return string
+   *   A unique entity id.
+   */
+  public static function createId($importName) {
+    $id = NULL;
+    $result = NULL;
+    while (TRUE) {
+      $id = uniqid($importName);
+      $query = \Drupal::entityQuery('result_type');
+      $result = $query
+        ->condition('id', $id)
+        ->count()
+        ->execute();
+      // If no existing result types have the id, return it.
+      if ($result === 0) {
+        break;
+      }
+    }
+    return $id;
+  }
+
+  /**
+   * Load a result type by import name and organization id.
+   *
+   * @param string $importName
+   *   The import name of the result type.
+   * @param int $organizationId
+   *   The organization id.
+   *
+   * @return ResultType
+   *   The loaded result type entity.
+   */
+  public static function getResultTypeByImportName($importName, $organizationId) {
+    $query = \Drupal::entityQuery('result_type');
+    $result = $query
+      ->condition('importname', $importName)
+      ->condition('organization', $organizationId)
+      ->execute();
+    return !empty($result) ? self::load(array_pop($result)) : NULL;
+  }
 
 }
