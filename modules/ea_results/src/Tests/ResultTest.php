@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_results\Tests;
 
+use Drupal\ea_results\Entity\ResultType;
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
@@ -17,6 +18,7 @@ use Drupal\field\Entity\FieldConfig;
 class ResultTest extends WebTestBase {
 
   const GROUPNAME = 'Test group';
+  const RESULTTYPEIMPORTNAME = 'result_type_test';
 
   public static $modules = array('effective_activism');
 
@@ -119,7 +121,7 @@ class ResultTest extends WebTestBase {
     ], 'organization');
     $this->drupalPostForm(NULL, array(
       'label' => 'Test',
-      'id' => 'result_type_test',
+      'importname' => self::RESULTTYPEIMPORTNAME,
       'description' => 'Test result type description',
       'datatypes[data_type_test]' => 'data_type_test',
       'organization' => $this->organization->id(),
@@ -136,9 +138,12 @@ class ResultTest extends WebTestBase {
    * numeric value to the field_integer_input field.
    */
   private function createResultEntity() {
+    // Get result type id.
+    $resultType = ResultType::getResultTypeByImportName(self::RESULTTYPEIMPORTNAME, $this->organization->id());
+    $this->assertNotNull($resultType);
     $this->drupalLogin($this->organizer);
     // Create an result entity using the result type.
-    $this->drupalGet('effectiveactivism/results/add/result_type_test');
+    $this->drupalGet(sprintf('effectiveactivism/results/add/%s', $resultType->id()));
     $this->assertResponse(200);
     $random_value = rand();
     $this->drupalPostForm(NULL, array(

@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_results\Form;
 
+use Drupal\ea_results\Entity\ResultType;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_permissions\Roles;
 use Drupal\Core\Entity\EntityForm;
@@ -51,13 +52,18 @@ class ResultTypeForm extends EntityForm {
       '#description' => $this->t("Label for the Result type."),
       '#required' => TRUE,
     );
-    $form['id'] = array(
+    $form['importname'] = array(
       '#type' => 'machine_name',
-      '#default_value' => $this->entity->id(),
+      '#title' => $this->t('Import name'),
+      '#description' => $this->t('This name is used when importing results of this type. Can only contain lowercase letters, numbers, and underscores.'),
+      '#default_value' => $this->entity->importname(),
       '#machine_name' => array(
-        'exists' => '\Drupal\ea_results\Entity\ResultType::load',
+        'exists' => '\Drupal\ea_results\Entity\ResultType::checkTypedImportNameExists',
+        'label' => $this->t('Import name'),
       ),
-      '#disabled' => !$this->entity->isNew(),
+      '#required' => TRUE,
+      // Disallow changing import name after result type has been created.
+      '#disabled' => empty($this->entity->id()) ? FALSE : TRUE,
     );
     $form['description'] = array(
       '#type' => 'textfield',
@@ -99,6 +105,24 @@ class ResultTypeForm extends EntityForm {
       '#required' => FALSE,
     );
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $importName = $form_state->getValue('importname');
+    $organizationId = $form_state->getValue('organization');
+    // Verify that import name is unique within organization.
+    // Only perform this check for new result types.
+    if (!empty($importName) && !empty($organizationId) && empty($this->entity->id()) && !ResultType::isUniqueImportName($importName, $organizationId)) {
+      $form_state->setErrorByName('import_name', $this->t('This import name is already in use for your organization. Please type in another one.'));
+    }
+    // Derive entity id from import name.
+    if (!empty($importName) && empty($this->entity->id())) {
+      $form_state->setValue('id', ResultType::createId($importName));
+    }
   }
 
   /**

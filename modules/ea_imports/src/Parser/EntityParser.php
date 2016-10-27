@@ -8,6 +8,8 @@ use Drupal\ea_tasks\Entity\Task;
 use Drupal\ea_people\Entity\Person;
 use Drupal\ea_data\Entity\Data;
 use Drupal\ea_results\Entity\Result;
+use Drupal\ea_results\Entity\ResultType;
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -112,17 +114,24 @@ class EntityParser {
    *
    * @param array $values
    *   Data to validate as result entity.
+   * @param string $importName
+   *   The import name.
+   * @param Grouping $grouping
+   *   The grouping.
    *
    * @return bool
    *   TRUE if result is valid, FALSE otherwise.
    */
-  public function validateResult($values, $bundle) {
-    // Make sure the type is valid.
-    if (!in_array($bundle, array_values(array_keys(\Drupal::entityManager()->getBundleInfo('result'))))) {
-      $this->errorMessages[] = t('Illegal bundle');
+  public function validateResult($values, $importName, Grouping $grouping) {
+    // Get organization from grouping.
+    $organizationId = empty($grouping->get('parent')->entity) ? $grouping->id() : $grouping->get('parent')->entity->id();
+    $resultType = ResultType::getResultTypeByImportName($importName, $organizationId);
+    // Make sure the result type is valid.
+    if (empty($resultType)) {
+      $this->errorMessages[] = t('Illegal import name');
       return FALSE;
     }
-    $fields = $this->getFields('result', $bundle);
+    $fields = $this->getFields('result', $resultType->id());
     $fieldsToIgnore = [];
     foreach ($fields as $key => $field) {
       // Create any data entities identified by field name 'field_*'.
@@ -132,10 +141,13 @@ class EntityParser {
           $dataType,
           $values[$key],
         ], $dataType);
-        // Overwrite value with corresponding data entity.
-        $values[$key] = NULL;
         // Do not validate this field for the result entity.
+        $values[$key] = NULL;
         $fieldsToIgnore[] = $field;
+      }
+      // Replace import name with result type id.
+      elseif ($field === 'type') {
+        $values[$key] = $resultType->id();
       }
     }
     $data = array_combine($fields, $values);
@@ -276,14 +288,19 @@ class EntityParser {
    *
    * @param array $values
    *   Values to import as a result entity.
-   * @param string $bundle
-   *   The bundle of the result entity.
+   * @param string $importName
+   *   The import name of the result entity.
+   * @param Grouping $grouping
+   *   The grouping to import to.
    *
    * @return int|bool
    *   The participants id or FALSE if import failed.
    */
-  public function importResult($values, $bundle) {
-    $fields = $this->getFields('result', $bundle);
+  public function importResult($values, $importName, Grouping $grouping) {
+    // Get organization from grouping.
+    $organizationId = empty($grouping->get('parent')->entity) ? $grouping->id() : $grouping->get('parent')->entity->id();
+    $resultType = ResultType::getResultTypeByImportName($importName, $organizationId);
+    $fields = $this->getFields('result', $resultType->id());
     foreach ($fields as $key => $field) {
       // Create any data entities identified by field name 'field_*'.
       if (strpos($field, 'field_') === 0) {
@@ -291,6 +308,10 @@ class EntityParser {
         $dataEntity = $this->importData($values[$key], $dataType);
         // Overwrite value with corresponding data entity.
         $values[$key] = $dataEntity->id();
+      }
+      // Replace import name with result type id.
+      elseif ($field === 'type') {
+        $values[$key] = $resultType->id();
       }
     }
     $data = array_combine($fields, $values);

@@ -239,7 +239,7 @@ class CSVParser extends EntityParser implements ParserInterface {
 
         case 'results':
           $dataArray = array_map('trim', explode('|', $data));
-          if (!empty($data) && (count(explode('|', $data)) < 5 || !$this->validateResult($dataArray, reset($dataArray)))) {
+          if (!empty($data) && (count(explode('|', $data)) < 5 || !$this->validateResult($dataArray, reset($dataArray), $this->grouping))) {
             throw new ParserValidationException(INVALID_RESULT, $this->row, $this->convertColumn($this->column));
           }
           break;
@@ -347,7 +347,7 @@ class CSVParser extends EntityParser implements ParserInterface {
       }
       // Create result, if any.
       $resultValues = $this->getValue($values, 'results');
-      $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($resultValues, reset($resultValues)) : NULL;
+      $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($resultValues, reset($resultValues), $this->grouping) : NULL;
       $resultId = !empty($result) ? $result->id() : NULL;
       // Create event.
       $this->latestEvent = $this->importEvent([
@@ -404,7 +404,7 @@ class CSVParser extends EntityParser implements ParserInterface {
       // Create result, if any.
       if (!empty($values[array_search('results', self::CSVHEADERFORMAT)]) && !empty($this->latestEvent)) {
         $resultValues = $this->getValue($values, 'results');
-        $entity = $this->importResult($resultValues, reset($resultValues));
+        $entity = $this->importResult($resultValues, reset($resultValues), $this->grouping);
         if ($entity) {
           // Attach to latest event.
           $this->latestEvent->results[] = [

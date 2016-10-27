@@ -91,7 +91,7 @@ class CSVImportTest extends ImportWebTestBase {
     ], 'organization');
     $this->drupalPostForm(NULL, array(
       'label' => 'Leafleting',
-      'id' => 'leafleting',
+      'importname' => 'leafleting',
       'description' => 'Sample result',
       'datatypes[leaflets]' => 'leaflets',
       'organization' => $this->grouping->id(),
