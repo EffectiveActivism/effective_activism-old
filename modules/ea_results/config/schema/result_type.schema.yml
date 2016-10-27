@@ -8,6 +8,9 @@ ea_results.result_type.*:
     label:
       type: label
       label: 'Label'
+    importname:
+      type: string
+      label: 'Import name'
     description:
       type: string
       label: 'Description'
@@ -18,7 +21,7 @@ ea_results.result_type.*:
         type: string
     organization:
       type: integer
-      label: 'Data types'
+      label: 'Organization'
     groupings:
       type: sequence
       label: 'Groupings'
