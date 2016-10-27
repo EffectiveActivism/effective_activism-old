@@ -9,6 +9,7 @@ use Drupal\ea_people\Entity\Person;
 use Drupal\ea_data\Entity\Data;
 use Drupal\ea_results\Entity\Result;
 use Drupal\ea_results\Entity\ResultType;
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
