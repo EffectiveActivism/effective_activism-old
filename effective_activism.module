@@ -106,6 +106,13 @@ function effective_activism_toolbar() {
         'title' => t('Results'),
       ),
     ),
+    'organization' => array(
+      'title' => t('Add organization'),
+      'url' => Url::fromRoute('ea_groupings.add_organization'),
+      'attributes' => array(
+        'title' => t('Add organization'),
+      ),
+    ),
   );
   // Construct toolbar link and tab.
   $items = array();
