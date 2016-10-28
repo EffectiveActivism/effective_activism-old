@@ -16,7 +16,7 @@ class OrganizationForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ea_groupings_add_organization';
   }
 
@@ -101,10 +101,10 @@ class OrganizationForm extends FormBase {
     $entity = Grouping::create($values);
     foreach ($entity->validate() as $violation) {
       if (in_array($violation->getPropertyPath(), array_keys($values))) {
-        $form_state->setErrorByName($violation->getPropertyPath(), $this->t($violation->getMessage()));
+        $form_state->setErrorByName($violation->getPropertyPath(), $violation->getMessage());
       }
       else {
-        $form_state->setError(NULL, $this->t($violation->getMessage()));
+        $form_state->setError(NULL, $violation->getMessage());
       }
     }
   }
