@@ -322,7 +322,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ));
     $fields['phone_number'] = BaseFieldDefinition::create('telephone')
       ->setLabel(t('Phone number'))
-      ->setDescription(t('The phone number of the grouping, prefixed by country code.'))
+      ->setDescription(t('The phone number of the grouping.'))
       ->setRevisionable(TRUE)
       ->setSettings(array(
         'max_length' => 50,
