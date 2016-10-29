@@ -51,13 +51,6 @@ entity.event.collection:
   parent: effective_activism.overview
   weight: 100
 
-event.admin.structure.settings:
-  title: Event settings
-  description: 'Configure Event entities'
-  route_name: event.settings
-  menu_name: effective_activism
-  parent: entity.event.collection
-
 # Event repeater menu items definition
 entity.event_repeater.collection:
   title: 'Event repeater list'
@@ -67,13 +60,6 @@ entity.event_repeater.collection:
   parent: effective_activism.overview
   weight: 100
 
-event_repeater.admin.structure.settings:
-  title: Event repeater settings
-  description: 'Configure Event repeater entities'
-  route_name: event_repeater.settings
-  menu_name: effective_activism
-  parent: entity.event_repeater.collection
-
 # Grouping menu items definition
 entity.grouping.collection:
   title: 'Grouping list'
@@ -82,13 +68,6 @@ entity.grouping.collection:
   menu_name: effective_activism
   parent: effective_activism.overview
   weight: 100
-
-grouping.admin.structure.settings:
-  title: Grouping settings
-  description: 'Configure Grouping entities'
-  route_name: grouping.settings
-  menu_name: effective_activism
-  parent: entity.grouping.collection
 
 # Import menu items definition
 entity.import.collection:
@@ -126,13 +105,6 @@ entity.person.collection:
   parent: effective_activism.overview
   weight: 100
 
-person.admin.structure.settings:
-  title: Person settings
-  description: 'Configure Person entities'
-  route_name: person.settings
-  menu_name: effective_activism
-  parent: entity.person.collection
-
 # Task menu items definition
 entity.task.collection:
   title: 'Task list'
@@ -141,10 +113,3 @@ entity.task.collection:
   menu_name: effective_activism
   parent: effective_activism.overview
   weight: 100
-
-task.admin.structure.settings:
-  title: Task settings
-  description: 'Configure Task entities'
-  route_name: task.settings
-  menu_name: effective_activism
-  parent: entity.task.collection
