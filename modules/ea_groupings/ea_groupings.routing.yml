@@ -1,0 +1,7 @@
+ea_groupings.add_organization:
+  path: 'effectiveactivism/groupings/add-organization'
+  defaults:
+    _title: 'Create organization'
+    _form: '\Drupal\ea_groupings\Form\OrganizationForm'
+  requirements:
+    _permission: 'access content'

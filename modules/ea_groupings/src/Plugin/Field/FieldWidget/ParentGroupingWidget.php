@@ -45,12 +45,15 @@ class ParentGroupingWidget extends WidgetBase {
     else {
       $defaultValue = NULL;
     }
-    $element['target_id'] = array(
-      '#title' => $this->t('Parent'),
-      '#type' => 'radios',
-      '#default_value' => $defaultValue,
-      '#options' => $options,
-    );
+    // Only show form element if grouping is not an organization or is new.
+    if ((!empty($currentId) && !empty($items[$delta]->target_id)) || empty($currentId)) {
+      $element['target_id'] = [
+        '#title' => $this->t('Parent'),
+        '#type' => 'radios',
+        '#default_value' => $defaultValue,
+        '#options' => $options,
+      ];
+    }
     return $element;
   }
 
