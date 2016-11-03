@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_results\Tests;
 
-use Drupal\ea_results\Entity\ResultType;
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
