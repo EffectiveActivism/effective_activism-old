@@ -18,10 +18,25 @@ class ICalendarImportTest extends ImportWebTestBase {
   const ENDDATE = '01/01/2016';
   const ENDTIME = '12:00';
 
+  /**
+   * The test grouping.
+   *
+   * @var Grouping
+   */
   private $grouping;
 
+  /**
+   * The test organizer.
+   *
+   * @var User
+   */
   private $organizer;
 
+  /**
+   * The test manager.
+   *
+   * @var User
+   */
   private $manager;
 
   /**

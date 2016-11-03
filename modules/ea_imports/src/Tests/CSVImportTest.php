@@ -18,12 +18,32 @@ class CSVImportTest extends ImportWebTestBase {
   const ENDDATE = '12/13/2016';
   const ENDTIME = '13:00';
 
+  /**
+   * The test grouping.
+   *
+   * @var Grouping
+   */
   private $grouping;
 
+  /**
+   * The test organizer.
+   *
+   * @var User
+   */
   private $organizer;
 
+  /**
+   * The test manager.
+   *
+   * @var User
+   */
   private $manager;
 
+  /**
+   * The test CSV file.
+   *
+   * @var File
+   */
   private $CSVFile;
 
   /**
