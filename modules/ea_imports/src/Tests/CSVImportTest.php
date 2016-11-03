@@ -12,12 +12,38 @@ use Drupal\ea_groupings\Entity\Grouping;
  */
 class CSVImportTest extends ImportWebTestBase {
 
+  // Test values.
+  const STARTDATE = '12/13/2016';
+  const STARTTIME = '11:00';
+  const ENDDATE = '12/13/2016';
+  const ENDTIME = '13:00';
+
+  /**
+   * The test grouping.
+   *
+   * @var Grouping
+   */
   private $grouping;
 
+  /**
+   * The test organizer.
+   *
+   * @var User
+   */
   private $organizer;
 
+  /**
+   * The test manager.
+   *
+   * @var User
+   */
   private $manager;
 
+  /**
+   * The test CSV file.
+   *
+   * @var File
+   */
   private $CSVFile;
 
   /**
@@ -25,6 +51,12 @@ class CSVImportTest extends ImportWebTestBase {
    */
   public function setUp() {
     parent::setUp();
+    // Disable user time zones.
+    // This is required in order for events to register correct time.
+    $systemDate = \Drupal::configFactory()->getEditable('system.date');
+    $systemDate->set('timezone.default', 'UTC');
+    $systemDate->save(TRUE);
+    // Create users.
     $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
     $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
     $this->grouping = $this->createGrouping();
@@ -56,6 +88,10 @@ class CSVImportTest extends ImportWebTestBase {
     $this->assertResponse(200);
     $this->assertText('Created the import.', 'Added a new import entity.');
     $this->assertText('One item imported', 'Successfully imported event');
+    $this->drupalGet('effectiveactivism/events/1');
+    $this->assertResponse(200);
+    $this->assertText(sprintf('%s - %s', self::STARTDATE, self::STARTTIME), 'Start date and time found.');
+    $this->assertText(sprintf('%s - %s', self::ENDDATE, self::ENDTIME), 'End date and time found.');
   }
 
   /**
