@@ -217,6 +217,11 @@ function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id)
   if ($form_id === 'import_csv_add_form') {
     $form['#validate'][] = '_ea_imports_validate_csv';
   }
+  elseif ($form_id === 'import_csv_edit_form') {
+    // Restrict access to existing import entities.
+    $form['grouping']['#disabled'] = TRUE;
+    $form['field_file_csv']['#disabled'] = TRUE;
+  }
   elseif ($form_id === 'import_icalendar_add_form') {
     $form['#validate'][] = '_ea_imports_validate_icalendar';
     $form['field_url']['#access'] = 0;
