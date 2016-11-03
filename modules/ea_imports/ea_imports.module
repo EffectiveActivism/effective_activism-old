@@ -226,6 +226,15 @@ function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id)
     $form['#validate'][] = '_ea_imports_validate_icalendar';
     $form['field_url']['#access'] = 0;
   }
+  elseif ($form_id === 'import_icalendar_edit_form') {
+    // Restrict access to existing import entities.
+    $form['field_filter_date_end']['#disabled'] = TRUE;
+    $form['field_filter_date_start']['#disabled'] = TRUE;
+    $form['field_filter_description']['#disabled'] = TRUE;
+    $form['field_filter_title']['#disabled'] = TRUE;
+    $form['field_url']['#disabled'] = TRUE;
+    $form['grouping']['#disabled'] = TRUE;
+  }
 }
 
 /**
