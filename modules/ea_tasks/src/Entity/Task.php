@@ -23,17 +23,7 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\ea_tasks\TaskListBuilder",
  *     "views_data" = "Drupal\ea_tasks\Entity\TaskViewsData",
- *
- *     "form" = {
- *       "default" = "Drupal\ea_tasks\Form\TaskForm",
- *       "add" = "Drupal\ea_tasks\Form\TaskForm",
- *       "edit" = "Drupal\ea_tasks\Form\TaskForm",
- *       "delete" = "Drupal\ea_tasks\Form\TaskDeleteForm",
- *     },
  *     "access" = "Drupal\ea_tasks\TaskAccessControlHandler",
- *     "route_provider" = {
- *       "html" = "Drupal\ea_tasks\TaskHtmlRouteProvider",
- *     },
  *   },
  *   base_table = "task",
  *   revision_table = "task_revision",
@@ -46,13 +36,6 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
- *   },
- *   links = {
- *     "canonical" = "/effectiveactivism/tasks/{task}",
- *     "add-form" = "/effectiveactivism/tasks/add",
- *     "edit-form" = "/effectiveactivism/tasks/{task}/edit",
- *     "delete-form" = "/effectiveactivism/tasks/{task}/delete",
- *     "collection" = "/effectiveactivism/tasks",
  *   },
  *   field_ui_base_route = "task.settings"
  * )

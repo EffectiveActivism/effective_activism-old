@@ -1,9 +1,3 @@
-entity.result.add_form:
-  route_name: 'result.add_page'
-  title: 'Add Result'
-  appears_on:
-    - entity.result.collection
-
 entity.result_type.add_form:
   route_name: 'entity.result_type.add_form'
   title: 'Add Result type'

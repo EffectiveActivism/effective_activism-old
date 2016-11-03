@@ -23,22 +23,11 @@ use Drupal\user\UserInterface;
  *     "list_builder" = "Drupal\ea_events\EventRepeaterListBuilder",
  *     "views_data" = "Drupal\ea_events\Entity\EventRepeaterViewsData",
  *     "translation" = "Drupal\ea_events\EventRepeaterTranslationHandler",
- *
- *     "form" = {
- *       "default" = "Drupal\ea_events\Form\EventRepeaterForm",
- *       "add" = "Drupal\ea_events\Form\EventRepeaterForm",
- *       "edit" = "Drupal\ea_events\Form\EventRepeaterForm",
- *       "delete" = "Drupal\ea_events\Form\EventRepeaterDeleteForm",
- *     },
  *     "access" = "Drupal\ea_events\EventRepeaterAccessControlHandler",
- *     "route_provider" = {
- *       "html" = "Drupal\ea_events\EventRepeaterHtmlRouteProvider",
- *     },
  *   },
  *   base_table = "event_repeater",
  *   data_table = "event_repeater_field_data",
  *   revision_table = "event_repeater_revision",
- *   translatable = TRUE,
  *   admin_permission = "administer event repeater entities",
  *   entity_keys = {
  *     "id" = "id",
@@ -46,13 +35,6 @@ use Drupal\user\UserInterface;
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
- *   },
- *   links = {
- *     "canonical" = "/effectiveactivism/event_repeaters/{event_repeater}",
- *     "add-form" = "/effectiveactivism/event_repeaters/add",
- *     "edit-form" = "/effectiveactivism/event_repeaters/{event_repeater}/edit",
- *     "delete-form" = "/effectiveactivism/event_repeaters/{event_repeater}/delete",
- *     "collection" = "/effectiveactivism/event_repeaters",
  *   },
  *   field_ui_base_route = "event_repeater.settings"
  * )

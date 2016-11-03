@@ -6,15 +6,6 @@ effective_activism.overview:
   menu_name: effective_activism
   weight: 100
 
-# Result menu items definition
-entity.result.collection:
-  title: 'Result list'
-  route_name: entity.result.collection
-  description: 'List Result entities'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 100
-
 # Result type menu items definition
 entity.result_type.collection:
   title: 'Result type'
@@ -47,15 +38,6 @@ entity.event.collection:
   title: 'Event list'
   route_name: entity.event.collection
   description: 'List Event entities'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 100
-
-# Event repeater menu items definition
-entity.event_repeater.collection:
-  title: 'Event repeater list'
-  route_name: entity.event_repeater.collection
-  description: 'List Event repeater entities'
   menu_name: effective_activism
   parent: effective_activism.overview
   weight: 100
@@ -95,21 +77,3 @@ ea_locations.settings:
   menu_name: effective_activism
   parent: effective_activism.overview
   weight: 99
-
-# Person menu items definition
-entity.person.collection:
-  title: 'Person list'
-  route_name: entity.person.collection
-  description: 'List Person entities'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 100
-
-# Task menu items definition
-entity.task.collection:
-  title: 'Task list'
-  route_name: entity.task.collection
-  description: 'List Task entities'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 100
