@@ -21,19 +21,8 @@ use Drupal\user\UserInterface;
  *   bundle_label = @Translation("Result type"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\ea_results\ResultListBuilder",
  *     "views_data" = "Drupal\ea_results\Entity\ResultViewsData",
- *
- *     "form" = {
- *       "default" = "Drupal\ea_results\Form\ResultForm",
- *       "add" = "Drupal\ea_results\Form\ResultForm",
- *       "edit" = "Drupal\ea_results\Form\ResultForm",
- *       "delete" = "Drupal\ea_results\Form\ResultDeleteForm",
- *     },
  *     "access" = "Drupal\ea_results\ResultAccessControlHandler",
- *     "route_provider" = {
- *       "html" = "Drupal\ea_results\ResultHtmlRouteProvider",
- *     },
  *   },
  *   base_table = "result",
  *   revision_table = "result_revision",
@@ -46,13 +35,6 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
- *   },
- *   links = {
- *     "canonical" = "/effectiveactivism/results/{result}",
- *     "add-form" = "/effectiveactivism/results/add/{result_type}",
- *     "edit-form" = "/effectiveactivism/results/{result}/edit",
- *     "delete-form" = "/effectiveactivism/results/{result}/delete",
- *     "collection" = "/effectiveactivism/results",
  *   },
  *   bundle_entity_type = "result_type",
  *   field_ui_base_route = "entity.result_type.edit_form"

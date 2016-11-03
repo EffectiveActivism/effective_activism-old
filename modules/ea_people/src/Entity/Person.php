@@ -20,19 +20,8 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Person"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\ea_people\PersonListBuilder",
  *     "views_data" = "Drupal\ea_people\Entity\PersonViewsData",
- *
- *     "form" = {
- *       "default" = "Drupal\ea_people\Form\PersonForm",
- *       "add" = "Drupal\ea_people\Form\PersonForm",
- *       "edit" = "Drupal\ea_people\Form\PersonForm",
- *       "delete" = "Drupal\ea_people\Form\PersonDeleteForm",
- *     },
  *     "access" = "Drupal\ea_people\PersonAccessControlHandler",
- *     "route_provider" = {
- *       "html" = "Drupal\ea_people\PersonHtmlRouteProvider",
- *     },
  *   },
  *   base_table = "person",
  *   revision_table = "person_revision",
@@ -45,13 +34,6 @@ use Drupal\user\UserInterface;
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
  *     "status" = "status",
- *   },
- *   links = {
- *     "canonical" = "/effectiveactivism/people/{person}",
- *     "add-form" = "/effectiveactivism/people/add",
- *     "edit-form" = "/effectiveactivism/people/{person}/edit",
- *     "delete-form" = "/effectiveactivism/people/{person}/delete",
- *     "collection" = "/effectiveactivism/people",
  *   },
  *   field_ui_base_route = "person.settings"
  * )

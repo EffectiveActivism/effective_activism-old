@@ -34,27 +34,6 @@ function effective_activism_toolbar() {
         'title' => t('Imports'),
       ),
     ),
-    'ea_people' => array(
-      'title' => t('People'),
-      'url' => Url::fromRoute('entity.person.collection'),
-      'attributes' => array(
-        'title' => t('People'),
-      ),
-    ),
-    'ea_tasks' => array(
-      'title' => t('Tasks'),
-      'url' => Url::fromRoute('entity.task.collection'),
-      'attributes' => array(
-        'title' => t('Tasks'),
-      ),
-    ),
-    'results' => array(
-      'title' => t('Results'),
-      'url' => Url::fromRoute('entity.result.collection'),
-      'attributes' => array(
-        'title' => t('Results'),
-      ),
-    ),
   );
   $manager_links = array(
     'ea_groupings' => array(
@@ -71,13 +50,6 @@ function effective_activism_toolbar() {
         'title' => t('Events'),
       ),
     ),
-    'ea_results_types' => array(
-      'title' => t('Result types'),
-      'url' => Url::fromRoute('entity.result_type.collection'),
-      'attributes' => array(
-        'title' => t('Result types'),
-      ),
-    ),
     'ea_imports' => array(
       'title' => t('Imports'),
       'url' => Url::fromRoute('entity.import.collection'),
@@ -85,25 +57,11 @@ function effective_activism_toolbar() {
         'title' => t('Imports'),
       ),
     ),
-    'ea_people' => array(
-      'title' => t('People'),
-      'url' => Url::fromRoute('entity.person.collection'),
+    'ea_results_types' => array(
+      'title' => t('Result types'),
+      'url' => Url::fromRoute('entity.result_type.collection'),
       'attributes' => array(
-        'title' => t('People'),
-      ),
-    ),
-    'ea_tasks' => array(
-      'title' => t('Tasks'),
-      'url' => Url::fromRoute('entity.task.collection'),
-      'attributes' => array(
-        'title' => t('Tasks'),
-      ),
-    ),
-    'results' => array(
-      'title' => t('Results'),
-      'url' => Url::fromRoute('entity.result.collection'),
-      'attributes' => array(
-        'title' => t('Results'),
+        'title' => t('Result types'),
       ),
     ),
     'organization' => array(

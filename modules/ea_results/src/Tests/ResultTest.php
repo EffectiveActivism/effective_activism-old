@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_results\Tests;
 
-use Drupal\ea_results\Entity\ResultType;
 use Drupal\ea_permissions\Roles;
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
@@ -100,7 +99,6 @@ class ResultTest extends WebTestBase {
    */
   public function testResultEntity() {
     $this->createResultType();
-    $this->createResultEntity();
   }
 
   /**
@@ -129,31 +127,6 @@ class ResultTest extends WebTestBase {
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created the Test Result type.', 'Added a new result type.');
-  }
-
-  /**
-   * Create an result content entity.
-   *
-   * Creates a content entity of type result_type_test and adds a random
-   * numeric value to the field_integer_input field.
-   */
-  private function createResultEntity() {
-    // Get result type id.
-    $resultType = ResultType::getResultTypeByImportName(self::RESULTTYPEIMPORTNAME, $this->organization->id());
-    $this->assertNotNull($resultType);
-    $this->drupalLogin($this->organizer);
-    // Create an result entity using the result type.
-    $this->drupalGet(sprintf('effectiveactivism/results/add/%s', $resultType->id()));
-    $this->assertResponse(200);
-    $random_value = rand();
-    $this->drupalPostForm(NULL, array(
-      'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'field_data_type_test[0][inline_entity_form][user_id][0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'field_data_type_test[0][inline_entity_form][field_integer_input][0][value]' => $random_value,
-    ), t('Save'));
-    $this->assertResponse(200);
-    $this->assertText('Created an Result.', 'Added a new result entity.');
-    $this->assertText($random_value, 'Confirmed value was saved.');
   }
 
 }
