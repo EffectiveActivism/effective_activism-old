@@ -20,7 +20,6 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Person"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\ea_people\PersonListBuilder",
  *     "views_data" = "Drupal\ea_people\Entity\PersonViewsData",
  *     "access" = "Drupal\ea_people\PersonAccessControlHandler",
  *   },

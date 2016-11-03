@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *   bundle_label = @Translation("Result type"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\ea_results\ResultListBuilder",
  *     "views_data" = "Drupal\ea_results\Entity\ResultViewsData",
  *     "access" = "Drupal\ea_results\ResultAccessControlHandler",
  *   },

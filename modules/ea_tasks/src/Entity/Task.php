@@ -21,7 +21,6 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Task"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\ea_tasks\TaskListBuilder",
  *     "views_data" = "Drupal\ea_tasks\Entity\TaskViewsData",
  *     "access" = "Drupal\ea_tasks\TaskAccessControlHandler",
  *   },

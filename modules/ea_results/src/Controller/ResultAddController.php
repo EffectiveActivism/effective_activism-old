@@ -42,7 +42,7 @@ class ResultAddController extends ControllerBase {
   }
 
   /**
-   * Displays add links for available bundles/types for entity result .
+   * Displays add links for available bundles/types for entity result.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The current request object.

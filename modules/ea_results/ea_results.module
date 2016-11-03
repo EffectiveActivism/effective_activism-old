@@ -28,24 +28,6 @@ function ea_results_help($route_name, RouteMatchInterface $route_match) {
 }
 
 /**
- * Implements hook_theme().
- */
-function ea_results_theme() {
-  $theme = [];
-  $theme['result'] = [
-    'render element' => 'elements',
-    'file' => 'result.page.inc',
-    'template' => 'result',
-  ];
-  $theme['result_content_add_list'] = [
-    'render element' => 'content',
-    'variables' => ['content' => NULL],
-    'file' => 'result.page.inc',
-  ];
-  return $theme;
-}
-
-/**
  * Implements hook_form_alter().
  *
  * Whether creating or updating a bundle, add fields as defined in the bundle

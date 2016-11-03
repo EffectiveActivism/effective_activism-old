@@ -20,7 +20,6 @@ use Drupal\user\UserInterface;
  *   label = @Translation("Event repeater"),
  *   handlers = {
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
- *     "list_builder" = "Drupal\ea_events\EventRepeaterListBuilder",
  *     "views_data" = "Drupal\ea_events\Entity\EventRepeaterViewsData",
  *     "translation" = "Drupal\ea_events\EventRepeaterTranslationHandler",
  *     "access" = "Drupal\ea_events\EventRepeaterAccessControlHandler",
