@@ -7,8 +7,6 @@
 
 use Drupal\ea_imports\Parser\CSVParser;
 use Drupal\ea_imports\Parser\ICalendarParser;
-use Drupal\ea_events\Entity\Event;
-use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -166,39 +164,17 @@ function ea_imports_cron() {
         $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
         $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
         // Get ICalendar file.
-        $parsed_icalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
-        // Iterate events.
-        foreach ($parsed_icalendar->getEvents() as $parsed_event) {
-          // Get UID.
-          $uid = $parsed_event['uid'];
-          unset($parsed_event['uid']);
-          // Get RRULE.
-          $rrule = $parsed_event['rrule'];
-          unset($parsed_event['rrule']);
-          // Save event if UID is not found within grouping scope.
-          // This does not take changes to an existing event into account.
-          if (!_ea_imports_uid_exists($gid, $uid)) {
-            // If RRULE exists, create event repeater entity.
-            if (!empty($rrule)) {
-              $event_repeater = EventRepeater::createFromRRule($rrule);
-              $event_repeater->save();
-              $parsed_event['event_repeater'] = $event_repeater->id();
+        $parsedIcalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
+        $position = 0;
+        while ($position < $parsedIcalendar->getItemCount()) {
+          foreach ($parsedIcalendar->getNextBatch($position) as $index => $item) {
+            if ($parsedIcalendar->importItem($item)) {
+              $count++;
             }
-            // Create event.
-            $parsed_event['grouping'] = $gid;
-            $parsed_event['user_id'] = \Drupal::currentUser()->id();
-            $event = Event::create($parsed_event);
-            $event->save();
-            // Add event to import entity reference field.
-            $import->events->appendItem($event->id());
-            $import->save();
-            // Insert UID/gid pair.
-            _ea_imports_uid_insert($uid, $gid, $event->id());
-            // Increment event import count.
-            $count++;
-          }
-          else {
-            $duplicate_count++;
+            else {
+              $duplicate_count++;
+            }
+            $position++;
           }
         }
       }
