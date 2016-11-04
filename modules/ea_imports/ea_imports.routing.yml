@@ -1,5 +1,5 @@
 ea_imports.icalendar.settings:
-  path: '/effectiveactivism/import/settings'
+  path: '/effectiveactivism/imports/settings'
   defaults:
     _title: 'Import settings'
     _form: '\Drupal\ea_imports\Form\SettingsForm'
