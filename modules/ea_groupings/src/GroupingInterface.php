@@ -88,15 +88,15 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
   /**
    * Add a member to the grouping.
    *
-   * @param Person $member
-   *   The member to add.
+   * @param Person $person
+   *   The person to add.
    */
   public function addMember(Person $person);
 
   /**
    * Remove a member from the grouping.
    *
-   * @param Person $member
+   * @param Person $person
    *   The member to remove.
    */
   public function removeMember(Person $person);
@@ -104,8 +104,8 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
   /**
    * Checks if person is member of the grouping.
    *
-   * @param Person $member
-   *   The member to check for.
+   * @param Person $person
+   *   The person to check for.
    *
    * @return bool
    *   TRUE if person is member, FALSE otherwise.
@@ -115,8 +115,8 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
   /**
    * Checks if person is member of any grouping.
    *
-   * @param Person $member
-   *   The member to check for.
+   * @param Person $person
+   *   The person to check for.
    *
    * @return bool
    *   TRUE if person is member, FALSE otherwise.

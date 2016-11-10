@@ -109,7 +109,8 @@ class EventForm extends ContentEntityForm {
         foreach ($widget_state['entities'] as $delta => $entity_item) {
           if (!empty($entity_item['entity'])) {
             $person = $entity_item['entity'];
-            // If person is not a member of any event grouping, add to current grouping.
+            // If person is not a member of any event grouping,
+            // add to current grouping.
             if (!Grouping::isAnyMember($person)) {
               $grouping->addMember($person);
               $changedGrouping = TRUE;
