@@ -4,6 +4,7 @@ namespace Drupal\ea_groupings\Entity;
 
 use Drupal\ea_groupings\GroupingInterface;
 use Drupal\ea_permissions\Roles;
+use Drupal\ea_people\Entity\Person;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -184,6 +185,64 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
     $result = $query->execute();
     $groupings += Grouping::loadMultiple($result);
     return $groupings;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function addMember(Person $person) {
+    if (!$this->isMember($person)) {
+      $this->members[] = $person;
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function removeMember(Person $person) {
+    if (!empty($this->get('members'))) {
+      $count = 0;
+      foreach ($this->get('members') as $member) {
+        if ($member === $person) {
+          unset($this->members[$count]);
+        }
+        $count++;
+      }
+    }
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isMember(Person $person) {
+    $isMember = FALSE;
+    if (!empty($this->get('members'))) {
+      foreach ($this->get('members') as $member) {
+        if ($member === $person) {
+          $isMember = TRUE;
+          break;
+        }
+      }
+    }
+    return $isMember;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function isAnyMember(Person $person) {
+    $isMember = FALSE;
+    $query = \Drupal::entityQuery('grouping');
+    $result = $query
+      ->condition('members', $person->id())
+      ->count()
+      ->execute();
+    if (!empty($result)) {
+      $isMember = TRUE;
+    }
+    return $isMember;
   }
 
   /**
