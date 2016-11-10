@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_groupings;
 
+use Drupal\ea_people\Entity\Person;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -83,6 +84,44 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
    *   An array of groupings related to this entity, including itself.
    */
   public function getRelatives($include_parent);
+
+  /**
+   * Add a member to the grouping.
+   *
+   * @param Person $person
+   *   The person to add.
+   */
+  public function addMember(Person $person);
+
+  /**
+   * Remove a member from the grouping.
+   *
+   * @param Person $person
+   *   The member to remove.
+   */
+  public function removeMember(Person $person);
+
+  /**
+   * Checks if person is member of the grouping.
+   *
+   * @param Person $person
+   *   The person to check for.
+   *
+   * @return bool
+   *   TRUE if person is member, FALSE otherwise.
+   */
+  public function isMember(Person $person);
+
+  /**
+   * Checks if person is member of any grouping.
+   *
+   * @param Person $person
+   *   The person to check for.
+   *
+   * @return bool
+   *   TRUE if person is member, FALSE otherwise.
+   */
+  public static function isAnyMember(Person $person);
 
   /**
    * Get groupings that a user is attached to.

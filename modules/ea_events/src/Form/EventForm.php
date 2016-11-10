@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_events\Form;
 
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_results\Entity\ResultType;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
@@ -65,6 +66,7 @@ class EventForm extends ContentEntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
+    // Validate participant inline entity form submission values, if any.
     $participants = $form_state->getValue('participants');
     if (isset($participants['form']['inline_entity_form'])) {
       $mobile_phone_number = $participants['form']['inline_entity_form']['mobile_phone_number'];
@@ -97,6 +99,33 @@ class EventForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function save(array $form, FormStateInterface $form_state) {
+    // If an organizer has changed grouping, we check to make sure
+    // that all the participants either belong to the grouping or are new
+    // ( in which case they will be added to the grouping ).
+    foreach ($form_state->get('inline_entity_form') as &$widget_state) {
+      if ($widget_state['instance']->getName() === 'participants') {
+        $grouping = Grouping::load($form_state->getValue('grouping')[0]['target_id']);
+        $changedGrouping = FALSE;
+        foreach ($widget_state['entities'] as $delta => $entity_item) {
+          if (!empty($entity_item['entity'])) {
+            $person = $entity_item['entity'];
+            // If person is not a member of any event grouping,
+            // add to current grouping.
+            if (!Grouping::isAnyMember($person)) {
+              $grouping->addMember($person);
+              $changedGrouping = TRUE;
+              drupal_set_message($this->t('Added @person as member to @grouping', [
+                '@person' => !empty($person->getName()) ? $person->getName() : 'participant',
+                '@grouping' => $grouping->getName(),
+              ]));
+            }
+          }
+        }
+        if ($changedGrouping) {
+          $grouping->save();
+        }
+      }
+    }
     $entity = $this->entity;
     $entity->setNewRevision();
     $status = parent::save($form, $form_state);
