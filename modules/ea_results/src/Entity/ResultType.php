@@ -151,7 +151,8 @@ class ResultType extends ConfigEntityBundleBase implements ResultTypeInterface {
     $id = NULL;
     $result = NULL;
     while (TRUE) {
-      $id = uniqid($importName);
+      // Id must be no more than 32 characters long.
+      $id = uniqid(substr($importName, 0, 19));
       $query = \Drupal::entityQuery('result_type');
       $result = $query
         ->condition('id', $id)
