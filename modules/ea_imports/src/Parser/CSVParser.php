@@ -15,7 +15,6 @@ class CSVParser extends EntityParser implements ParserInterface {
   const CSVHEADERFORMAT = array(
     'start_date',
     'end_date',
-    'repeat',
     'address',
     'address_extra_information',
     'title',
@@ -137,10 +136,6 @@ class CSVParser extends EntityParser implements ParserInterface {
           $this->errorMessage = t('The CSV file contains a row with an incorrect participant at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
           break;
 
-        case INVALID_RRULE:
-          $this->errorMessage = t('The CSV file contains a row with an incorrect rrule at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
-          break;
-
         case INVALID_RESULT:
           $this->errorMessage = t('The CSV file contains a row with an incorrect result at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
           break;
@@ -224,12 +219,6 @@ class CSVParser extends EntityParser implements ParserInterface {
           }
           break;
 
-        case 'repeat':
-          if (!empty($data) && (!RruleParser::validateRrule($data) || !$this->validateEventRepeater($data))) {
-            throw new ParserValidationException(INVALID_RRULE, $this->row, $this->convertColumn($this->column));
-          }
-          break;
-
         case 'task_participants':
         case 'participants':
           if (!empty($data) && (count(explode('|', $data)) !== 3 || !$this->validateParticipant(array_map('trim', explode('|', $data))))) {
@@ -263,7 +252,6 @@ class CSVParser extends EntityParser implements ParserInterface {
           'extra_information' => $row[array_search('address_extra_information', self::CSVHEADERFORMAT)],
         ],
         $row[array_search('description', self::CSVHEADERFORMAT)],
-        NULL,
         NULL,
         NULL,
         NULL,
@@ -328,8 +316,6 @@ class CSVParser extends EntityParser implements ParserInterface {
     if ($this->isEvent($values)) {
       $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
       $participantId = !empty($participant) ? $participant->id() : NULL;
-      $eventRepeater = !empty($values[array_search('repeat', self::CSVHEADERFORMAT)]) ? $this->importEventRepeater($values[array_search('repeat', self::CSVHEADERFORMAT)]) : $this->importDefaultEventRepeater();
-      $eventRepeaterId = !empty($eventRepeater) ? $eventRepeater->id() : NULL;
       // Create task, if any.
       $taskId = NULL;
       if (!empty($values[array_search('tasks', self::CSVHEADERFORMAT)])) {
@@ -360,7 +346,6 @@ class CSVParser extends EntityParser implements ParserInterface {
         ],
         $values[array_search('description', self::CSVHEADERFORMAT)],
         $taskId,
-        $eventRepeaterId,
         $participantId,
         $resultId,
         $this->grouping->id(),

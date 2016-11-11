@@ -66,7 +66,6 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
     'grouping',
     'start_date',
     'end_date',
-    'event_repeater',
     'location',
     'participants',
     'tasks',
@@ -260,22 +259,6 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
           'allow_existing' => FALSE,
         ),
         'weight' => array_search('tasks', self::WEIGHTS),
-      ));
-    $fields['event_repeater'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Repeat'))
-      ->setDescription(t('Repeat this event.'))
-      ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'event_repeater')
-      ->setSetting('handler', 'default')
-      ->setCardinality(1)
-      ->setRequired(TRUE)
-      ->setDisplayOptions('view', array(
-        'type' => 'string',
-        'weight' => array_search('event_repeater', self::WEIGHTS),
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'inline_entity_form_simple',
-        'weight' => array_search('event_repeater', self::WEIGHTS),
       ));
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))

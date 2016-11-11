@@ -109,10 +109,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
           $this->errorMessage = t('The ICalendar file contains an event with an incorrect date.');
           break;
 
-        case INVALID_RRULE:
-          $this->errorMessage = t('The ICalendar file contains an event with an incorrect rrule.');
-          break;
-
         case INVALID_EVENT:
           $this->errorMessage = t('The ICalendar file contains an incorrect event.');
           break;
@@ -187,11 +183,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
           }
           break;
 
-        case 'RRULE':
-          if (!empty($value) && (!RruleParser::validateRrule($value) || !$this->validateEventRepeater($value))) {
-            throw new ParserValidationException(INVALID_RRULE);
-          }
-          break;
       }
     }
     // Validate event if required fields are present.
@@ -205,7 +196,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
           'extra_information' => NULL,
         ],
         !empty($values['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $values['DESCRIPTION']) : NULL,
-        NULL,
         NULL,
         NULL,
         NULL,
@@ -303,7 +293,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
     // Only import item if it doesn't exist already for the selected grouping.
     $uid = !empty($values['UID']) ? $values['UID'] : NULL;
     if (!empty($uid) && !$this->uidExists($uid)) {
-      $eventRepeater = !empty($values['RRULE']) ? $this->importEventRepeater($values['RRULE']) : $this->importDefaultEventRepeater();
       $event = $this->importEvent([
         !empty($values['SUMMARY']) ? $values['SUMMARY'] : NULL,
         \DateTime::createFromFormat(self::ICALENDAR_DATETIME_FORMAT, $values['DTSTART'])->format(DATETIME_DATETIME_STORAGE_FORMAT),
@@ -314,7 +303,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
         ],
         !empty($values['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $values['DESCRIPTION']) : NULL,
         NULL,
-        $eventRepeater->id(),
         NULL,
         NULL,
         $this->grouping->id(),

@@ -3,7 +3,6 @@
 namespace Drupal\ea_imports\Parser;
 
 use Drupal\ea_events\Entity\Event;
-use Drupal\ea_events\Entity\EventRepeater;
 use Drupal\ea_tasks\Entity\Task;
 use Drupal\ea_people\Entity\Person;
 use Drupal\ea_data\Entity\Data;
@@ -170,21 +169,6 @@ class EntityParser {
   }
 
   /**
-   * Validates an event repeater entity.
-   *
-   * @param string $rrule
-   *   Data to validate as event repeater entity.
-   *
-   * @return bool
-   *   TRUE if event repeater is valid, FALSE otherwise.
-   */
-  public function validateEventRepeater($rrule) {
-    $rruleParser = new RruleParser($rrule);
-    $data = $rruleParser->getEventRepeaterValues();
-    return $this->validateEntity(EventRepeater::create($data));
-  }
-
-  /**
    * Validates an event entity.
    *
    * @param array $values
@@ -196,45 +180,7 @@ class EntityParser {
   public function validateEvent($values) {
     $fields = $this->getFields('event');
     $data = array_combine($fields, $values);
-    return $this->validateEntity(Event::create($data), ['event_repeater']);
-  }
-
-  /**
-   * Imports an event repeater entity.
-   *
-   * @param string $rrule
-   *   RRule to import as an event repeater.
-   *
-   * @return int|bool
-   *   The event repeater id or FALSE if import failed.
-   */
-  public function importEventRepeater($rrule) {
-    $rruleParser = new RruleParser($rrule);
-    $data = $rruleParser->getEventRepeaterValues();
-    $entity = EventRepeater::create($data);
-    if ($entity->save()) {
-      return $entity;
-    }
-    else {
-      return FALSE;
-    }
-  }
-
-  /**
-   * Imports a default event repeater entity.
-   *
-   * @return int|bool
-   *   The event repeater id or FALSE if import failed.
-   */
-  public function importDefaultEventRepeater() {
-    $data = EventRepeater::DEFAULT_VALUES;
-    $entity = EventRepeater::create($data);
-    if ($entity->save()) {
-      return $entity;
-    }
-    else {
-      return FALSE;
-    }
+    return $this->validateEntity(Event::create($data));
   }
 
   /**
