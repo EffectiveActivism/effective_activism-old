@@ -5,7 +5,6 @@ namespace Drupal\ea_events\Tests;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\ea_permissions\Roles;
 use Drupal\simpletest\WebTestBase;
-use Drupal\ea_events\Entity\EventRepeater;
 
 /**
  * Function tests for ea_events.
@@ -34,13 +33,6 @@ class EventTest extends WebTestBase {
   const ENDTIME = '12:00';
 
   /**
-   * Contains the event repeater for the event.
-   *
-   * @var EventRepeater
-   */
-  private $eventRepeater;
-
-  /**
    * Container for the organizer user.
    *
    * @var Drupal\user\Entity\User
@@ -61,8 +53,6 @@ class EventTest extends WebTestBase {
     parent::setUp();
     $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
     $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
-    // Create event repeater.
-    $this->eventRepeater = EventRepeater::create(EventRepeater::DEFAULT_VALUES);
   }
 
   /**

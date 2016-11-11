@@ -27,13 +27,6 @@ class AccessRestrictionsTest extends WebTestBase {
   const ENDTIME = '12:00';
 
   /**
-   * Contains the event repeater for the event.
-   *
-   * @var EventRepeater
-   */
-  private $eventRepeater;
-
-  /**
    * Container for the group1 grouping.
    *
    * @var Grouping

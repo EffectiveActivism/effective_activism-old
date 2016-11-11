@@ -10,7 +10,6 @@ dependencies:
   - ea_data
   - ea_people
   - ea_locations
-  - ea_tasks
   - ea_events
   - ea_imports
   - toolbar
