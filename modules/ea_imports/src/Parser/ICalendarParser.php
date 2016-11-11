@@ -198,7 +198,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
         !empty($values['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $values['DESCRIPTION']) : NULL,
         NULL,
         NULL,
-        NULL,
         $this->grouping->id(),
       ];
       if (!$this->validateEvent($values)) {
@@ -302,7 +301,6 @@ class ICalendarParser extends EntityParser implements ParserInterface {
           'extra_information' => NULL,
         ],
         !empty($values['DESCRIPTION']) ? str_replace(['\n', '\,'], ["\n"], $values['DESCRIPTION']) : NULL,
-        NULL,
         NULL,
         NULL,
         $this->grouping->id(),

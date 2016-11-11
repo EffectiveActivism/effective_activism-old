@@ -68,7 +68,6 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
     'end_date',
     'location',
     'participants',
-    'tasks',
     'results',
     'user_id',
   ];
@@ -240,25 +239,6 @@ class Event extends RevisionableContentEntityBase implements EventInterface {
       ->setDisplayOptions('view', array(
         'type' => 'basic_string',
         'weight' => array_search('description', self::WEIGHTS),
-      ));
-    $fields['tasks'] = BaseFieldDefinition::create('entity_reference')
-      ->setLabel(t('Tasks'))
-      ->setDescription(t('The tasks to do before, under and after the event.'))
-      ->setRevisionable(TRUE)
-      ->setSetting('target_type', 'task')
-      ->setSetting('handler', 'default')
-      ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED)
-      ->setDisplayOptions('view', array(
-        'type' => 'string',
-        'weight' => array_search('tasks', self::WEIGHTS),
-      ))
-      ->setDisplayOptions('form', array(
-        'type' => 'inline_entity_form_complex',
-        'settings' => array(
-          'allow_new' => TRUE,
-          'allow_existing' => FALSE,
-        ),
-        'weight' => array_search('tasks', self::WEIGHTS),
       ));
     $fields['participants'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('Participants'))

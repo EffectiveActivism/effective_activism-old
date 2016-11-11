@@ -20,8 +20,6 @@ class CSVParser extends EntityParser implements ParserInterface {
     'title',
     'description',
     'participants',
-    'tasks',
-    'task_participants',
     'results',
   );
 
@@ -73,13 +71,6 @@ class CSVParser extends EntityParser implements ParserInterface {
    * @var Event
    */
   private $latestEvent;
-
-  /**
-   * Tracks the latest read task.
-   *
-   * @var Task
-   */
-  private $latestTask;
 
   /**
    * Tracks the latest read result.
@@ -213,13 +204,6 @@ class CSVParser extends EntityParser implements ParserInterface {
           }
           break;
 
-        case 'tasks':
-          if (!empty($data) && !$this->validateTask($data)) {
-            throw new ParserValidationException(INVALID_TASK, $this->row, $this->convertColumn($this->column));
-          }
-          break;
-
-        case 'task_participants':
         case 'participants':
           if (!empty($data) && (count(explode('|', $data)) !== 3 || !$this->validateParticipant(array_map('trim', explode('|', $data))))) {
             throw new ParserValidationException(INVALID_PARTICIPANT, $this->row, $this->convertColumn($this->column));
@@ -252,7 +236,6 @@ class CSVParser extends EntityParser implements ParserInterface {
           'extra_information' => $row[array_search('address_extra_information', self::CSVHEADERFORMAT)],
         ],
         $row[array_search('description', self::CSVHEADERFORMAT)],
-        NULL,
         NULL,
         NULL,
         $this->grouping->id(),
@@ -316,21 +299,6 @@ class CSVParser extends EntityParser implements ParserInterface {
     if ($this->isEvent($values)) {
       $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
       $participantId = !empty($participant) ? $participant->id() : NULL;
-      // Create task, if any.
-      $taskId = NULL;
-      if (!empty($values[array_search('tasks', self::CSVHEADERFORMAT)])) {
-        $this->latestTask = $this->importTask($values[array_search('tasks', self::CSVHEADERFORMAT)]);
-        $taskId = !empty($this->latestTask) ? $this->latestTask->id() : NULL;
-      }
-      // Add task participants to latest task, if any.
-      if (!empty($this->latestTask) && !empty($values[array_search('task_participants', self::CSVHEADERFORMAT)])) {
-        $participant = $this->importParticipant($this->getValue($values, 'task_participants'));
-        // Attach to latest task.
-        $this->latestTask->participants[] = [
-          'target_id' => $participant->id(),
-        ];
-        $this->latestTask->save();
-      }
       // Create result, if any.
       $resultValues = $this->getValue($values, 'results');
       $result = !empty($values[array_search('results', self::CSVHEADERFORMAT)]) ? $this->importResult($resultValues, reset($resultValues), $this->grouping) : NULL;
@@ -345,7 +313,6 @@ class CSVParser extends EntityParser implements ParserInterface {
           'extra_information' => $values[array_search('address_extra_information', self::CSVHEADERFORMAT)],
         ],
         $values[array_search('description', self::CSVHEADERFORMAT)],
-        $taskId,
         $participantId,
         $resultId,
         $this->grouping->id(),
@@ -362,28 +329,6 @@ class CSVParser extends EntityParser implements ParserInterface {
             'target_id' => $entity->id(),
           ];
           $this->latestEvent->save();
-        }
-      }
-      // Create task, if any.
-      if (!empty($values[array_search('tasks', self::CSVHEADERFORMAT)]) && !empty($this->latestEvent)) {
-        $this->latestTask = $this->importTask(reset($this->getValue($values, 'tasks')));
-        if ($this->latestTask) {
-          // Attach to latest event.
-          $this->latestEvent->tasks[] = [
-            'target_id' => $this->latestTask->id(),
-          ];
-          $this->latestEvent->save();
-        }
-      }
-      // Create task participant, if any.
-      if (!empty($values[array_search('task_participants', self::CSVHEADERFORMAT)]) && !empty($this->latestTask)) {
-        $entity = $this->importParticipant($this->getValue($values, 'task_participants'));
-        if ($entity) {
-          // Attach to latest task.
-          $this->latestTask->participants[] = [
-            'target_id' => $entity->id(),
-          ];
-          $this->latestTask->save();
         }
       }
       // Create result, if any.
