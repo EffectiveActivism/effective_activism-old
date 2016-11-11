@@ -27,32 +27,34 @@ class EventForm extends ContentEntityForm {
       'callback' => [$this, 'updateAvailableResultTypes'],
       'wrapper' => 'ajax',
     ];
-    // Control creation access to inline result entities.
+    $gid = $form_state->getTemporaryValue('gid');
+    // If the form is fresh, it has no grouping id. Use default value instead.
+    if (empty($gid) && !empty($form['grouping']['widget'][0]['target_id']['#default_value'])) {
+      $gid = $form['grouping']['widget'][0]['target_id']['#default_value'];
+    }
+    // Limit result inline entity form options by result type access settings.
     if (!empty($form['results']['widget']['actions']['bundle']['#options'])) {
-      $gid = NULL;
-      // Check for a selected grouping value in form state.
-      if (!empty($form_state->getValue('grouping'))) {
-        $value = $form_state->getValue('grouping');
-        $gid = $value[0]['target_id'];
-      }
-      // Otherwise, attempt to use the default value.
-      elseif (!empty($form['grouping']['widget'][0]['target_id']['#default_value'])) {
-        $gid = $form['grouping']['widget'][0]['target_id']['#default_value'];
-      }
-      if (!empty($gid)) {
-        foreach ($form['results']['widget']['actions']['bundle']['#options'] as $machineName => $humanName) {
-          $resultType = ResultType::load($machineName);
-          if (!empty($resultType)) {
-            $allowedGids = $resultType->get('groupings');
-            if (!in_array($gid, $allowedGids)) {
-              unset($form['results']['widget']['actions']['bundle']['#options'][$machineName]);
-            }
+      foreach ($form['results']['widget']['actions']['bundle']['#options'] as $machineName => $humanName) {
+        $resultType = ResultType::load($machineName);
+        if (!empty($resultType)) {
+          if (!in_array($gid, $resultType->get('groupings'))) {
+            unset($form['results']['widget']['actions']['bundle']['#options'][$machineName]);
           }
         }
       }
-      // If the event is not attached to grouping, do not allow adding results.
-      else {
-        unset($form['results']);
+      // If there are no options left, hide add button.
+      if (empty($form['results']['widget']['actions']['bundle']['#options'])) {
+        unset($form['results']['widget']['actions']['ief_add']);
+        unset($form['results']['widget']['actions']['bundle']);
+      }
+    }
+    // ...also check if there is only one result type to add.
+    elseif (!empty($form['results']['widget']['actions']['bundle']['#value'])) {
+      $resultType = ResultType::load($form['results']['widget']['actions']['bundle']['#value']);
+      if (!empty($resultType)) {
+        if (!in_array($gid, $resultType->get('groupings'))) {
+          unset($form['results']['widget']['actions']['ief_add']);
+        }
       }
     }
     // Hide fields.
@@ -66,6 +68,38 @@ class EventForm extends ContentEntityForm {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     parent::validateForm($form, $form_state);
+    // Make the selected grouping id persistent across form states.
+    // We cannot rely on the form_state values, because inline entity forms
+    // only submit a subset of values.
+    $form_state->setTemporaryValue('gid', $form_state->getValue('grouping')[0]['target_id']);
+    // Only allow user to change grouping if existing results are allowed
+    // in new grouping.
+    if (!empty($form_state->getValue('results')['entities'])) {
+      $gid = $form_state->getValue('grouping')[0]['target_id'];
+      // Iterate all inline entity forms to find results.
+      foreach ($form_state->get('inline_entity_form') as &$widget_state) {
+        if (!empty($widget_state['instance'])) {
+          if ($widget_state['instance']->getName() === 'results') {
+            foreach ($widget_state['entities'] as $delta => $entity_item) {
+              if (!empty($entity_item['entity'])) {
+                $result = $entity_item['entity'];
+                $resultType = ResultType::load($result->getType());
+                if (!empty($resultType)) {
+                  $allowedGids = $resultType->get('groupings');
+                  if (!in_array($gid, $allowedGids)) {
+                    $form_state->setErrorByName('grouping', $this->t('<em>@grouping</em> does not allow the result type <em>@result_type</em>. Please select another grouping or remove the result.', [
+                      '@grouping' => Grouping::load($gid)->getName(),
+                      '@result_type' => $resultType->get('label'),
+                    ]));
+                    break 2;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     // Validate participant inline entity form submission values, if any.
     $participants = $form_state->getValue('participants');
     if (isset($participants['form']['inline_entity_form'])) {
@@ -103,26 +137,28 @@ class EventForm extends ContentEntityForm {
     // that all the participants either belong to the grouping or are new
     // ( in which case they will be added to the grouping ).
     foreach ($form_state->get('inline_entity_form') as &$widget_state) {
-      if ($widget_state['instance']->getName() === 'participants') {
-        $grouping = Grouping::load($form_state->getValue('grouping')[0]['target_id']);
-        $changedGrouping = FALSE;
-        foreach ($widget_state['entities'] as $delta => $entity_item) {
-          if (!empty($entity_item['entity'])) {
-            $person = $entity_item['entity'];
-            // If person is not a member of any event grouping,
-            // add to current grouping.
-            if (!Grouping::isAnyMember($person)) {
-              $grouping->addMember($person);
-              $changedGrouping = TRUE;
-              drupal_set_message($this->t('Added @person as member to @grouping', [
-                '@person' => !empty($person->getName()) ? $person->getName() : 'participant',
-                '@grouping' => $grouping->getName(),
-              ]));
+      if (!empty($widget_state['instance'])) {
+        if ($widget_state['instance']->getName() === 'participants') {
+          $grouping = Grouping::load($form_state->getValue('grouping')[0]['target_id']);
+          $changedGrouping = FALSE;
+          foreach ($widget_state['entities'] as $delta => $entity_item) {
+            if (!empty($entity_item['entity'])) {
+              $person = $entity_item['entity'];
+              // If person is not a member of any event grouping,
+              // add to current grouping.
+              if (!Grouping::isAnyMember($person)) {
+                $grouping->addMember($person);
+                $changedGrouping = TRUE;
+                drupal_set_message($this->t('Added @person as member to @grouping', [
+                  '@person' => !empty($person->getName()) ? $person->getName() : 'participant',
+                  '@grouping' => $grouping->getName(),
+                ]));
+              }
             }
           }
-        }
-        if ($changedGrouping) {
-          $grouping->save();
+          if ($changedGrouping) {
+            $grouping->save();
+          }
         }
       }
     }
