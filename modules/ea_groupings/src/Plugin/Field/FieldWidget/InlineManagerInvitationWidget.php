@@ -2,9 +2,11 @@
 
 namespace Drupal\ea_groupings\Plugin\Field\FieldWidget;
 
-use Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\ea_groupings\Component\Invitation;
+use Drupal\ea_permissions\Roles;
+use Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex;
 
 /**
  * Plugin implementation of the parent grouping widget.
@@ -39,12 +41,12 @@ class InlineManagerInvitationWidget extends InlineEntityFormComplex {
       '#submit' => ['inline_entity_form_open_form'],
       '#ief_form' => 'ief_invite',
     ];
-    // Add invitation form.
+    // Add invitation form if grouping id is set.
     if ($form_state->get(['inline_entity_form', $this->getIefId(), 'form']) === 'ief_invite') {
       $element['form'] = [
         '#type' => 'fieldset',
         '#attributes' => ['class' => ['ief-form', 'ief-form-bottom']],
-        '#description' => t('An e-mail invitation will be sent containing a unique, one-time link to join the grouping as a manager.'),
+        '#description' => t('Type in the e-mail address of the person you would like to invite to the grouping as manager.'),
       ];
       $element['form']['#title'] = t('Invite a manager');
       $element['form']['invite_email_address'] = [
@@ -67,6 +69,17 @@ class InlineManagerInvitationWidget extends InlineEntityFormComplex {
         ],
         '#submit' => [['\Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex', 'closeForm']],
       ];
+      $element['form']['cancel'] = [
+        '#type' => 'submit',
+        '#value' => t('Cancel'),
+        '#name' => 'ief-reference-cancel-' . $this->getIefId(),
+        '#limit_validation_errors' => [],
+        '#ajax' => [
+          'callback' => 'inline_entity_form_get_element',
+          'wrapper' => 'inline-entity-form-' . $this->getIefId(),
+        ],
+        '#submit' => [['\Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex', 'closeForm']],
+      ];
       // Hide 'Invite new manager' button.
       unset($element['actions']['invite_manager']);
     }
@@ -82,13 +95,34 @@ class InlineManagerInvitationWidget extends InlineEntityFormComplex {
    *   The form state of the form.
    */
   static public function invite($form, FormStateInterface $form_state) {
-    $email_address = $form_state->getValue(['managers', 'form', 'invite_email_address']);
-    // Check that user isn't already added to grouping.
-    if (FALSE) {
-      // Send e-mail invitation to manager.
+    $gid = $form_state->getTemporaryValue('gid');
+    $email = $form_state->getValue(['managers', 'form', 'invite_email_address']);
+    $status = NULL;
+    if (!empty($email)) {
+      $status = Invitation::getManagerStatus($gid, user_load_by_mail($email));
+      // Add invitation.
+      if ($status === Invitation::INVITATION_STATUS_NEW_USER || $status === Invitation::INVITATION_STATUS_EXISTING_USER) {
+        Invitation::addInvition($gid, Roles::MANAGER_ROLE_ID, $email);
+      }
+      // Display message of invitation status.
+      switch ($status) {
+        case Invitation::INVITATION_STATUS_ALREADY_MANAGER:
+          drupal_set_message(t('The user is already a manager of this grouping.'), 'warning');
+          break;
+
+        case Invitation::INVITATION_STATUS_INVITED:
+          drupal_set_message(t('The user is already invited to this grouping.'), 'warning');
+          break;
+
+        case Invitation::INVITATION_STATUS_NEW_USER:
+          drupal_set_message(t('An invitation to join your grouping as manager will be shown for the user with the e-mail address <em>@email_address</em> once the person registers with the site.', ['@email_address' => $email]));
+          break;
+
+        case Invitation::INVITATION_STATUS_EXISTING_USER:
+          drupal_set_message(t('An invitation to join your grouping as manager will be shown for the user with the e-mail address <em>@email_address</em> next time the user logs in.', ['@email_address' => $email]));
+          break;
+      }
     }
-    // Display message of invitation status.
-    drupal_set_message(t('An invitation to join your grouping as manager has been sent by e-mail to <em>@email_address</em>.', ['@email_address' => $email_address]));
     return $form['managers'];
   }
 

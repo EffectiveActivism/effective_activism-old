@@ -479,7 +479,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
         'type' => 'inline_entity_form_complex',
         'settings' => array(
           'allow_new' => TRUE,
-          'allow_existing' => TRUE,
+          'allow_existing' => FALSE,
         ),
         'weight' => array_search('members', self::WEIGHTS),
       ));
