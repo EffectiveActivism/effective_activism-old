@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_locations\Coordinates;
 
-use Drupal\ea_locations\Controller\LocationController;
 use Drupal\Core\TypedData\TypedData;
 
 /**

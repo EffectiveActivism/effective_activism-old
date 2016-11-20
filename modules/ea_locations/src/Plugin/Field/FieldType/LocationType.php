@@ -95,7 +95,7 @@ class LocationType extends FieldItemBase {
           'max' => self::ADDRESS_MAXLENGTH,
           'maxMessage' => t('%name: the location address may not be longer than @max characters.', [
             '%name' => $this->getFieldDefinition()->getLabel(),
-            '@max' => self::ADDRESS_MAXLENGTH
+            '@max' => self::ADDRESS_MAXLENGTH,
           ]),
         ],
       ],
