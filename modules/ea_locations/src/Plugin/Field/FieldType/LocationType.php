@@ -5,6 +5,7 @@ namespace Drupal\ea_locations\Plugin\Field\FieldType;
 use Drupal\Core\Field\FieldItemBase;
 use Drupal\Core\TypedData\DataDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
+use Drupal\ea_locations\Controller\LocationController;
 
 /**
  * Plugin implementation of the 'location' field type.
@@ -45,33 +46,33 @@ class LocationType extends FieldItemBase {
    * {@inheritdoc}
    */
   public static function schema(FieldStorageDefinitionInterface $field_definition) {
-    return array(
-      'columns' => array(
-        'address' => array(
+    return [
+      'columns' => [
+        'address' => [
           'type' => 'char',
-          'length' => static::ADDRESS_MAXLENGTH,
+          'length' => self::ADDRESS_MAXLENGTH,
           'not null' => FALSE,
-        ),
-        'extra_information' => array(
+        ],
+        'extra_information' => [
           'type' => 'char',
-          'length' => static::ADDRESS_MAXLENGTH,
+          'length' => self::ADDRESS_MAXLENGTH,
           'not null' => FALSE,
-        ),
-        'latitude' => array(
+        ],
+        'latitude' => [
           'type' => 'float',
-          'size' => 'normal',
+          'size' => 'big',
           'not null' => FALSE,
-        ),
-        'longitude' => array(
+        ],
+        'longitude' => [
           'type' => 'float',
-          'size' => 'normal',
+          'size' => 'big',
           'not null' => FALSE,
-        ),
-      ),
-      'indexes' => array(
-        'address' => array('address'),
-      ),
-    );
+        ],
+      ],
+      'indexes' => [
+        'address' => ['address'],
+      ],
+    ];
   }
 
   /**
@@ -88,15 +89,37 @@ class LocationType extends FieldItemBase {
   public function getConstraints() {
     $constraint_manager = \Drupal::typedDataManager()->getValidationConstraintManager();
     $constraints = parent::getConstraints();
-    $constraints[] = $constraint_manager->create('ComplexData', array(
-      'address' => array(
-        'Length' => array(
-          'max' => static::ADDRESS_MAXLENGTH,
-          'maxMessage' => t('%name: the location address may not be longer than @max characters.', array('%name' => $this->getFieldDefinition()->getLabel(), '@max' => self::ADDRESS_MAXLENGTH)),
-        ),
-      ),
-    ));
+    $constraints[] = $constraint_manager->create('ComplexData', [
+      'address' => [
+        'Length' => [
+          'max' => self::ADDRESS_MAXLENGTH,
+          'maxMessage' => t('%name: the location address may not be longer than @max characters.', [
+            '%name' => $this->getFieldDefinition()->getLabel(),
+            '@max' => self::ADDRESS_MAXLENGTH
+          ]),
+        ],
+      ],
+    ]);
     return $constraints;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setValue($values, $notify = TRUE) {
+    // Retrieve the GPS coordinates from the cached locations table.
+    $location = \Drupal::database()
+      ->select(LocationController::LOCATION_CACHE_TABLE, 'location')
+      ->fields('location', [
+        'lat',
+        'lon',
+      ])
+      ->condition('address', $values['address'])
+      ->execute()
+      ->fetchAssoc();
+    $values['latitude'] = $location['lat'];
+    $values['longitude'] = $location['lon'];
+    parent::setValue($values, $notify);
   }
 
 }

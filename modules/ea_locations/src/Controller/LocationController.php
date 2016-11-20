@@ -13,6 +13,7 @@ class LocationController {
 
   const AUTOCOMPLETE_URL = 'https://maps.googleapis.com/maps/api/place/autocomplete';
   const GEOCODE_URL = 'https://maps.googleapis.com/maps/api/geocode';
+  const LOCATION_CACHE_TABLE = 'ea_locations_addresses';
 
   /**
    * Returns response for the location autocompletion.
@@ -45,31 +46,32 @@ class LocationController {
    *   If any connection errors occur, validation returns TRUE.
    */
   public function validateAddress($address) {
+    $match = FALSE;
     // First check cache.
     $database = \Drupal::database();
-    $matches = $database->select('ea_locations_addresses', 'location')
+    $results = $database->select(self::LOCATION_CACHE_TABLE, 'location')
       ->fields('location', ['id'])
       ->condition('location.address', $address)
       ->countQuery()
       ->execute()
       ->fetchField();
-    if ($matches > 0) {
-      return TRUE;
+    if ($results > 0) {
+      $match = TRUE;
     }
     else {
       $valid_addresses = $this->getAddressSuggestions($address);
       if (in_array($address, $valid_addresses)) {
         // Get coordinates and store valid address in cache.
         $coordinates = $this->getCoordinates($address);
-        $database->insert('ea_locations_addresses')->fields(array(
+        $database->insert(self::LOCATION_CACHE_TABLE)->fields(array(
           'address' => $address,
           'lat' => $coordinates['lat'],
           'lon' => $coordinates['lon'],
         ))->execute();
-        return TRUE;
+        $match = TRUE;
       }
     }
-    return FALSE;
+    return $match;
   }
 
   /**

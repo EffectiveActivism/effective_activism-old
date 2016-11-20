@@ -8,7 +8,7 @@
 /**
  * Implements hook_schema().
  *
- * Defines the database tables used by this module.
+ * Adds a cached location table for storing addresses from Google Maps API.
  *
  * @see hook_schema()
  * @ingroup ea_locations
@@ -30,11 +30,13 @@ function ea_locations_schema() {
       ),
       'lat' => array(
         'type' => 'float',
+        'size' => 'big',
         'not null' => TRUE,
         'description' => 'Latitude of address.',
       ),
       'lon' => array(
         'type' => 'float',
+        'size' => 'big',
         'not null' => TRUE,
         'description' => 'Longitude of address.',
       ),
