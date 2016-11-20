@@ -44,6 +44,26 @@ use Drupal\Core\Form\FormStateInterface;
 class ResultType extends ConfigEntityBundleBase implements ResultTypeInterface {
 
   /**
+   * The default result types.
+   */
+  const DEFAULT_RESULT_TYPES = [
+    'leafleting' => [
+      'label' => 'Leafleting',
+      'description' => 'Distribute flyers on sidewalks, city squares, public events and colleges.',
+      'datatypes' => [
+        'leaflets' => 'leaflets',
+      ],
+    ],
+    'signature_collection' => [
+      'label' => 'Signature collection',
+      'description' => 'Ask people for a signature ( and usually an e-mail address ) to support a cause.',
+      'datatypes' => [
+        'signatures' => 'signatures',
+      ],
+    ],
+  ];
+
+  /**
    * The Result type ID.
    *
    * @var string

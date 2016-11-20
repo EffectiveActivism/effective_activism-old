@@ -5,8 +5,11 @@
  * Contains ea_groupings.module.
  */
 
-use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\ea_groupings\Entity\Grouping;
+use Drupal\ea_results\Entity\ResultType;
 
 /**
  * Implements hook_help().
@@ -37,5 +40,30 @@ function ea_groupings_form_alter(&$form, FormStateInterface $form_state, $form_i
         ':input[name="parent[0][target_id]"]' => array('filled' => TRUE),
       ),
     );
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * Create default result types for new organizations.
+ */
+function ea_groupings_grouping_insert(EntityInterface $entity) {
+  if (empty($entity->get('parent')->getValue())) {
+    foreach (ResultType::DEFAULT_RESULT_TYPES as $importName => $settings) {
+      ResultType::create(array(
+        'id' => ResultType::createId($importName),
+        'label' => $settings['label'],
+        'importname' => $importName,
+        'description' => $settings['description'],
+        'datatypes' => $settings['datatypes'],
+        'organization' => $entity->id(),
+        'groupings' => [$entity->id()],
+      ))->save();
+    }
+  }
+  else {
+    dpm('Created group');
+    dpm($entity->get('parent')->getValue());
   }
 }
