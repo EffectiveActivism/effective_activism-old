@@ -107,18 +107,20 @@ class LocationType extends FieldItemBase {
    * {@inheritdoc}
    */
   public function setValue($values, $notify = TRUE) {
-    // Retrieve the GPS coordinates from the cached locations table.
-    $location = \Drupal::database()
-      ->select(LocationController::LOCATION_CACHE_TABLE, 'location')
-      ->fields('location', [
-        'lat',
-        'lon',
-      ])
-      ->condition('address', $values['address'])
-      ->execute()
-      ->fetchAssoc();
-    $values['latitude'] = $location['lat'];
-    $values['longitude'] = $location['lon'];
+    if (!empty($values['address'])) {
+      // Retrieve the GPS coordinates from the cached locations table.
+      $location = \Drupal::database()
+        ->select(LocationController::LOCATION_CACHE_TABLE, 'location')
+        ->fields('location', [
+          'lat',
+          'lon',
+        ])
+        ->condition('address', $values['address'])
+        ->execute()
+        ->fetchAssoc();
+      $values['latitude'] = $location['lat'];
+      $values['longitude'] = $location['lon'];
+    }
     parent::setValue($values, $notify);
   }
 
