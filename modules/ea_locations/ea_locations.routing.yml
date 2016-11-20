@@ -5,7 +5,7 @@ ea_locations.autocomplete:
   requirements:
     _permission: 'use location autocomplete'
 ea_locations.settings:
-  path: '/effectiveactivism/locations/settings'
+  path: '/effectiveactivism/settings/locations'
   defaults:
     _form: '\Drupal\ea_locations\Form\LocationsSettingsForm'
   requirements:
