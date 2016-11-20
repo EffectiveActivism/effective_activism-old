@@ -20,6 +20,8 @@ class GroupingForm extends ContentEntityForm {
     /* @var $entity \Drupal\ea_groupings\Entity\Grouping */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
+    // Set grouping id.
+    $form_state->setTemporaryValue('gid', $entity->id());
     // Hide fields.
     $form['user_id']['#attributes']['class'][] = 'hidden';
     $form['revision_log_message']['#attributes']['class'][] = 'hidden';

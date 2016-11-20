@@ -1,0 +1,55 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the ea_groupings module.
+ */
+
+/**
+ * Implements hook_schema().
+ *
+ * Defines the database tables used by this module.
+ *
+ * @see hook_schema()
+ * @ingroup ea_groupings
+ */
+function ea_groupings_schema() {
+  $schema['ea_groupings_invitations'] = [
+    'description' => 'Stores invitations to groupings',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique ID.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Creation timestamp.',
+      ],
+      'email' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'The e-mail address of the user.',
+      ],
+      'gid' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'The grouping id.',
+      ],
+      'roleid' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'The role id of the grouping',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'email' => ['email'],
+      'gid' => ['gid'],
+      'roleid' => ['roleid'],
+    ],
+  ];
+  return $schema;
+}
