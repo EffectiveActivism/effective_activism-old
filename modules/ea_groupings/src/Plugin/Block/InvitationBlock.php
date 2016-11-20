@@ -4,8 +4,7 @@ namespace Drupal\ea_groupings\Plugin\Block;
 
 use Drupal\Core\Block\BlockBase;
 use Drupal\ea_groupings\Component\Invitation;
-use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_grouping\Form\InvitationForm;
+use Drupal\ea_groupings\Form\InvitationForm;
 
 /**
  * Provides a block prompting the user to respond to an invitation.
@@ -33,7 +32,7 @@ class InvitationBlock extends BlockBase {
       $invitations = Invitation::getInvitations($email);
       if (!empty($invitations)) {
         foreach ($invitations as $invitation) {
-          $content['invitation-' . $invitation->id] = \Drupal::formBuilder()->getForm(\Drupal\ea_groupings\Form\InvitationForm::class, $invitation);
+          $content['invitation-' . $invitation->id] = \Drupal::formBuilder()->getForm(InvitationForm::class, $invitation);
         }
       }
       else {

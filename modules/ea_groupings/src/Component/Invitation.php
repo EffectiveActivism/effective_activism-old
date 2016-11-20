@@ -2,11 +2,8 @@
 
 namespace Drupal\ea_groupings\Component;
 
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\user\Entity\User;
 use Drupal\ea_permissions\Roles;
-use Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormComplex;
 
 use Exception;
 
@@ -33,7 +30,7 @@ class Invitation {
    * @return int
    *   A status code
    */
-  static public function getManagerStatus(int $gid, User $user) {
+  static public function getManagerStatus($gid, User $user) {
     // Check if user exists.
     if (empty($user)) {
       return self::INVITATION_STATUS_NEW_USER;
@@ -64,7 +61,7 @@ class Invitation {
   }
 
   /**
-   * Checks if user is already an organizer of the grouping or invited to be one.
+   * Checks if user is already organizer of the grouping or invited to be one.
    *
    * @param int $gid
    *   The grouping id to check for.
@@ -74,7 +71,7 @@ class Invitation {
    * @return int
    *   A status code
    */
-  static public function getOrganizerStatus(int $gid, User $user) {
+  static public function getOrganizerStatus($gid, User $user) {
     // Check if user exists.
     if (empty($user)) {
       return self::INVITATION_STATUS_NEW_USER;
@@ -117,7 +114,7 @@ class Invitation {
    * @return bool|int
    *   The id of the invitation or FALSE if the operation failed.
    */
-  static public function addInvition(int $gid, int $roleId, string $email) {
+  static public function addInvition($gid, $roleId, $email) {
     try {
       return db_insert(self::DATABASE_TABLE)
         ->fields([
@@ -138,12 +135,12 @@ class Invitation {
    * Delete an invitation for a user.
    *
    * @param int $id
-   *   The invitation id
+   *   The invitation id.
    *
    * @return bool|int
    *   The number of deleted invitations or FALSE if the operation failed.
    */
-  static public function removeInvition(int $id) {
+  static public function removeInvition($id) {
     try {
       return db_delete(self::DATABASE_TABLE)
         ->condition('id', $id)
@@ -164,15 +161,15 @@ class Invitation {
    * @return bool|array
    *   A list of invitations or FALSE if the operation failed.
    */
-  static public function getInvitations(string $email) {
-     try {
-       return db_select(self::DATABASE_TABLE, 'invitation')
+  static public function getInvitations($email) {
+    try {
+      return db_select(self::DATABASE_TABLE, 'invitation')
         ->fields('invitation')
         ->condition('email', $email)
         ->execute()
         ->fetchAll();
-     }
-     catch (Exception $e) {
+    }
+    catch (Exception $e) {
       \Drupal::logger('ea_groupings')->error('Failed to retrieve invitations.');
       return FALSE;
     }

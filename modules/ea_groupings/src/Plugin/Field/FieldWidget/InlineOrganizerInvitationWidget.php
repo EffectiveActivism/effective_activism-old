@@ -96,7 +96,11 @@ class InlineOrganizerInvitationWidget extends InlineEntityFormComplex {
    */
   static public function invite($form, FormStateInterface $form_state) {
     $gid = $form_state->getTemporaryValue('gid');
-    $email = $form_state->getValue(['organizers', 'form', 'invite_email_address']);
+    $email = $form_state->getValue([
+      'organizers',
+      'form',
+      'invite_email_address',
+    ]);
     $status = NULL;
     if (!empty($email)) {
       $status = Invitation::getOrganizerStatus($gid, user_load_by_mail($email));

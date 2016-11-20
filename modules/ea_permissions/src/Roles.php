@@ -48,7 +48,7 @@ class Roles {
    * @return bool|string
    *   Returns the role name or FALSE if unknown role id.
    */
-  static public function getRole(int $roleId) {
+  static public function getRole($roleId) {
     $role = FALSE;
     switch ($roleId) {
       case self::MANAGER_ROLE_ID:

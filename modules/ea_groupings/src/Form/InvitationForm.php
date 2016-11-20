@@ -38,7 +38,7 @@ class InvitationForm extends FormBase {
       '#title' => $this->t('You have been invited to a grouping'),
       '#attributes' => [
         'class' => [
-          'grouping-invitatation'
+          'grouping-invitatation',
         ],
       ],
     ];
