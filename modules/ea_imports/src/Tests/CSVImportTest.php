@@ -60,7 +60,6 @@ class CSVImportTest extends ImportWebTestBase {
     $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
     $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
     $this->grouping = $this->createGrouping();
-    $this->createResultType();
     // Create CSV file.
     $data = file_get_contents($this->container->get('file_system')->realpath(drupal_get_path('module', 'ea_imports') . '/src/Tests/sample.csv'));
     $this->CSVFile = file_save_data($data, 'public://sample.csv', FILE_EXISTS_REPLACE);
