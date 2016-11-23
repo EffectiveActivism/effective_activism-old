@@ -48,17 +48,23 @@ function ea_groupings_form_alter(&$form, FormStateInterface $form_state, $form_i
  * Create default result types for new organizations.
  */
 function ea_groupings_grouping_insert(EntityInterface $entity) {
+  // Ceheck if the grouping is an organization.
   if (empty($entity->get('parent')->getValue())) {
     foreach (ResultType::DEFAULT_RESULT_TYPES as $importName => $settings) {
-      ResultType::create(array(
+      $resultType = ResultType::create(array(
         'id' => ResultType::createId($importName),
         'label' => $settings['label'],
         'importname' => $importName,
         'description' => $settings['description'],
         'datatypes' => $settings['datatypes'],
         'organization' => $entity->id(),
-        'groupings' => [$entity->id()],
-      ))->save();
+        'groupings' => [
+          $entity->id() => $entity->id(),
+        ],
+      ));
+      if ($resultType->save() === SAVED_NEW) {
+        _ea_result_update_bundle_settings($resultType);
+      }
     }
   }
 }
