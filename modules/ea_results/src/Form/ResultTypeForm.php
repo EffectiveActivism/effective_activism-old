@@ -142,6 +142,8 @@ class ResultTypeForm extends EntityForm {
           '%label' => $this->entity->label(),
         ]));
     }
+    // Update fields for this entity type.
+    _ea_result_update_bundle_settings($this->entity);
     $form_state->setRedirectUrl($this->entity->urlInfo('collection'));
   }
 
