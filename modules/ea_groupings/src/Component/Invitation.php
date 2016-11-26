@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_groupings\Component;
 
-use Drupal\user\Entity\User;
 use Drupal\ea_permissions\Roles;
 
 use Exception;
@@ -24,15 +23,16 @@ class Invitation {
    *
    * @param int $gid
    *   The grouping id to check for.
-   * @param User $user
-   *   The user to check for.
+   * @param string $email
+   *   The email to check for.
    *
    * @return int
    *   A status code
    */
-  static public function getManagerStatus($gid, User $user) {
+  static public function getManagerStatus($gid, $email) {
     // Check if user exists.
-    if (empty($user)) {
+    $user = user_load_by_mail($email);
+    if ($user === FALSE) {
       return self::INVITATION_STATUS_NEW_USER;
     }
     // Check that user isn't already invited.
@@ -65,15 +65,16 @@ class Invitation {
    *
    * @param int $gid
    *   The grouping id to check for.
-   * @param User $user
-   *   The user to check for.
+   * @param string $email
+   *   The email to check for.
    *
    * @return int
    *   A status code
    */
-  static public function getOrganizerStatus($gid, User $user) {
+  static public function getOrganizerStatus($gid, $email) {
     // Check if user exists.
-    if (empty($user)) {
+    $user = user_load_by_mail($email);
+    if ($user === FALSE) {
       return self::INVITATION_STATUS_NEW_USER;
     }
     // Check that user isn't already invited.
