@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_groupings\Component;
 
-use Drupal\user\Entity\User;
 use Drupal\ea_permissions\Roles;
 
 use Exception;
@@ -25,7 +24,7 @@ class Invitation {
    * @param int $gid
    *   The grouping id to check for.
    * @param string $email
-   *   The user to check for.
+   *   The email to check for.
    *
    * @return int
    *   A status code
@@ -66,8 +65,8 @@ class Invitation {
    *
    * @param int $gid
    *   The grouping id to check for.
-   * @param User $user
-   *   The user to check for.
+   * @param string $email
+   *   The email to check for.
    *
    * @return int
    *   A status code
