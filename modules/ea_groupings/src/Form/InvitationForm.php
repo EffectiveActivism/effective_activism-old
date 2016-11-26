@@ -82,7 +82,7 @@ class InvitationForm extends FormBase {
       // Add current user to grouping with specified role.
       switch ($roleId) {
         case Roles::MANAGER_ROLE_ID:
-          $status = Invitation::getManagerStatus($grouping->id(), $user);
+          $status = Invitation::getManagerStatus($grouping->id(), $user->getEmail());
           if ($status === Invitation::INVITATION_STATUS_INVITED) {
             $grouping->managers[] = $user->id();
             drupal_set_message(t('You are now a manager for <em>@link</em>.', ['@link' => $link]));
@@ -90,7 +90,7 @@ class InvitationForm extends FormBase {
           break;
 
         case Roles::ORGANIZER_ROLE_ID:
-          $status = Invitation::getOrganizerStatus($grouping->id(), $user);
+          $status = Invitation::getOrganizerStatus($grouping->id(), $user->getEmail());
           if ($status === Invitation::INVITATION_STATUS_INVITED) {
             $grouping->organizers[] = $user->id();
             drupal_set_message(t('You are now an organizer for <em>@link</em>.', ['@link' => $link]));

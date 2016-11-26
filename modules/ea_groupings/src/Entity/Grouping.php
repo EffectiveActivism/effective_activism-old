@@ -476,10 +476,10 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
         'weight' => array_search('members', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
-        'type' => 'inline_entity_form_complex',
+        'type' => 'inline_group_member',
         'settings' => array(
           'allow_new' => TRUE,
-          'allow_existing' => FALSE,
+          'allow_existing' => TRUE,
         ),
         'weight' => array_search('members', self::WEIGHTS),
       ));
@@ -497,7 +497,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
         'type' => 'inline_organizer_invitation',
         'settings' => array(
           'allow_new' => FALSE,
-          'allow_existing' => FALSE,
+          'allow_existing' => TRUE,
         ),
         'weight' => array_search('organizers', self::WEIGHTS),
       ));
@@ -515,7 +515,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
         'type' => 'inline_manager_invitation',
         'settings' => array(
           'allow_new' => FALSE,
-          'allow_existing' => FALSE,
+          'allow_existing' => TRUE,
         ),
         'weight' => array_search('managers', self::WEIGHTS),
       ));

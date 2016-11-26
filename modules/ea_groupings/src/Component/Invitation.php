@@ -24,15 +24,16 @@ class Invitation {
    *
    * @param int $gid
    *   The grouping id to check for.
-   * @param User $user
+   * @param string $email
    *   The user to check for.
    *
    * @return int
    *   A status code
    */
-  static public function getManagerStatus($gid, User $user) {
+  static public function getManagerStatus($gid, $email) {
     // Check if user exists.
-    if (empty($user)) {
+    $user = user_load_by_mail($email);
+    if ($user === FALSE) {
       return self::INVITATION_STATUS_NEW_USER;
     }
     // Check that user isn't already invited.
@@ -71,9 +72,10 @@ class Invitation {
    * @return int
    *   A status code
    */
-  static public function getOrganizerStatus($gid, User $user) {
+  static public function getOrganizerStatus($gid, $email) {
     // Check if user exists.
-    if (empty($user)) {
+    $user = user_load_by_mail($email);
+    if ($user === FALSE) {
       return self::INVITATION_STATUS_NEW_USER;
     }
     // Check that user isn't already invited.

@@ -27,6 +27,10 @@ class InlineManagerInvitationWidget extends InlineEntityFormComplex {
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $element = parent::formElement($items, $delta, $element, $form, $form_state);
+    // Remove 'add existing user' button.
+    // This step is necessary because 'allow_existing' must be TRUE in order for
+    // entities not to be deleted when their reference is removed.
+    unset($element['actions']['ief_add_existing']);
     // Determine the wrapper ID for the entire element.
     $wrapper = 'inline-entity-form-' . $this->getIefId();
     // Add custom button to add people from the event grouping.
@@ -99,7 +103,7 @@ class InlineManagerInvitationWidget extends InlineEntityFormComplex {
     $email = $form_state->getValue(['managers', 'form', 'invite_email_address']);
     $status = NULL;
     if (!empty($email)) {
-      $status = Invitation::getManagerStatus($gid, user_load_by_mail($email));
+      $status = Invitation::getManagerStatus($gid, $email);
       // Add invitation.
       if ($status === Invitation::INVITATION_STATUS_NEW_USER || $status === Invitation::INVITATION_STATUS_EXISTING_USER) {
         Invitation::addInvition($gid, Roles::MANAGER_ROLE_ID, $email);
