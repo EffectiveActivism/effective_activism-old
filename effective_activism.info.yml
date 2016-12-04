@@ -1,5 +1,15 @@
-name: Effective Activism Hub
+name: Effective Activism
 type: module
-description: Provides a hub page for management of submodules.
+description: Provides an interface to record activism.
 core: 8.x
 package: Effective Activism
+dependencies:
+  - ea_permissions
+  - ea_groupings
+  - ea_results
+  - ea_data
+  - ea_people
+  - ea_locations
+  - ea_events
+  - ea_imports
+  - toolbar

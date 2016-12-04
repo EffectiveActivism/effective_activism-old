@@ -1,8 +1,4 @@
 # Grouping routing definition
-grouping.settings_tab:
-  route_name: grouping.settings
-  title: 'Settings'
-  base_route: grouping.settings
 entity.grouping.canonical:
   route_name: entity.grouping.canonical
   base_route: entity.grouping.canonical

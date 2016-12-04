@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\EventInterface.
- */
-
 namespace Drupal\ea_events;
 
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -17,7 +12,6 @@ use Drupal\user\EntityOwnerInterface;
  * @ingroup ea_events
  */
 interface EventInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
-  // Add get/set methods for your configuration properties here.
 
   /**
    * Gets the Event creation timestamp.

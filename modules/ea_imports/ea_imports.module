@@ -1,0 +1,276 @@
+<?php
+
+/**
+ * @file
+ * Contains ea_imports.module.
+ */
+
+use Drupal\ea_imports\Parser\CSVParser;
+use Drupal\ea_imports\Parser\ICalendarParser;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
+
+const EA_IMPORTS_BUNDLE_CSV = 'csv';
+const EA_IMPORTS_BUNDLE_ICALENDAR = 'icalendar';
+const EA_IMPORTS_MAX_ERRORS = 15;
+
+/**
+ * Implements hook_help().
+ */
+function ea_imports_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the ea_imports module.
+    case 'help.page.ea_imports':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('Import content from 3rd party sources.') . '</p>';
+      return $output;
+
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function ea_imports_theme() {
+  $theme = [];
+  $theme['import'] = array(
+    'render element' => 'elements',
+    'file' => 'import.page.inc',
+    'template' => 'import',
+  );
+  $theme['import_content_add_list'] = [
+    'render element' => 'content',
+    'variables' => ['content' => NULL],
+    'file' => 'import.page.inc',
+  ];
+  return $theme;
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK().
+ */
+function ea_imports_theme_suggestions_import(array $variables) {
+  $suggestions = array();
+  $entity = $variables['elements']['#import'];
+  $sanitized_view_mode = strtr($variables['elements']['#view_mode'], '.', '_');
+  $suggestions[] = 'import__' . $sanitized_view_mode;
+  $suggestions[] = 'import__' . $entity->bundle();
+  $suggestions[] = 'import__' . $entity->bundle() . '__' . $sanitized_view_mode;
+  $suggestions[] = 'import__' . $entity->id();
+  $suggestions[] = 'import__' . $entity->id() . '__' . $sanitized_view_mode;
+  return $suggestions;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ */
+function ea_imports_import_insert(EntityInterface $entity) {
+  // If the import is a CSV file, import the content of it.
+  if ($entity->bundle() === EA_IMPORTS_BUNDLE_CSV) {
+    $field_file_csv = $entity->get('field_file_csv')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $gid = $grouping[0]['target_id'];
+    // Get CSV file.
+    $csvParser = new CSVParser($field_file_csv[0]['target_id'], $gid);
+    $batch = [
+      'title' => t('Importing...'),
+      'operations' => [
+        [
+          'Drupal\ea_imports\BatchProcess::import',
+          [
+            $csvParser,
+            $entity,
+          ],
+        ],
+      ],
+      'finished' => 'Drupal\ea_imports\BatchProcess::finished',
+    ];
+    batch_set($batch);
+  }
+  // If the import is an ICalendar file, import the content of it.
+  elseif ($entity->bundle() === EA_IMPORTS_BUNDLE_ICALENDAR) {
+    $field_url = $entity->get('field_url')->getValue();
+    $grouping = $entity->get('grouping')->getValue();
+    $filter_title = $entity->get('field_filter_title')->getValue();
+    $filter_description = $entity->get('field_filter_title')->getValue();
+    $filter_date_start = $entity->get('field_filter_date_start')->getValue();
+    $filter_date_end = $entity->get('field_filter_date_end')->getValue();
+    $gid = $grouping[0]['target_id'];
+    // Add filters.
+    $filters = [];
+    $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
+    $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
+    $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
+    $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
+    // Get ICalendar file.
+    $parsedICalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
+    // Iterate events.
+    $count = 0;
+    $duplicate_count = 0;
+    $batch = [
+      'title' => t('Importing...'),
+      'operations' => [
+        [
+          'Drupal\ea_imports\BatchProcess::import',
+          [
+            $parsedICalendar,
+            $entity,
+          ],
+        ],
+      ],
+      'finished' => 'Drupal\ea_imports\BatchProcess::finished',
+    ];
+    batch_set($batch);
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function ea_imports_cron() {
+  // Get import configuration.
+  $cron_config = \Drupal::config('ea_imports.settings');
+  if ($cron_config->get('enabled')) {
+    $interval = $cron_config->get('interval');
+    $interval = !empty($interval) ? $interval : 3600;
+    $nextExecution = \Drupal::state()->get('ea_imports.next_execution');
+    $nextExecution = !empty($nextExecution) ? $nextExecution : 0;
+    $nextExecution += $interval;
+    if (REQUEST_TIME >= $nextExecution) {
+      $count = 0;
+      $duplicate_count = 0;
+      // Reset counter.
+      \Drupal::state()->set('ea_imports.next_execution', REQUEST_TIME);
+      // Get ICalendar import entities.
+      $iids = \Drupal::entityQuery('import')
+        ->condition('type', 'icalendar')
+        ->condition('field_continuous_import', '1')
+        ->execute();
+      $imports = \Drupal::entityManager()->getStorage('import')->loadMultiple($iids);
+      foreach ($imports as $import) {
+        $field_url = $import->get('field_url')->getValue();
+        $grouping = $import->get('grouping')->getValue();
+        $filter_title = $import->get('field_filter_title')->getValue();
+        $filter_description = $import->get('field_filter_title')->getValue();
+        $filter_date_start = $import->get('field_filter_date_start')->getValue();
+        $filter_date_end = $import->get('field_filter_date_end')->getValue();
+        $gid = $grouping[0]['target_id'];
+        // Add filters.
+        $filters = [];
+        $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
+        $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
+        $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
+        $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
+        // Get ICalendar file.
+        $parsedIcalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
+        $position = 0;
+        while ($position < $parsedIcalendar->getItemCount()) {
+          foreach ($parsedIcalendar->getNextBatch($position) as $index => $item) {
+            if ($parsedIcalendar->importItem($item)) {
+              $count++;
+            }
+            else {
+              $duplicate_count++;
+            }
+            $position++;
+          }
+        }
+      }
+      \Drupal::logger('ea_imports')->notice(t('Cron: @count events imported', array('@count' => $count)));
+      \Drupal::logger('ea_imports')->notice(t('Cron: @count duplicate events skipped', array('@count' => $duplicate_count)));
+    }
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Disallow changes to the source file of existing import entities.
+ */
+function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'import_csv_add_form') {
+    $form['#validate'][] = '_ea_imports_validate_csv';
+  }
+  elseif ($form_id === 'import_csv_edit_form') {
+    // Restrict access to existing import entities.
+    $form['grouping']['#disabled'] = TRUE;
+    $form['field_file_csv']['#disabled'] = TRUE;
+  }
+  elseif ($form_id === 'import_icalendar_add_form') {
+    $form['#validate'][] = '_ea_imports_validate_icalendar';
+    $form['field_url']['#access'] = 0;
+  }
+  elseif ($form_id === 'import_icalendar_edit_form') {
+    // Restrict access to existing import entities.
+    $form['field_filter_date_end']['#disabled'] = TRUE;
+    $form['field_filter_date_start']['#disabled'] = TRUE;
+    $form['field_filter_description']['#disabled'] = TRUE;
+    $form['field_filter_title']['#disabled'] = TRUE;
+    $form['field_url']['#disabled'] = TRUE;
+    $form['grouping']['#disabled'] = TRUE;
+  }
+}
+
+/**
+ * Validation function for the CSV import form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param FormStateInterface $form_state
+ *   The form state to validate.
+ */
+function _ea_imports_validate_csv(&$form, FormStateInterface $form_state) {
+  $trigger = $form_state->getTriggeringElement();
+  // Do not validate on file upload button trigger.
+  if (!empty($trigger['#name']) && $trigger['#name'] !== 'field_file_csv_0_upload_button' && $trigger['#name'] !== 'field_file_csv_0_remove_button') {
+    if (!empty($form_state->getValue('field_file_csv')[0]['fids'][0])) {
+      $fid = $form_state->getValue('field_file_csv')[0]['fids'][0];
+      $gid = $form_state->getValue('grouping')[0]['target_id'];
+      $parsed_csv = new CSVParser($fid, $gid);
+      if (!$parsed_csv->validate()) {
+        $form_state->setErrorByName('field_file_csv', $parsed_csv->getErrorMessage());
+      }
+    }
+  }
+}
+
+/**
+ * Validation function for the ICalendar import form.
+ *
+ * @param array $form
+ *   The form array.
+ * @param FormStateInterface $form_state
+ *   The form state to validate.
+ */
+function _ea_imports_validate_icalendar(&$form, FormStateInterface $form_state) {
+  $field_url = $form_state->getValue('field_url');
+  $grouping = $form_state->getValue('grouping');
+  $filter_title = $form_state->getValue('field_filter_title');
+  $filter_description = $form_state->getValue('field_filter_title');
+  $filter_date_start = $form_state->getValue('field_filter_date_start');
+  $filter_date_end = $form_state->getValue('field_filter_date_end');
+  $gid = $grouping[0]['target_id'];
+  // Validate filter fields.
+  if (
+    !empty($filter_date_start[0]['value']) &&
+    !empty($filter_date_end[0]['value']) &&
+    $filter_date_start[0]['value'] > $filter_date_end[0]['value']
+  ) {
+    $form_state->setErrorByName('field_url', 'The start date must be before the end date.');
+    return;
+  }
+  // Add filters.
+  $filters = [];
+  $filters['title'] = !empty($filter_title[0]['value']) ? $filter_title[0]['value'] : NULL;
+  $filters['description'] = !empty($filter_description[0]['value']) ? $filter_description[0]['value'] : NULL;
+  $filters['date_start'] = !empty($filter_date_start[0]['value']) ? $filter_date_start[0]['value'] : NULL;
+  $filters['date_end'] = !empty($filter_date_end[0]['value']) ? $filter_date_end[0]['value'] : NULL;
+  // Get ICalendar file.
+  $parsedICalendar = new ICalendarParser($field_url[0]['uri'], $filters, $gid);
+  // Validate ICalendar headers.
+  if (!$parsedICalendar->validate()) {
+    $form_state->setErrorByName('field_url', $parsedICalendar->getErrorMessage());
+  }
+}

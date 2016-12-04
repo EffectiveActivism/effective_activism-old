@@ -2,6 +2,7 @@
 
 namespace Drupal\ea_groupings\Form;
 
+use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -19,7 +20,32 @@ class GroupingForm extends ContentEntityForm {
     /* @var $entity \Drupal\ea_groupings\Entity\Grouping */
     $form = parent::buildForm($form, $form_state);
     $entity = $this->entity;
+    // Set grouping id.
+    $form_state->setTemporaryValue('gid', $entity->id());
+    // Hide fields.
+    $form['user_id']['#attributes']['class'][] = 'hidden';
+    $form['revision_log_message']['#attributes']['class'][] = 'hidden';
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    parent::validateForm($form, $form_state);
+    $entity = $this->entity;
+    $parent = $form_state->getValue('parent');
+    // Groupings may not have themselves as parent.
+    if (!empty($entity) && !empty($parent[0]['target_id']) && $entity->id() === $parent[0]['target_id']) {
+      $form_state->setErrorByName('parent', $this->t('A grouping cannot have itself as parent.'));
+    }
+    // Groupings may not have children as parents.
+    if (!empty($parent[0]['target_id'])) {
+      $grouping = Grouping::load($parent[0]['target_id']);
+      if (!empty($grouping->get('parent')->entity)) {
+        $form_state->setErrorByName('parent', $this->t('The selected parent grouping has a parent itself.'));
+      }
+    }
   }
 
   /**
@@ -27,6 +53,7 @@ class GroupingForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $entity = $this->entity;
+    $entity->setNewRevision();
     $status = parent::save($form, $form_state);
     switch ($status) {
       case SAVED_NEW:
@@ -34,6 +61,7 @@ class GroupingForm extends ContentEntityForm {
           '%label' => $entity->label(),
         ]));
         break;
+
       default:
         drupal_set_message($this->t('Saved the %label Grouping.', [
           '%label' => $entity->label(),
@@ -41,4 +69,5 @@ class GroupingForm extends ContentEntityForm {
     }
     $form_state->setRedirect('entity.grouping.canonical', ['grouping' => $entity->id()]);
   }
+
 }

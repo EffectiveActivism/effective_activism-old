@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\Form\DataTypeDeleteForm.
- */
-
 namespace Drupal\ea_data\Form;
 
 use Drupal\Core\Entity\EntityConfirmFormBase;
@@ -15,6 +10,7 @@ use Drupal\Core\Url;
  * Builds the form to delete Data type entities.
  */
 class DataTypeDeleteForm extends EntityConfirmFormBase {
+
   /**
    * {@inheritdoc}
    */
@@ -41,16 +37,11 @@ class DataTypeDeleteForm extends EntityConfirmFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $this->entity->delete();
-
-    drupal_set_message(
-      $this->t('content @type: deleted @label.',
-        [
-          '@type' => $this->entity->bundle(),
-          '@label' => $this->entity->label()
-        ]
-        )
-    );
-
+    drupal_set_message($this->t('content @type: deleted @label.', [
+      '@type' => $this->entity->bundle(),
+      '@label' => $this->entity->label(),
+    ]
+    ));
     $form_state->setRedirectUrl($this->getCancelUrl());
   }
 

@@ -1,16 +1,13 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\EventAccessControlHandler.
- */
-
 namespace Drupal\ea_events;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultForbidden;
 
 /**
  * Access controller for the Event entity.
@@ -18,6 +15,7 @@ use Drupal\Core\Access\AccessResult;
  * @see \Drupal\ea_events\Entity\Event.
  */
 class EventAccessControlHandler extends EntityAccessControlHandler {
+
   /**
    * {@inheritdoc}
    */
@@ -26,17 +24,19 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished event entities');
+          return Permission::allowedIfIsManager($account, $entity->get('grouping')->entity);
         }
-        return AccessResult::allowedIfHasPermission($account, 'view published event entities');
+        else {
+          return Permission::allowedIfInGroupings($account, [$entity->get('grouping')->entity]);
+        }
 
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit event entities');
+        return Permission::allowedIfInGroupings($account, [$entity->get('grouping')->entity]);
 
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete event entities');
-    }
+        return new AccessResultForbidden();
 
+    }
     // Unknown operation, no opinion.
     return AccessResult::neutral();
   }
@@ -45,7 +45,7 @@ class EventAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add event entities');
+    return Permission::allowedIfInAnyGroupings($account);
   }
 
 }

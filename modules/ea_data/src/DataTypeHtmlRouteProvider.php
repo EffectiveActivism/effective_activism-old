@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\DataTypeHtmlRouteProvider.
- */
-
 namespace Drupal\ea_data;
 
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -18,22 +13,19 @@ use Symfony\Component\Routing\Route;
  * @see Drupal\Core\Entity\Routing\DefaultHtmlRouteProvider
  */
 class DataTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
+
   /**
    * {@inheritdoc}
    */
   public function getRoutes(EntityTypeInterface $entity_type) {
     $collection = parent::getRoutes($entity_type);
-
     $entity_type_id = $entity_type->id();
-
     if ($collection_route = $this->getCollectionRoute($entity_type)) {
       $collection->add("entity.{$entity_type_id}.collection", $collection_route);
     }
-
     if ($add_form_route = $this->getAddFormRoute($entity_type)) {
       $collection->add("entity.{$entity_type_id}.add_form", $add_form_route);
     }
-
     return $collection;
   }
 
@@ -57,9 +49,7 @@ class DataTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
           // TitleResolver translates this string again.
           '_title' => (string) $entity_type->getLabel(),
         ])
-        ->setRequirement('_permission', $entity_type->getAdminPermission())
-        ->setOption('_admin_route', TRUE);
-
+        ->setRequirement('_permission', 'administer data entities');
       return $route;
     }
   }
@@ -90,9 +80,7 @@ class DataTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
         ->setRequirement('_entity_create_access', $entity_type_id)
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
-        ])
-        ->setOption('_admin_route', TRUE);
-
+        ]);
       return $route;
     }
   }

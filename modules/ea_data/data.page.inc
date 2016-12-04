@@ -31,16 +31,16 @@ function template_preprocess_data(array &$variables) {
 }
 
 /**
-* Prepares variables for a custom entity type creation list templates.
-*
-* Default template: data-content-add-list.html.twig.
-*
-* @param array $variables
-*   An associative array containing:
-*   - content: An array of data-types.
-*
-* @see block_content_add_page()
-*/
+ * Prepares variables for a custom entity type creation list templates.
+ *
+ * Default template: data-content-add-list.html.twig.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - content: An array of data-types.
+ *
+ * @see block_content_add_page()
+ */
 function template_preprocess_data_content_add_list(&$variables) {
   $variables['types'] = array();
   $query = \Drupal::request()->query->all();

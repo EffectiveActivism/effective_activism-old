@@ -1,24 +1,10 @@
 <?php
 
-/**
- * @file
- * Test cases for the ea_events module.
- */
-
 namespace Drupal\ea_events\Tests;
 
-use Drupal\ea_events\Entity\Event;
+use Drupal\ea_groupings\Entity\Grouping;
+use Drupal\ea_permissions\Roles;
 use Drupal\simpletest\WebTestBase;
-use Drupal;
-
-define(__NAMESPACE__ . '\GROUPNAME', 'Test group');
-define(__NAMESPACE__ . '\DESCRIPTION', 'Example text for an event description');
-define(__NAMESPACE__ . '\STARTDATE', '2016-01-01');
-define(__NAMESPACE__ . '\STARTDATEFORMATTED', '01/01/2016');
-define(__NAMESPACE__ . '\STARTTIME', '11:00');
-define(__NAMESPACE__ . '\ENDDATE', '2016-01-01');
-define(__NAMESPACE__ . '\ENDDATEFORMATTED', '01/01/2016');
-define(__NAMESPACE__ . '\ENDTIME', '12:00');
 
 /**
  * Function tests for ea_events.
@@ -27,71 +13,73 @@ define(__NAMESPACE__ . '\ENDTIME', '12:00');
  */
 class EventTest extends WebTestBase {
 
-  public static $modules = array('telephone', 'inline_entity_form', 'ea_data', 'ea_activities', 'ea_locations', 'ea_tasks', 'ea_people', 'ea_groupings', 'ea_events');
+  public static $modules = array('effective_activism');
 
+  // Test values.
+  const GROUPNAME = 'Test group';
+
+  const DESCRIPTION = 'Example text for an event description';
+
+  const STARTDATE = '2016-01-01';
+
+  const STARTDATEFORMATTED = '01/01/2016';
+
+  const STARTTIME = '11:00';
+
+  const ENDDATE = '2016-01-01';
+
+  const ENDDATEFORMATTED = '01/01/2016';
+
+  const ENDTIME = '12:00';
+
+  /**
+   * Container for the organizer user.
+   *
+   * @var Drupal\user\Entity\User
+   */
   private $organizer;
+
+  /**
+   * Container for the manager user.
+   *
+   * @var Drupal\user\Entity\User
+   */
+  private $manager;
 
   /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
-    $this->organizer = $this->drupalCreateUser(array(
-      // Event permissions.
-      'add event entities',
-      'delete event entities',
-      'edit event entities',
-      'view published event entities',
-      // Grouping permissions.
-      'add grouping entities',
-      'delete grouping entities',
-      'edit grouping entities',
-      'view published grouping entities',
-      // Activity permissions.
-      'add activity entities',
-      'delete activity entities',
-      'edit activity entities',
-      'view published activity entities',
-      // Task permissions.
-      'add task entities',
-      'delete task entities',
-      'edit task entities',
-      'view published task entities',
-      // People permissions.
-      'add person entities',
-      'delete person entities',
-      'edit person entities',
-      'view published person entities',
-      // Data permissions.
-      'add data entities',
-      'delete data entities',
-      'edit data entities',
-      'view data entities',
-    ));
+    $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
+    $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
   }
 
   /**
    * Test event entities.
    */
   public function testEvents() {
+    $this->createGrouping();
     $this->drupalLogin($this->organizer);
-    $this->createGroupingEntity();
     $this->createEventEntity();
   }
 
   /**
-   * Creates a grouping entity.
+   * Create grouping.
+   *
+   * @return Grouping
+   *   The created grouping.
    */
-  private function createGroupingEntity() {
-    // Create a grouping entity.
-    $this->drupalGet('effectiveactivism/groupings/add');
-    $this->assertResponse(200);
-    $this->drupalPostForm(NULL, array(
-      'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'name[0][value]' => GROUPNAME,
-    ), t('Save'));
-    $this->assertResponse(200);
-    $this->assertText(sprintf('Created the %s Grouping.', GROUPNAME), 'Added a new grouping entity.');
+  private function createGrouping() {
+    $grouping = Grouping::create(array(
+      'user_id' => $this->manager->id(),
+      'name' => self::GROUPNAME,
+      'timezone' => \Drupal::config('system.date')->get('timezone.default'),
+      'managers' => $this->manager->id(),
+      'organizers' => $this->organizer->id(),
+    ));
+    $grouping->save();
+    return $grouping;
   }
 
   /**
@@ -104,19 +92,43 @@ class EventTest extends WebTestBase {
     $random_value = rand();
     $this->drupalPostForm(NULL, array(
       'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'description[0][value]' => DESCRIPTION,
-      'start_date[0][value][date]' => STARTDATE,
-      'start_date[0][value][time]' => STARTTIME,
-      'end_date[0][value][date]' => ENDDATE,
-      'end_date[0][value][time]' => ENDTIME,
-      'grouping[0][target_id]' => sprintf('%s (%d)', GROUPNAME, 1),
+      'description[0][value]' => self::DESCRIPTION,
+      'start_date[0][value][date]' => self::STARTDATE,
+      'start_date[0][value][time]' => self::STARTTIME,
+      'end_date[0][value][date]' => self::ENDDATE,
+      'end_date[0][value][time]' => self::ENDTIME,
+      'grouping[0][target_id]' => 1,
     ), t('Save'));
     $this->assertResponse(200);
     $this->assertText('Created event.', 'Added a new event entity.');
-    $this->assertText(DESCRIPTION, 'Confirmed description was saved.');
-    $this->assertText(STARTDATEFORMATTED, 'Confirmed start date was saved.');
-    $this->assertText(STARTTIME, 'Confirmed start time was saved.');
-    $this->assertText(ENDDATEFORMATTED, 'Confirmed end date was saved.');
-    $this->assertText(ENDTIME, 'Confirmed end time was saved.');
+    $this->assertText(self::DESCRIPTION, 'Confirmed description was saved.');
+    $this->assertText(self::STARTDATEFORMATTED, 'Confirmed start date was saved.');
+    $this->assertText(self::STARTTIME, 'Confirmed start time was saved.');
+    $this->assertText(self::ENDDATEFORMATTED, 'Confirmed end date was saved.');
+    $this->assertText(self::ENDTIME, 'Confirmed end time was saved.');
   }
+
+  /**
+   * Gets IEF button name.
+   *
+   * @param array $xpath
+   *   Xpath of the button.
+   *
+   * @return string
+   *   The name of the button.
+   */
+  protected function getButtonName($xpath) {
+    $retval = '';
+    /** @var \SimpleXMLElement[] $elements */
+    if ($elements = $this->xpath($xpath)) {
+      foreach ($elements[0]->attributes() as $name => $value) {
+        if ($name == 'name') {
+          $retval = $value;
+          break;
+        }
+      }
+    }
+    return $retval;
+  }
+
 }

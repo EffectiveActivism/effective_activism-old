@@ -5,7 +5,10 @@
  * Contains ea_groupings.module.
  */
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\ea_results\Entity\ResultType;
 
 /**
  * Implements hook_help().
@@ -18,6 +21,50 @@ function ea_groupings_help($route_name, RouteMatchInterface $route_match) {
       $output .= '<h3>' . t('About') . '</h3>';
       $output .= '<p>' . t('Manages organizations and groups.') . '</p>';
       return $output;
+
     default:
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Hide managers entity reference field for groupings with a parent.
+ * Only when a grouping is parent do we allow the manager field to be set.
+ */
+function ea_groupings_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  if ($form_id === 'grouping_edit_form' || $form_id === 'grouping_add_form') {
+    $form['managers']['#states'] = array(
+      'invisible' => array(
+        ':input[name="parent[0][target_id]"]' => array('filled' => TRUE),
+      ),
+    );
+  }
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert().
+ *
+ * Create default result types for new organizations.
+ */
+function ea_groupings_grouping_insert(EntityInterface $entity) {
+  // Ceheck if the grouping is an organization.
+  if (empty($entity->get('parent')->getValue())) {
+    foreach (ResultType::DEFAULT_RESULT_TYPES as $importName => $settings) {
+      $resultType = ResultType::create(array(
+        'id' => ResultType::createId($importName),
+        'label' => $settings['label'],
+        'importname' => $importName,
+        'description' => $settings['description'],
+        'datatypes' => $settings['datatypes'],
+        'organization' => $entity->id(),
+        'groupings' => [
+          $entity->id() => $entity->id(),
+        ],
+      ));
+      if ($resultType->save() === SAVED_NEW) {
+        _ea_result_update_bundle_settings($resultType);
+      }
+    }
   }
 }

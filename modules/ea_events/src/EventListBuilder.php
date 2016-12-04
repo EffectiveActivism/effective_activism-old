@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_events\EventListBuilder.
- */
-
 namespace Drupal\ea_events;
 
 use Drupal\Core\Entity\EntityInterface;
@@ -18,7 +13,9 @@ use Drupal\Core\Url;
  * @ingroup ea_events
  */
 class EventListBuilder extends EntityListBuilder {
+
   use LinkGeneratorTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -32,17 +29,18 @@ class EventListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
-    /* @var $entity \Drupal\ea_events\Entity\Event */
-    $row['id'] = $entity->id();
-    $row['name'] = $this->l(
-      $entity->id(),
-      new Url(
-        'entity.event.edit_form', array(
-          'event' => $entity->id(),
+    if ($entity->access('view', \Drupal::currentUser())) {
+      $row['id'] = $entity->id();
+      $row['name'] = $this->l(
+        $entity->id(),
+        new Url(
+          'entity.event.edit_form', array(
+            'event' => $entity->id(),
+          )
         )
-      )
-    );
-    return $row + parent::buildRow($entity);
+      );
+      return $row + parent::buildRow($entity);
+    }
   }
 
 }

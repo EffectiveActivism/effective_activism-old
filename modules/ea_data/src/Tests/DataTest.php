@@ -1,14 +1,12 @@
 <?php
 
-/**
- * @file
- * Test cases for the ea_data module.
- */
-
 namespace Drupal\ea_data\Tests;
 
 use Drupal\ea_data\Entity\Data;
+use Drupal\ea_data\Entity\DataType;
 use Drupal\simpletest\WebTestBase;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
 
 /**
  * Function tests for ea_data.
@@ -17,98 +15,95 @@ use Drupal\simpletest\WebTestBase;
  */
 class DataTest extends WebTestBase {
 
-  public static $modules = array('ea_data', 'field_ui');
+  public static $modules = array('effective_activism');
 
-  private $statistician;
-  private $organizer;
+  private $dataType;
+
+  private $data;
 
   /**
    * {@inheritdoc}
    */
   public function setUp() {
     parent::setUp();
-    $this->statistician = $this->drupalCreateUser(array(
-      'administer data entities',
-      'administer data fields',
-    ));
-    $this->organizer = $this->drupalCreateUser(array(
-      'add data entities',
-      'delete data entities',
-      'edit data entities',
-      'view data entities',
-    ));
   }
 
   /**
    * Create a data entity.
    */
   public function testDataEntity() {
-    $this->createDataType();
+    $this->createDataTypeEntity();
     $this->createDataEntity();
   }
 
   /**
-   * Create a data type.
-   * 
-   * Creates a data type called data_type_test and adds a numeric
-   * field field_integer_input to it.
+   * Create a data type entity.
    */
-  private function createDataType() {
-    $this->drupalLogin($this->statistician);
-    $this->drupalGet('effectiveactivism/data_type');
-    $this->assertResponse(200);
-    $this->drupalGet('effectiveactivism/data_type/add');
-    $this->assertResponse(200);
-    // Create a data type.
-    $this->drupalPostForm(NULL, array(
-      'label' => 'Test',
+  private function createDataTypeEntity() {
+    // Create data type.
+    $this->dataType = DataType::create([
       'id' => 'data_type_test',
-      'description' => 'Test data type description',
-    ), t('Save'));
-    $this->assertResponse(200);
-    $this->assertText('Created the Test Data type.', 'Added a new data type.');
-    $this->drupalGet('effectiveactivism/data_type/data_type_test/edit/fields/add-field');
-    // Create a field for the data type.
-    $this->drupalPostForm(NULL, array(
-      'new_storage_type' => 'integer',
-      'label' => 'Integer input',
-      'field_name' => 'integer_input',
-    ), t('Save and continue'));
-    $this->assertResponse(200);
-    $this->assertText('Integer input', 'Added an integer field to the data type.');
-    // Set cardinality of the field.
-    $this->drupalPostForm(NULL, array(
-      'cardinality' => 'number',
-      'cardinality_number' => '1',
-    ), t('Save field settings'));
-    $this->assertResponse(200);
-    $this->assertText('Updated field Integer input field settings.', 'Set cardinality for integer field.');
-    // Settings for the field.
-    $this->drupalPostForm(NULL, array(
-      'settings[min]' => '0',
-    ), t('Save settings'));
-    $this->assertResponse(200);
-    $this->assertText('Saved Integer input configuration.', 'Saved settings for integer field.');
+      'label' => 'Test',
+    ]);
+    $this->dataType->save();
+    // Add an integer field to the data type.
+    $field_name = 'field_integer_input';
+    $entity_type_id = 'data';
+    $bundle = 'data_type_test';
+    $label = 'Integer input';
+    // Check if field exists and create as necessary.
+    $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
+    if (empty($field_storage)) {
+      $field_storage = FieldStorageConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => $entity_type_id,
+        'type' => 'integer',
+        'cardinality' => 1,
+        'module' => 'core',
+        'settings' => ['min' => '0'],
+      ])->save();
+    }
+    $field = FieldConfig::loadByName($entity_type_id, $bundle, $field_name);
+    if (empty($field)) {
+      $field = FieldConfig::create([
+        'field_name' => $field_name,
+        'entity_type' => $entity_type_id,
+        'bundle' => $bundle,
+        'label' => $label,
+      ]);
+      $field
+        ->setRequired(TRUE)
+        ->save();
+    }
+    // Form display settings for field_integer_input.
+    entity_get_form_display($entity_type_id, $bundle, 'default')
+      ->setComponent('field_integer_input', [
+        'type' => 'number',
+      ])
+      ->save();
+    // View display settings for field_integer_input.
+    entity_get_display($entity_type_id, $bundle, 'default')
+      ->setComponent('field_integer_input', [
+        'type' => 'number_integer',
+      ])
+      ->save();
   }
 
   /**
    * Create a data content entity.
-   * 
+   *
    * Creates a content entity of type data_type_test and adds a random
    * numeric value to the field_integer_input field.
    */
   private function createDataEntity() {
-    $this->drupalLogin($this->organizer);
-    // Create a data entity using the data type.
-    $this->drupalGet('effectiveactivism/data/add');
-    $this->assertResponse(200);
     $random_value = rand();
-    $this->drupalPostForm(NULL, array(
-      'user_id[0][target_id]' => sprintf('%s (%d)', $this->organizer->getAccountName(), $this->organizer->id()),
-      'field_integer_input[0][value]' => $random_value,
-    ), t('Save'));
-    $this->assertResponse(200);
-    $this->assertText('Created data', 'Added a new data entity.');
-    $this->assertText($random_value, 'Confirmed value was saved.');
+    $this->data = Data::create([
+      'type' => 'data_type_test',
+      'user_id' => 1,
+      'field_integer_input' => $random_value,
+    ]);
+    $value = $this->data->get('field_integer_input')->getValue();
+    $this->assertEqual($value[0]['value'], $random_value);
   }
+
 }

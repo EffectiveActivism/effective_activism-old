@@ -1,0 +1,7 @@
+effective_activism.overview:
+  path: '/effectiveactivism'
+  defaults:
+    _controller: '\Drupal\effective_activism\Controller\Overview::content'
+    _title: 'Effective Activism'
+  requirements:
+    _permission: 'access content'

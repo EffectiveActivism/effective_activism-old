@@ -1,12 +1,8 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_people\PersonAccessControlHandler.
- */
-
 namespace Drupal\ea_people;
 
+use Drupal\ea_permissions\Permission;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -27,13 +23,15 @@ class PersonAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         if (!$entity->isPublished()) {
-          return AccessResult::allowedIfHasPermission($account, 'view unpublished person entities');
+          return Permission::allowedIfIsManagerInAnyGroupings($account);
         }
-        return AccessResult::allowedIfHasPermission($account, 'view published person entities');
+        return Permission::allowedIfInAnyGroupings($account);
+
       case 'update':
-        return AccessResult::allowedIfHasPermission($account, 'edit person entities');
+        return Permission::allowedIfIsManagerInAnyGroupings($account);
+
       case 'delete':
-        return AccessResult::allowedIfHasPermission($account, 'delete person entities');
+        return AccessResult::forbidden();
     }
     // Unknown operation, no opinion.
     return AccessResult::neutral();
@@ -43,6 +41,7 @@ class PersonAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    return AccessResult::allowedIfHasPermission($account, 'add person entities');
+    return Permission::allowedIfInAnyGroupings($account);
   }
+
 }

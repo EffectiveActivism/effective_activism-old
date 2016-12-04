@@ -1,10 +1,5 @@
 <?php
 
-/**
- * @file
- * Contains \Drupal\ea_data\Entity\DataType.
- */
-
 namespace Drupal\ea_data\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
@@ -36,15 +31,16 @@ use Drupal\ea_data\DataTypeInterface;
  *     "uuid" = "uuid"
  *   },
  *   links = {
- *     "canonical" = "/effectiveactivism/data_type/{data_type}",
- *     "add-form" = "/effectiveactivism/data_type/add",
- *     "edit-form" = "/effectiveactivism/data_type/{data_type}/edit",
- *     "delete-form" = "/effectiveactivism/data_type/{data_type}/delete",
- *     "collection" = "/effectiveactivism/data_type"
+ *     "canonical" = "/effectiveactivism/data-types/{data_type}",
+ *     "add-form" = "/effectiveactivism/data-types/add",
+ *     "edit-form" = "/effectiveactivism/data-types/{data_type}/edit",
+ *     "delete-form" = "/effectiveactivism/data-types/{data_type}/delete",
+ *     "collection" = "/effectiveactivism/data-types"
  *   }
  * )
  */
 class DataType extends ConfigEntityBundleBase implements DataTypeInterface {
+
   /**
    * The Data type ID.
    *
@@ -65,4 +61,5 @@ class DataType extends ConfigEntityBundleBase implements DataTypeInterface {
    * @var string
    */
   public $description;
+
 }

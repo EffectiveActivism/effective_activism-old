@@ -1,0 +1,79 @@
+# Effective Activism overview
+effective_activism.overview:
+  title: 'Effective Activism'
+  route_name: effective_activism.overview
+  description: 'An overview of features available to the Effective Activism module.'
+  menu_name: effective_activism
+  weight: 100
+
+# Result type menu items definition
+entity.result_type.collection:
+  title: 'Result type'
+  route_name: entity.result_type.collection
+  description: 'List Result type (bundles)'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99
+
+# Data menu items definition
+entity.data.collection:
+  title: 'Data list'
+  route_name: entity.data.collection
+  description: 'List Data entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+# Data type menu items definition
+entity.data_type.collection:
+  title: 'Data type'
+  route_name: entity.data_type.collection
+  description: 'List Data type (bundles)'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99
+
+# Event menu items definition
+entity.event.collection:
+  title: 'Event list'
+  route_name: entity.event.collection
+  description: 'List Event entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+# Grouping menu items definition
+entity.grouping.collection:
+  title: 'Grouping list'
+  route_name: entity.grouping.collection
+  description: 'List Grouping entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+# Import menu items definition
+entity.import.collection:
+  title: 'Import list'
+  route_name: entity.import.collection
+  description: 'List Import entities'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 100
+
+# Import type menu items definition
+entity.import_type.collection:
+  title: 'Import type'
+  route_name: entity.import_type.collection
+  description: 'List Import type (bundles)'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99
+
+# Location settings menu items definition
+ea_locations.settings:
+  title: 'Location settings'
+  route_name: ea_locations.settings
+  description: 'Configure location settings'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 99

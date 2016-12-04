@@ -6,6 +6,7 @@
  */
 
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Implements hook_help().
@@ -16,7 +17,6 @@ function ea_data_help($route_name, RouteMatchInterface $route_match) {
     case 'help.page.ea_data':
       $output = '';
       $output .= '<h3>' . t('About') . '</h3>';
-      $output .= '<p>' . t('') . '</p>';
       return $output;
 
     default:
@@ -39,4 +39,15 @@ function ea_data_theme() {
     'file' => 'data.page.inc',
   ];
   return $theme;
+}
+
+/**
+ * Implements hook_inline_entity_form_entity_form_alter().
+ */
+function ea_data_inline_entity_form_entity_form_alter(&$entity_form, FormStateInterface $form_state) {
+  if ($entity_form['#entity_type'] === 'data') {
+    // Hide revision and user fields.
+    $entity_form['user_id']['#attributes']['class'][] = 'hidden';
+    $entity_form['revision_log_message']['#attributes']['class'][] = 'hidden';
+  }
 }
