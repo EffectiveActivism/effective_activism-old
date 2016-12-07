@@ -67,12 +67,11 @@ function ea_groupings_grouping_insert(EntityInterface $entity) {
       }
     }
     // Create tagging vocabulary for organization.
-    $name = sprintf('%s tags', $entity->get('Name'));
+    $name = t('@organization tags', ['@organization' => $entity->getName()]);
     $vid = sprintf('tags_%d', $entity->id());
     if (Vocabulary::load($vid) === NULL) {
       $vocabulary = Vocabulary::create([
         'vid' => $vid,
-        'machine_name' => $vid,
         'name' => $name,
       ]);
       $vocabulary->save();
