@@ -144,6 +144,8 @@ class ResultTypeForm extends EntityForm {
     }
     // Update fields for this entity type.
     _ea_result_update_bundle_settings($this->entity);
+    // Add a tagging field to the result type.
+    _ea_result_add_taxonomy_field($this->entity);
     $form_state->setRedirectUrl($this->entity->urlInfo('collection'));
   }
 
