@@ -8,3 +8,4 @@ dependencies:
   - ea_groupings
   - ea_data
   - inline_entity_form
+  - taxonomy
