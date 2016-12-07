@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\ea_results\Entity\ResultType;
+use Drupal\taxonomy\Entity\Vocabulary;
 
 /**
  * Implements hook_help().
@@ -44,12 +45,11 @@ function ea_groupings_form_alter(&$form, FormStateInterface $form_state, $form_i
 
 /**
  * Implements hook_ENTITY_TYPE_insert().
- *
- * Create default result types for new organizations.
  */
 function ea_groupings_grouping_insert(EntityInterface $entity) {
   // Ceheck if the grouping is an organization.
   if (empty($entity->get('parent')->getValue())) {
+    // Create default result types for new organizations.
     foreach (ResultType::DEFAULT_RESULT_TYPES as $importName => $settings) {
       $resultType = ResultType::create(array(
         'id' => ResultType::createId($importName),
@@ -65,6 +65,22 @@ function ea_groupings_grouping_insert(EntityInterface $entity) {
       if ($resultType->save() === SAVED_NEW) {
         _ea_result_update_bundle_settings($resultType);
       }
+    }
+    // Create tagging vocabulary for organization.
+    $name = t('@organization tags', ['@organization' => $entity->getName()]);
+    $vid = sprintf('tags_%d', $entity->id());
+    if (Vocabulary::load($vid) === NULL) {
+      $vocabulary = Vocabulary::create([
+        'vid' => $vid,
+        'name' => $name,
+      ]);
+      $vocabulary->save();
+    }
+    else {
+      // A vocabulary with this vid already exists.
+      // This shouldn't happen as vids are meant to be
+      // unique and exclusive to the created organization.
+      \Drupal::logger('ea_groupings')->error(sprintf('Vocabulary with vid %s already exists.', $vid));
     }
   }
 }

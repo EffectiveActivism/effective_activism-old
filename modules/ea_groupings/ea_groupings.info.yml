@@ -6,4 +6,5 @@ package: Effective Activism
 dependencies:
   - ea_locations
   - ea_people
+  - taxonomy
   - telephone
