@@ -7,6 +7,7 @@
 
 use Drupal\ea_results\Entity\ResultType;
 use Drupal\ea_data\Entity\DataType;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
@@ -36,6 +37,65 @@ function ea_results_inline_entity_form_entity_form_alter(&$entity_form, FormStat
     $entity_form['user_id']['#attributes']['class'][] = 'hidden';
     $entity_form['revision_log_message']['#attributes']['class'][] = 'hidden';
   }
+}
+
+/**
+ * Add a taxonomy field.
+ *
+ * @param ResultType $result_type
+ *   The result type to add field to.
+ */
+function _ea_result_add_taxonomy_field(ResultType $result_type) {
+  $entity_type_id = 'result';
+  $bundle_id = $result_type->id();
+  // Create unique field name.
+  $gid = $result_type->organization;
+  $field_name = sprintf('field_tags_%d', $gid);
+  $vid = sprintf('tags_%d', $gid);
+  // Check if field exists and create as necessary.
+  $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
+  if (empty($field_storage)) {
+    $field_storage = FieldStorageConfig::create(array(
+      'field_name' => $field_name,
+      'entity_type' => $entity_type_id,
+      'type' => 'entity_reference',
+      'cardinality' => FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED,
+      'module' => 'core',
+      'settings' => ['target_type' => 'taxonomy_term'],
+    ))->save();
+  }
+  // Check if instance exists and create as necessary.
+  $field = FieldConfig::loadByName($entity_type_id, $bundle_id, $field_name);
+  if (empty($field)) {
+    // Create field.
+    $field = FieldConfig::create([
+      'field_name' => $field_name,
+      'entity_type' => $entity_type_id,
+      'bundle' => $bundle_id,
+      'label' => t('Tags'),
+    ]);
+    $field->setRequired(TRUE)
+      ->setSetting('target_type', 'taxonomy_term')
+      ->setSetting('handler', 'default')
+      ->setSetting('handler_settings', [
+        'target_bundles' => [
+          $vid => $vid,
+        ],
+      ])
+      ->save();
+  }
+  // Set form display settings.
+  entity_get_form_display($entity_type_id, $bundle_id, 'default')
+    ->setComponent($field_name, [
+      'type' => 'entity_reference_autocomplete_tags',
+    ])
+    ->save();
+  // Set view display settings.
+  entity_get_display($entity_type_id, $bundle_id, 'default')
+    ->setComponent($field_name, [
+      'type' => 'entity_reference_entity_view',
+    ])
+    ->save();
 }
 
 /**
