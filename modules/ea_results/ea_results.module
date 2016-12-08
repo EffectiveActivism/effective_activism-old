@@ -50,7 +50,7 @@ function _ea_result_add_taxonomy_field(ResultType $result_type) {
   $bundle_id = $result_type->id();
   // Create unique field name.
   $gid = $result_type->organization;
-  $field_name = sprintf('field_tags_%d', $gid);
+  $field_name = sprintf('tags_%d', $gid);
   $vid = sprintf('tags_%d', $gid);
   // Check if field exists and create as necessary.
   $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
@@ -113,7 +113,7 @@ function _ea_result_update_bundle_settings(ResultType $result_type) {
   if (isset($result_type->datatypes) && !empty($result_type->datatypes)) {
     foreach ($result_type->datatypes as $data_type => $enabled) {
       if ((bool) $enabled) {
-        $field_name = 'field_' . $data_type;
+        $field_name = 'data_' . $data_type;
         // Check if field exists and create as necessary.
         $field_storage = FieldStorageConfig::loadByName($entity_type_id, $field_name);
         if (empty($field_storage)) {
