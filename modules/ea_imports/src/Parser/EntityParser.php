@@ -196,8 +196,8 @@ class EntityParser {
    * @param array $values
    *   Values to import as a participant entity.
    *
-   * @return int|bool
-   *   The participant id or FALSE if import failed.
+   * @return Participant|bool
+   *   The participant entity or FALSE if import failed.
    */
   public function importParticipant($values) {
     $fields = $this->getFields('person');
@@ -221,8 +221,8 @@ class EntityParser {
    * @param Grouping $grouping
    *   The grouping to import to.
    *
-   * @return int|bool
-   *   The participants id or FALSE if import failed.
+   * @return Result|bool
+   *   The result entity or FALSE if import failed.
    */
   public function importResult($values, $importName, Grouping $grouping) {
     // Get organization from grouping.
@@ -267,8 +267,8 @@ class EntityParser {
    * @param string $bundle
    *   The bundle of the result entity.
    *
-   * @return int|bool
-   *   The participants id or FALSE if import failed.
+   * @return Data|bool
+   *   The data entity or FALSE if import failed.
    */
   public function importData($dataValue, $bundle) {
     $fields = $this->getFields('data', $bundle);
@@ -288,13 +288,11 @@ class EntityParser {
   /**
    * Imports a term entity if none exists, or adds existing.
    *
-   * @param array $dataValue
-   *   The data value.
-   * @param string $bundle
-   *   The bundle of the result entity.
+   * @param array $values
+   *   Values to import as a term.
    *
-   * @return int|bool
-   *   The participants id or FALSE if import failed.
+   * @return Term|bool
+   *   The term entity or FALSE if import failed.
    */
   public function importTerm($values) {
     $fields = ['vid', 'name'];
@@ -321,8 +319,8 @@ class EntityParser {
    * @param array $values
    *   Values to import as an event.
    *
-   * @return int|bool
-   *   The event id or FALSE if import failed.
+   * @return Event|bool
+   *   The event entity or FALSE if import failed.
    */
   public function importEvent($values) {
     $fields = $this->getFields('event');
