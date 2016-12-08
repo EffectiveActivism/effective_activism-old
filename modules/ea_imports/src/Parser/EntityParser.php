@@ -2,13 +2,14 @@
 
 namespace Drupal\ea_imports\Parser;
 
-use Drupal\ea_events\Entity\Event;
-use Drupal\ea_people\Entity\Person;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\ea_data\Entity\Data;
+use Drupal\ea_events\Entity\Event;
+use Drupal\ea_groupings\Entity\Grouping;
+use Drupal\ea_people\Entity\Person;
 use Drupal\ea_results\Entity\Result;
 use Drupal\ea_results\Entity\ResultType;
-use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\Core\Entity\EntityInterface;
+use Drupal\taxonomy\Entity\Term;
 
 /**
  * Entity parsing functions.
@@ -113,13 +114,24 @@ class EntityParser {
     $fields = $this->getFields('result', $resultType->id());
     $fieldsToIgnore = [];
     foreach ($fields as $key => $field) {
-      // Create any data entities identified by field name 'field_*'.
-      if (strpos($field, 'field_') === 0) {
-        $dataType = substr($field, strlen('field_'));
+      // Create any data entities identified by field name 'data_*'.
+      if (strpos($field, 'data_') === 0) {
+        $dataType = substr($field, strlen('data_'));
         $this->validateData([
           $dataType,
           $values[$key],
         ], $dataType);
+        // Do not validate this field for the result entity.
+        $values[$key] = NULL;
+        $fieldsToIgnore[] = $field;
+      }
+      // Create any tags.
+      elseif (strpos($field, 'tags_') === 0) {
+        $vid = $field;
+        $this->validateTerm([
+          $vid,
+          $values[$key],
+        ]);
         // Do not validate this field for the result entity.
         $values[$key] = NULL;
         $fieldsToIgnore[] = $field;
@@ -146,6 +158,21 @@ class EntityParser {
     $fields = $this->getFields('data', $bundle);
     $data = array_combine($fields, $values);
     return $this->validateEntity(Data::create($data));
+  }
+
+  /**
+   * Validates a term entity.
+   *
+   * @param array $values
+   *   Data to validate as term entity.
+   *
+   * @return bool
+   *   TRUE if data is valid, FALSE otherwise.
+   */
+  public function validateTerm($values) {
+    $fields = ['vid', 'name'];
+    $data = array_combine($fields, $values);
+    return $this->validateEntity(Term::create($data));
   }
 
   /**
@@ -210,6 +237,13 @@ class EntityParser {
         // Overwrite value with corresponding data entity.
         $values[$key] = $dataEntity->id();
       }
+      // Create or add any term entities.
+      elseif (strpos($field, 'tags_') === 0) {
+        $vid = $field;
+        $termEntity = $this->importTerm([$vid, $values[$key]]);
+        // Overwrite value with corresponding data entity.
+        $values[$key] = $termEntity->id();
+      }
       // Replace import name with result type id.
       elseif ($field === 'type') {
         $values[$key] = $resultType->id();
@@ -248,6 +282,36 @@ class EntityParser {
     }
     else {
       return FALSE;
+    }
+  }
+
+  /**
+   * Imports a term entity if none exists, or adds existing.
+   *
+   * @param array $dataValue
+   *   The data value.
+   * @param string $bundle
+   *   The bundle of the result entity.
+   *
+   * @return int|bool
+   *   The participants id or FALSE if import failed.
+   */
+  public function importTerm($values) {
+    $fields = ['vid', 'name'];
+    $data = array_combine($fields, $values);
+    $existing_terms = taxonomy_term_load_multiple_by_name($data['name'], $data['vid']);
+    // If term doesn't exist, create it.
+    if (empty($existing_terms)) {
+      $entity = Term::create($data);
+      if ($entity->save()) {
+        return $entity;
+      }
+      else {
+        return FALSE;
+      }
+    }
+    else {
+      return array_pop($existing_terms);
     }
   }
 
