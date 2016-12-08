@@ -157,7 +157,7 @@ function _ea_result_update_bundle_settings(ResultType $result_type) {
   }
   // Hide any fields that arent enabled.
   foreach (\Drupal::service('entity_field.manager')->getFieldDefinitions($entity_type_id, $bundle_id) as $field_name => $field_definition) {
-    if (strpos($field_name, 'field_') === 0 && !in_array($field_name, $enabled_fields)) {
+    if (strpos($field_name, 'data_') === 0 && !in_array($field_name, $enabled_fields)) {
       $field = FieldConfig::loadByName($entity_type_id, $bundle_id, $field_name);
       $field->setRequired(FALSE)->save();
       _ea_results_disable_field_display($field);
