@@ -75,7 +75,7 @@ function _ea_result_add_taxonomy_field(ResultType $result_type) {
       'label' => t('Tags'),
       'weight' => 100,
     ]);
-    $field->setRequired(TRUE)
+    $field->setRequired(FALSE)
       ->setSetting('target_type', 'taxonomy_term')
       ->setSetting('handler', 'default')
       ->setSetting('handler_settings', [
