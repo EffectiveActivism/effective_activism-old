@@ -82,6 +82,7 @@ function _ea_result_add_taxonomy_field(ResultType $result_type) {
         'target_bundles' => [
           $vid => $vid,
         ],
+        'auto_create' => 1,
       ])
       ->save();
   }
