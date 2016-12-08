@@ -64,6 +64,7 @@ function ea_groupings_grouping_insert(EntityInterface $entity) {
       ));
       if ($resultType->save() === SAVED_NEW) {
         _ea_result_update_bundle_settings($resultType);
+        _ea_result_add_taxonomy_field($resultType);
       }
     }
     // Create tagging vocabulary for organization.

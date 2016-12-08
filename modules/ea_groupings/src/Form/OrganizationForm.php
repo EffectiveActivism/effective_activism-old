@@ -54,7 +54,7 @@ class OrganizationForm extends FormBase {
       '#size' => 30,
       '#maxlength' => 255,
       '#element_validate' => [
-        'LocationWidget::validateAddress',
+        '\Drupal\ea_locations\Plugin\Field\FieldWidget\LocationWidget::validateAddress',
       ],
       '#attached' => [
         'library' => ['ea_locations/autocomplete'],
