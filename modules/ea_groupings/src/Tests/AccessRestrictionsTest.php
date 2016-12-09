@@ -83,7 +83,7 @@ class AccessRestrictionsTest extends WebTestBase {
   }
 
   /**
-   * Test event entities.
+   * Test access restrictions.
    */
   public function testAccessRestrictions() {
     // Verify that manager1 can manage group 1 and not group 2.
