@@ -8,7 +8,6 @@ use Drupal\ea_results\Entity\ResultType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\simpletest\WebTestBase;
 use Drupal\taxonomy\Entity\Vocabulary;
-use Drupal\user\Entity\User;
 
 /**
  * Function tests for ea_groupings.
@@ -55,7 +54,8 @@ class GroupingTest extends WebTestBase {
     $vid = sprintf('tags_%d', $this->group->id());
     $vocabulary = Vocabulary::load($vid);
     $this->assertNotNull($vocabulary, 'Vocabulary created');
-    // Verify that default result types have been added and contain the tagging field.
+    // Verify that default result types have been added
+    // and contain the tagging field.
     foreach (ResultType::DEFAULT_RESULT_TYPES as $import_name => $settings) {
       $result_type = ResultType::getResultTypeByImportName($import_name, $this->group->id());
       $this->assertNotNull($result_type, sprintf('Result type %s created', $import_name));
