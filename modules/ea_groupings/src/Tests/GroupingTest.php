@@ -58,9 +58,9 @@ class GroupingTest extends WebTestBase {
     // Verify that default result types have been added and contain the tagging field.
     foreach (ResultType::DEFAULT_RESULT_TYPES as $import_name => $settings) {
       $result_type = ResultType::getResultTypeByImportName($import_name, $this->group->id());
-      $this->assertNotNull($result_type, sprintf('Result type %s created', $bundle));
-      $tagging_field = FieldConfig::loadByName('result', $bundle, $vid);
-      $this->assertNotNull($tagging_field, sprintf('Field %s for result type %s exists', $vid, $bundle));
+      $this->assertNotNull($result_type, sprintf('Result type %s created', $import_name));
+      $tagging_field = FieldConfig::loadByName('result', $result_type->id(), $vid);
+      $this->assertNotNull($tagging_field, sprintf('Field %s for result type %s exists', $vid, $import_name));
     }
   }
 
