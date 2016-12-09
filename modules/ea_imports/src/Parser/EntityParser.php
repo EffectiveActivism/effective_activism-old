@@ -230,9 +230,9 @@ class EntityParser {
     $resultType = ResultType::getResultTypeByImportName($importName, $organizationId);
     $fields = $this->getFields('result', $resultType->id());
     foreach ($fields as $key => $field) {
-      // Create any data entities identified by field name 'field_*'.
-      if (strpos($field, 'field_') === 0) {
-        $dataType = substr($field, strlen('field_'));
+      // Create any data entities identified by field name 'data_*'.
+      if (strpos($field, 'data_') === 0) {
+        $dataType = substr($field, strlen('data_'));
         $dataEntity = $this->importData($values[$key], $dataType);
         // Overwrite value with corresponding data entity.
         $values[$key] = $dataEntity->id();
