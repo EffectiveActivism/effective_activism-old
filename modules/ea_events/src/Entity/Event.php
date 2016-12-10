@@ -28,6 +28,7 @@ use Drupal\user\UserInterface;
  *       "default" = "Drupal\ea_events\Form\EventForm",
  *       "add" = "Drupal\ea_events\Form\EventForm",
  *       "edit" = "Drupal\ea_events\Form\EventForm",
+ *       "publish" = "Drupal\ea_events\Form\EventPublishForm",
  *       "delete" = "Drupal\ea_events\Form\EventDeleteForm",
  *     },
  *     "access" = "Drupal\ea_events\EventAccessControlHandler",
@@ -51,6 +52,7 @@ use Drupal\user\UserInterface;
  *     "add-form" = "/effectiveactivism/events/add",
  *     "edit-form" = "/effectiveactivism/events/{event}/edit",
  *     "delete-form" = "/effectiveactivism/events/{event}/delete",
+ *     "publish-form" = "/effectiveactivism/events/{event}/publish",
  *     "collection" = "/effectiveactivism/events",
  *   },
  *   field_ui_base_route = "event.settings"

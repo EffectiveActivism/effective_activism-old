@@ -4,3 +4,22 @@
  * @file
  * Contains ea_events.module.
  */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_entity_operation().
+ */
+function ea_events_entity_operation(EntityInterface $entity) {
+  if ($entity->bundle() === 'event') {
+    $operations['publish'] = [
+      'title' => $entity->isPublished() ? t('Unpublish') : t('Publish'),
+      'url' => new Url('entity.event.publish_form', [
+        'event' => $entity->id(),
+      ]),
+      'weight' => 50,
+    ];
+    return $operations;
+  }
+}
