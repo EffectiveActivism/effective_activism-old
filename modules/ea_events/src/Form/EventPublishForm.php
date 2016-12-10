@@ -18,7 +18,7 @@ class EventPublishForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getFormID() {
+  public function getFormId() {
     return 'ea_events_publish_event';
   }
 
