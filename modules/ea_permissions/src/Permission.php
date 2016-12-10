@@ -87,6 +87,9 @@ class Permission {
    *   Returns an access result.
    */
   public static function allowedIfInAnyGroupings(AccountInterface $account) {
+    if ((int) $account->id() === 1) {
+      return new AccessResultAllowed();
+    }
     if (!empty(Grouping::getAllGroupingsByUser($account))) {
       return new AccessResultAllowed();
     }
@@ -105,6 +108,9 @@ class Permission {
    *   Returns an access result.
    */
   public static function allowedIfIsManagerInAnyGroupings(AccountInterface $account) {
+    if ((int) $account->id() === 1) {
+      return new AccessResultAllowed();
+    }
     if (!empty(Grouping::getAllGroupingsByRole(Roles::MANAGER_ROLE, $account))) {
       return new AccessResultAllowed();
     }
@@ -127,6 +133,9 @@ class Permission {
    *   Whether or not user has access.
    */
   private static function checkPermission(AccountInterface $account, Grouping $grouping, $role) {
+    if ((int) $account->id() === 1) {
+      return TRUE;
+    }
     // Determine access based on role.
     switch ($role) {
       case Roles::ORGANIZER_ROLE:
