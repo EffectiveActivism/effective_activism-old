@@ -222,7 +222,7 @@ function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id)
  * @param FormStateInterface $form_state
  *   The form state to validate.
  */
-function _ea_imports_validate_csv(&$form, FormStateInterface $form_state) {
+function _ea_imports_validate_csv(array &$form, FormStateInterface $form_state) {
   $trigger = $form_state->getTriggeringElement();
   // Do not validate on file upload button trigger.
   if (!empty($trigger['#name']) && $trigger['#name'] !== 'field_file_csv_0_upload_button' && $trigger['#name'] !== 'field_file_csv_0_remove_button') {
@@ -245,7 +245,7 @@ function _ea_imports_validate_csv(&$form, FormStateInterface $form_state) {
  * @param FormStateInterface $form_state
  *   The form state to validate.
  */
-function _ea_imports_validate_icalendar(&$form, FormStateInterface $form_state) {
+function _ea_imports_validate_icalendar(array &$form, FormStateInterface $form_state) {
   $field_url = $form_state->getValue('field_url');
   $grouping = $form_state->getValue('grouping');
   $filter_title = $form_state->getValue('field_filter_title');

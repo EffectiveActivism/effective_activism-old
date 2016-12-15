@@ -26,7 +26,7 @@ interface ParserInterface {
    * @return array
    *   The items to import.
    */
-  public function getNextBatch($position);
+  public function getNextBatch(array $position);
 
   /**
    * Imports parsed items.
@@ -37,7 +37,7 @@ interface ParserInterface {
    * @return int|bool
    *   Returns item entity id or FALSE if import failed.
    */
-  public function importItem($values);
+  public function importItem(array $values);
 
   /**
    * Validates items.

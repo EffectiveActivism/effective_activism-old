@@ -145,7 +145,7 @@ class LocationController {
    * @return string
    *   Returns JSON response.
    */
-  private function request($url, $query) {
+  private function request($url, array $query) {
     // Set Google API key.
     $query['key'] = Drupal::config('ea_locations.settings')->get('key');
     if (!empty($query['key'])) {

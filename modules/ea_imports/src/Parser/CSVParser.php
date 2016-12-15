@@ -190,7 +190,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    * @param array $row
    *   The row to validate.
    */
-  private function validateRow($row) {
+  private function validateRow(array $row) {
     foreach ($row as $column => $data) {
       $this->column = $column;
       switch (self::CSVHEADERFORMAT[$column]) {
@@ -356,7 +356,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    * @return bool
    *   Whether or not the row contains an event.
    */
-  private function isEvent($row) {
+  private function isEvent(array $row) {
     return !empty($row[array_search('start_date', self::CSVHEADERFORMAT)]);
   }
 
@@ -371,7 +371,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    * @return array
    *   Return values.
    */
-  private function getValue($row, $columnName) {
+  private function getValue(array $row, $columnName) {
     return array_map('trim', explode('|', $row[array_search($columnName, self::CSVHEADERFORMAT)]));
   }
 

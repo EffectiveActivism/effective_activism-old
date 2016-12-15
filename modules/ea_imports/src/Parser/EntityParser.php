@@ -61,7 +61,7 @@ class EntityParser {
    * @return bool
    *   TRUE if entity has no violations, FALSE otherwise.
    */
-  private function validateEntity(EntityInterface $entity, $fieldsToIgnore = []) {
+  private function validateEntity(EntityInterface $entity, array $fieldsToIgnore = []) {
     $isValid = TRUE;
     if ($entity) {
       $this->errorMessages = [];
@@ -83,7 +83,7 @@ class EntityParser {
    * @return bool
    *   TRUE if participant is valid, FALSE otherwise.
    */
-  public function validateParticipant($values) {
+  public function validateParticipant(array $values) {
     $fields = $this->getFields('person');
     $data = array_combine($fields, $values);
     return $this->validateEntity(Person::create($data));
@@ -102,7 +102,7 @@ class EntityParser {
    * @return bool
    *   TRUE if result is valid, FALSE otherwise.
    */
-  public function validateResult($values, $importName, Grouping $grouping) {
+  public function validateResult(array $values, $importName, Grouping $grouping) {
     // Get organization from grouping.
     $organizationId = empty($grouping->get('parent')->entity) ? $grouping->id() : $grouping->get('parent')->entity->id();
     $resultType = ResultType::getResultTypeByImportName($importName, $organizationId);
@@ -150,11 +150,13 @@ class EntityParser {
    *
    * @param array $values
    *   Data to validate as data entity.
+   * @param string $bundle
+   *   The bundle of the data entity.
    *
    * @return bool
    *   TRUE if data is valid, FALSE otherwise.
    */
-  public function validateData($values, $bundle) {
+  public function validateData(array $values, $bundle) {
     $fields = $this->getFields('data', $bundle);
     $data = array_combine($fields, $values);
     return $this->validateEntity(Data::create($data));
@@ -169,7 +171,7 @@ class EntityParser {
    * @return bool
    *   TRUE if data is valid, FALSE otherwise.
    */
-  public function validateTerm($values) {
+  public function validateTerm(array $values) {
     $fields = ['vid', 'name'];
     $data = array_combine($fields, $values);
     return $this->validateEntity(Term::create($data));
@@ -184,7 +186,7 @@ class EntityParser {
    * @return bool
    *   TRUE if event is valid, FALSE otherwise.
    */
-  public function validateEvent($values) {
+  public function validateEvent(array $values) {
     $fields = $this->getFields('event');
     $data = array_combine($fields, $values);
     return $this->validateEntity(Event::create($data));
@@ -199,7 +201,7 @@ class EntityParser {
    * @return Participant|bool
    *   The participant entity or FALSE if import failed.
    */
-  public function importParticipant($values) {
+  public function importParticipant(array $values) {
     $fields = $this->getFields('person');
     $data = array_combine($fields, $values);
     $entity = Person::create($data);
@@ -224,7 +226,7 @@ class EntityParser {
    * @return Result|bool
    *   The result entity or FALSE if import failed.
    */
-  public function importResult($values, $importName, Grouping $grouping) {
+  public function importResult(array $values, $importName, Grouping $grouping) {
     // Get organization from grouping.
     $organizationId = empty($grouping->get('parent')->entity) ? $grouping->id() : $grouping->get('parent')->entity->id();
     $resultType = ResultType::getResultTypeByImportName($importName, $organizationId);
@@ -270,7 +272,7 @@ class EntityParser {
    * @return Data|bool
    *   The data entity or FALSE if import failed.
    */
-  public function importData($dataValue, $bundle) {
+  public function importData(array $dataValue, $bundle) {
     $fields = $this->getFields('data', $bundle);
     $data = array_combine($fields, [
       $bundle,
@@ -294,7 +296,7 @@ class EntityParser {
    * @return Term|bool
    *   The term entity or FALSE if import failed.
    */
-  public function importTerm($values) {
+  public function importTerm(array $values) {
     $fields = ['vid', 'name'];
     $data = array_combine($fields, $values);
     $existing_terms = taxonomy_term_load_multiple_by_name($data['name'], $data['vid']);
@@ -322,7 +324,7 @@ class EntityParser {
    * @return Event|bool
    *   The event entity or FALSE if import failed.
    */
-  public function importEvent($values) {
+  public function importEvent(array $values) {
     $fields = $this->getFields('event');
     $data = array_combine($fields, $values);
     $entity = Event::create($data);
