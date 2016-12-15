@@ -19,13 +19,10 @@ class ImportTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
    */
   public function getRoutes(EntityTypeInterface $entity_type) {
     $collection = parent::getRoutes($entity_type);
-
     $entity_type_id = $entity_type->id();
-
     if ($collection_route = $this->getCollectionRoute($entity_type)) {
       $collection->add("entity.{$entity_type_id}.collection", $collection_route);
     }
-
     return $collection;
   }
 
@@ -51,7 +48,6 @@ class ImportTypeHtmlRouteProvider extends AdminHtmlRouteProvider {
         ])
         ->setRequirement('_permission', $entity_type->getAdminPermission())
         ->setOption('_admin_route', TRUE);
-
       return $route;
     }
   }

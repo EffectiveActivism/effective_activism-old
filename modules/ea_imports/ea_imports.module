@@ -10,6 +10,7 @@ use Drupal\ea_imports\Parser\ICalendarParser;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 
 const EA_IMPORTS_BUNDLE_CSV = 'csv';
 const EA_IMPORTS_BUNDLE_ICALENDAR = 'icalendar';
@@ -272,5 +273,28 @@ function _ea_imports_validate_icalendar(&$form, FormStateInterface $form_state) 
   // Validate ICalendar headers.
   if (!$parsedICalendar->validate()) {
     $form_state->setErrorByName('field_url', $parsedICalendar->getErrorMessage());
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function ea_imports_entity_operation(EntityInterface $entity) {
+  if ($entity->bundle() === 'csv' || $entity->bundle() === 'icalendar') {
+    $operations['view'] = [
+      'title' => t('View'),
+      'url' => new Url('entity.import.canonical', [
+        'import' => $entity->id(),
+      ]),
+      'weight' => -100,
+    ];
+    $operations['publish'] = [
+      'title' => $entity->isPublished() ? t('Unpublish') : t('Publish'),
+      'url' => new Url('entity.import.publish_form', [
+        'import' => $entity->id(),
+      ]),
+      'weight' => 100,
+    ];
+    return $operations;
   }
 }

@@ -26,6 +26,8 @@ class BatchProcess {
       $context['sandbox']['progress'] = 1;
     }
     $context['message'] = t('Importing items...');
+    // Reload entity to get latest changes.
+    $entity = Import::load($entity->id());
     foreach ($parser->getNextBatch($context['sandbox']['progress']) as $item) {
       $itemId = $parser->importItem($item);
       if (intval($itemId) > 0 && !in_array($itemId, $context['results'])) {
