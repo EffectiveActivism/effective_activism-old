@@ -69,7 +69,6 @@ class EventHtmlRouteProvider extends DefaultHtmlRouteProvider {
       $parameters = [
         $entity_type_id => ['type' => 'entity:' . $entity_type_id],
       ];
-
       $route = new Route($entity_type->getLinkTemplate('add-form'));
       // Use the add form handler, if available, otherwise default.
       $operation = 'default';
@@ -83,7 +82,6 @@ class EventHtmlRouteProvider extends DefaultHtmlRouteProvider {
         ])
         ->setRequirement('_entity_create_access', $entity_type_id)
         ->setOption('parameters', $parameters);
-
       return $route;
     }
   }
@@ -111,7 +109,6 @@ class EventHtmlRouteProvider extends DefaultHtmlRouteProvider {
         ->setOption('parameters', [
           $entity_type_id => ['type' => 'entity:' . $entity_type_id],
         ]);
-
       // Entity types with serial IDs can specify this in their route
       // requirements, improving the matching process.
       if ($this->getEntityTypeIdKeyType($entity_type) === 'integer') {

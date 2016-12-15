@@ -65,7 +65,14 @@ class EventPublishForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getConfirmText() {
-    return $this->t('Do you wish to proceed?');
+    $confirmation = NULL;
+    if ($this->isPublished === TRUE) {
+      $confirmation = $this->t('Unpublish');
+    }
+    else {
+      $confirmation = $this->t('Publish');
+    }
+    return $confirmation;
   }
 
   /**
