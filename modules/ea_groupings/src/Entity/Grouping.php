@@ -31,6 +31,7 @@ use Drupal\user\UserInterface;
  *       "default" = "Drupal\ea_groupings\Form\GroupingForm",
  *       "add" = "Drupal\ea_groupings\Form\GroupingForm",
  *       "edit" = "Drupal\ea_groupings\Form\GroupingForm",
+ *       "publish" = "Drupal\ea_groupings\Form\GroupingPublishForm",
  *       "delete" = "Drupal\ea_groupings\Form\GroupingDeleteForm",
  *     },
  *     "access" = "Drupal\ea_groupings\GroupingAccessControlHandler",
@@ -55,6 +56,7 @@ use Drupal\user\UserInterface;
  *     "add-form" = "/effectiveactivism/groupings/add",
  *     "edit-form" = "/effectiveactivism/groupings/{grouping}/edit",
  *     "delete-form" = "/effectiveactivism/groupings/{grouping}/delete",
+ *     "publish-form" = "/effectiveactivism/groupings/{grouping}/publish",
  *     "collection" = "/effectiveactivism/groupings",
  *   },
  *   field_ui_base_route = "grouping.settings"

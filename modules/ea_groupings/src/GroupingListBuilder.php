@@ -20,8 +20,8 @@ class GroupingListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('Grouping ID');
     $header['name'] = $this->t('Name');
+    $header['parent'] = $this->t('Parent');
     return $header + parent::buildHeader();
   }
 
@@ -30,12 +30,19 @@ class GroupingListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     if ($entity->access('view', \Drupal::currentUser())) {
-      $row['id'] = $entity->id();
       $row['name'] = $this->l(
         $entity->label(),
         new Url(
-          'entity.grouping.edit_form', array(
+          'entity.grouping.canonical', array(
             'grouping' => $entity->id(),
+          )
+        )
+      );
+      $row['parent'] = empty($entity->get('parent')->entity) ? '' : $this->l(
+        $entity->get('parent')->entity->get('name')->value,
+        new Url(
+          'entity.grouping.canonical', array(
+            'grouping' => $entity->get('parent')->entity->id(),
           )
         )
       );
