@@ -288,7 +288,7 @@ class ICalendarParser extends EntityParser implements ParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function importItem($values) {
+  public function importItem(array $values) {
     // Only import item if it doesn't exist already for the selected grouping.
     $uid = !empty($values['UID']) ? $values['UID'] : NULL;
     if (!empty($uid) && !$this->uidExists($uid)) {
