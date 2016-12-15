@@ -269,7 +269,7 @@ class CSVParser extends EntityParser implements ParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function getNextBatch($position) {
+  public function getNextBatch(array $position) {
     $this->fileHandle = fopen($this->filePath, "r");
     $this->row = 0;
     $itemCount = 0;
@@ -294,7 +294,7 @@ class CSVParser extends EntityParser implements ParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function importItem($values) {
+  public function importItem(array $values) {
     // Create event, if any.
     if ($this->isEvent($values)) {
       $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
