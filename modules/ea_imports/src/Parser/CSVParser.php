@@ -269,7 +269,7 @@ class CSVParser extends EntityParser implements ParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function getNextBatch(array $position) {
+  public function getNextBatch($position) {
     $this->fileHandle = fopen($this->filePath, "r");
     $this->row = 0;
     $itemCount = 0;

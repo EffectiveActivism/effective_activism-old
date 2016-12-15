@@ -264,7 +264,7 @@ class EntityParser {
   /**
    * Imports a data entity.
    *
-   * @param array $dataValue
+   * @param string $dataValue
    *   The data value.
    * @param string $bundle
    *   The bundle of the result entity.
@@ -272,7 +272,7 @@ class EntityParser {
    * @return Data|bool
    *   The data entity or FALSE if import failed.
    */
-  public function importData(array $dataValue, $bundle) {
+  public function importData($dataValue, $bundle) {
     $fields = $this->getFields('data', $bundle);
     $data = array_combine($fields, [
       $bundle,

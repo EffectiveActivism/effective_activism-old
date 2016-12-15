@@ -20,13 +20,13 @@ interface ParserInterface {
   /**
    * Get the items to be imported.
    *
-   * @param array $position
+   * @param int $position
    *   The position to start from.
    *
    * @return array
    *   The items to import.
    */
-  public function getNextBatch(array $position);
+  public function getNextBatch($position);
 
   /**
    * Imports parsed items.
