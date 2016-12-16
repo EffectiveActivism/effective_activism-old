@@ -106,6 +106,11 @@ class AccessRestrictionsTest extends WebTestBase {
     $this->performGroupingManagement($this->group2, $this->manager1);
     // Verify that manager1 can create events for group 2.
     $this->performEventManagement($this->group2, $this->manager1);
+    // Import event.
+    $this->performImportManagement($this->group1, $this->manager1);
+    // Verify that manager2 cannot manage import.
+    $this->drupalLogin($this->manager2);
+    $this->failImportManagement();
   }
 
   /**
@@ -205,6 +210,39 @@ class AccessRestrictionsTest extends WebTestBase {
     $this->assertResponse(403);
     // User has no access to event edit page.
     $this->drupalGet('effectiveactivism/events/1/edit');
+    $this->assertResponse(403);
+  }
+
+  /**
+   * Test import management.
+   *
+   * @param Grouping $grouping
+   *   The grouping to test with.
+   * @param User $user
+   *   The user to test with.
+   */
+  private function performImportManagement(Grouping $grouping, User $user) {
+    $this->drupalGet('effectiveactivism/imports/add/csv');
+    $this->assertResponse(200);
+    $this->drupalPostForm(NULL, array(
+      'grouping[0][target_id]' => $grouping->id(),
+      'user_id[0][target_id]' => sprintf('%s (%d)', $user->getAccountName(), $user->id()),
+      'files[field_file_csv_0]' => $this->container->get('file_system')->realpath(drupal_get_path('module', 'ea_imports') . '/src/Tests/sample.csv'),
+    ), t('Save'));
+    $this->assertResponse(200);
+    $this->assertText('Created the import.', 'Added a new import entity.');
+    $this->assertText('One item imported', 'Successfully imported event');
+    $this->drupalGet('effectiveactivism/events/2');
+    $this->assertResponse(200);
+    $this->assertText(sprintf('%s - %s', self::STARTDATE, self::STARTTIME), 'Start date and time found.');
+    $this->assertText(sprintf('%s - %s', self::ENDDATE, self::ENDTIME), 'End date and time found.');
+  }
+
+  /**
+   * Test access denied for other imports.
+   */
+  private function failImportManagement() {
+    $this->drupalGet('effectiveactivism/imports/1');
     $this->assertResponse(403);
   }
 
