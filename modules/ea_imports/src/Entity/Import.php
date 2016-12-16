@@ -23,7 +23,6 @@ use Drupal\user\UserInterface;
  *     "view_builder" = "Drupal\Core\Entity\EntityViewBuilder",
  *     "list_builder" = "Drupal\ea_imports\ImportListBuilder",
  *     "views_data" = "Drupal\ea_imports\Entity\ImportViewsData",
- *     "translation" = "Drupal\ea_imports\ImportTranslationHandler",
  *
  *     "form" = {
  *       "default" = "Drupal\ea_imports\Form\ImportForm",

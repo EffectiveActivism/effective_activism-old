@@ -5,12 +5,13 @@
  * Contains ea_imports.module.
  */
 
-use Drupal\ea_imports\Parser\CSVParser;
-use Drupal\ea_imports\Parser\ICalendarParser;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\ea_imports\Parser\CSVParser;
+use Drupal\ea_imports\Parser\ICalendarParser;
+use Drupal\ea_permissions\Permission;
 
 const EA_IMPORTS_BUNDLE_CSV = 'csv';
 const EA_IMPORTS_BUNDLE_ICALENDAR = 'icalendar';
