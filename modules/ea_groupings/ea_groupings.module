@@ -8,6 +8,7 @@
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 use Drupal\ea_results\Entity\ResultType;
 use Drupal\taxonomy\Entity\Vocabulary;
 
@@ -83,5 +84,28 @@ function ea_groupings_grouping_insert(EntityInterface $entity) {
       // unique and exclusive to the created organization.
       \Drupal::logger('ea_groupings')->error(sprintf('Vocabulary with vid %s already exists.', $vid));
     }
+  }
+}
+
+/**
+ * Implements hook_entity_operation().
+ */
+function ea_groupings_entity_operation(EntityInterface $entity) {
+  if ($entity->bundle() === 'grouping') {
+    $operations['view'] = [
+      'title' => t('View'),
+      'url' => new Url('entity.grouping.canonical', [
+        'grouping' => $entity->id(),
+      ]),
+      'weight' => -100,
+    ];
+    $operations['publish'] = [
+      'title' => $entity->isPublished() ? t('Unpublish') : t('Publish'),
+      'url' => new Url('entity.grouping.publish_form', [
+        'grouping' => $entity->id(),
+      ]),
+      'weight' => 100,
+    ];
+    return $operations;
   }
 }

@@ -132,7 +132,7 @@ class ResultType extends ConfigEntityBundleBase implements ResultTypeInterface {
    * @return bool
    *   Whether the machine name exists within the organization or not.
    */
-  public static function checkTypedImportNameExists($value, $elements, FormStateInterface $form_state) {
+  public static function checkTypedImportNameExists($value, array $elements, FormStateInterface $form_state) {
     $organizationId = $form_state->getValue('organization');
     return !empty($organizationId) ? !self::isUniqueImportName($value, $organizationId) : NULL;
   }

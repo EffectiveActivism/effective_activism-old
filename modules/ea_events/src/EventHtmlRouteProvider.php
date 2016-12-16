@@ -25,6 +25,9 @@ class EventHtmlRouteProvider extends DefaultHtmlRouteProvider {
     if ($add_form_route = $this->getAddFormRoute($entity_type)) {
       $collection->add("entity.{$entity_type_id}.add_form", $add_form_route);
     }
+    if ($publish_form_route = $this->getPublishFormRoute($entity_type)) {
+      $collection->add("entity.{$entity_type_id}.publish_form", $publish_form_route);
+    }
     return $collection;
   }
 
@@ -66,7 +69,6 @@ class EventHtmlRouteProvider extends DefaultHtmlRouteProvider {
       $parameters = [
         $entity_type_id => ['type' => 'entity:' . $entity_type_id],
       ];
-
       $route = new Route($entity_type->getLinkTemplate('add-form'));
       // Use the add form handler, if available, otherwise default.
       $operation = 'default';
@@ -80,7 +82,38 @@ class EventHtmlRouteProvider extends DefaultHtmlRouteProvider {
         ])
         ->setRequirement('_entity_create_access', $entity_type_id)
         ->setOption('parameters', $parameters);
+      return $route;
+    }
+  }
 
+  /**
+   * Gets the publish-form route.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
+   *   The entity type.
+   *
+   * @return \Symfony\Component\Routing\Route|null
+   *   The generated route, if available.
+   */
+  protected function getPublishFormRoute(EntityTypeInterface $entity_type) {
+    if ($entity_type->hasLinkTemplate('publish-form')) {
+      $entity_type_id = $entity_type->id();
+      $route = new Route($entity_type->getLinkTemplate('publish-form'));
+      $operation = 'publish';
+      $route
+        ->setDefaults([
+          '_form' => '\Drupal\ea_events\Form\EventPublishForm',
+          '_title' => "Publish {$entity_type->getLabel()}",
+        ])
+        ->setRequirement('_entity_access', "{$entity_type_id}.update")
+        ->setOption('parameters', [
+          $entity_type_id => ['type' => 'entity:' . $entity_type_id],
+        ]);
+      // Entity types with serial IDs can specify this in their route
+      // requirements, improving the matching process.
+      if ($this->getEntityTypeIdKeyType($entity_type) === 'integer') {
+        $route->setRequirement($entity_type_id, '\d+');
+      }
       return $route;
     }
   }

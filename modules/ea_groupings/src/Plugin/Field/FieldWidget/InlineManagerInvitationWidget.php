@@ -98,7 +98,7 @@ class InlineManagerInvitationWidget extends InlineEntityFormComplex {
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The form state of the form.
    */
-  static public function invite($form, FormStateInterface $form_state) {
+  static public function invite(array $form, FormStateInterface $form_state) {
     $gid = $form_state->getTemporaryValue('gid');
     $email = $form_state->getValue(['managers', 'form', 'invite_email_address']);
     $status = NULL;

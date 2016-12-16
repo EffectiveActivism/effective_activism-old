@@ -63,7 +63,7 @@ class Permission {
    * @return \Drupal\Core\Access\AccessResult
    *   Returns an access result.
    */
-  public static function allowedIfInGroupings(AccountInterface $account, $groupings) {
+  public static function allowedIfInGroupings(AccountInterface $account, array $groupings) {
     if (!empty($groupings)) {
       foreach ($groupings as $grouping) {
         if (

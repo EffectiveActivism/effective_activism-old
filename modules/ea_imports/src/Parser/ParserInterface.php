@@ -20,7 +20,7 @@ interface ParserInterface {
   /**
    * Get the items to be imported.
    *
-   * @param array $position
+   * @param int $position
    *   The position to start from.
    *
    * @return array
@@ -37,7 +37,7 @@ interface ParserInterface {
    * @return int|bool
    *   Returns item entity id or FALSE if import failed.
    */
-  public function importItem($values);
+  public function importItem(array $values);
 
   /**
    * Validates items.

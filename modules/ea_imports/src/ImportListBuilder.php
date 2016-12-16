@@ -22,6 +22,7 @@ class ImportListBuilder extends EntityListBuilder {
   public function buildHeader() {
     $header['id'] = $this->t('Import ID');
     $header['grouping'] = $this->t('Grouping');
+    $header['events'] = $this->t('Events');
     return $header + parent::buildHeader();
   }
 
@@ -32,13 +33,14 @@ class ImportListBuilder extends EntityListBuilder {
     /* @var $entity \Drupal\ea_imports\Entity\Import */
     $row['id'] = $entity->id();
     $row['grouping'] = $this->l(
-      $this->t('Edit'),
+      $entity->get('grouping')->entity->get('name')->value,
       new Url(
-        'entity.import.edit_form', array(
-          'import' => $entity->id(),
-        )
+        'entity.grouping.canonical', [
+          'grouping' => $entity->get('grouping')->entity->id(),
+        ]
       )
     );
+    $row['events'] = $entity->get('events')->count();
     return $row + parent::buildRow($entity);
   }
 

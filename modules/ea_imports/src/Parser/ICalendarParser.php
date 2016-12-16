@@ -172,7 +172,7 @@ class ICalendarParser extends EntityParser implements ParserInterface {
    * @param array $values
    *   The values to validate.
    */
-  private function validateItem($values) {
+  private function validateItem(array $values) {
     foreach ($values as $key => $value) {
       switch ($key) {
         case 'DTSTART':
@@ -229,7 +229,7 @@ class ICalendarParser extends EntityParser implements ParserInterface {
    * @return bool
    *   Whether or not the values contains an event.
    */
-  private function isEvent($values) {
+  private function isEvent(array $values) {
     return !empty($values['DTSTART']);
   }
 
@@ -288,7 +288,7 @@ class ICalendarParser extends EntityParser implements ParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function importItem($values) {
+  public function importItem(array $values) {
     // Only import item if it doesn't exist already for the selected grouping.
     $uid = !empty($values['UID']) ? $values['UID'] : NULL;
     if (!empty($uid) && !$this->uidExists($uid)) {

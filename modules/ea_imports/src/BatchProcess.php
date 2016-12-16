@@ -20,12 +20,14 @@ class BatchProcess {
    * @param array $context
    *   The context.
    */
-  public static function import(ParserInterface $parser, Import $entity, &$context) {
+  public static function import(ParserInterface $parser, Import $entity, array &$context) {
     // Set inital batch values.
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 1;
     }
     $context['message'] = t('Importing items...');
+    // Reload entity to get latest changes.
+    $entity = Import::load($entity->id());
     foreach ($parser->getNextBatch($context['sandbox']['progress']) as $item) {
       $itemId = $parser->importItem($item);
       if (intval($itemId) > 0 && !in_array($itemId, $context['results'])) {
@@ -49,7 +51,7 @@ class BatchProcess {
    * @param array $operations
    *   The operations performed.
    */
-  public static function finished($success, $results, $operations) {
+  public static function finished($success, array $results, array $operations) {
     if ($success) {
       drupal_set_message(\Drupal::translation()->formatPlural(
         count(array_unique($results, SORT_NUMERIC)),

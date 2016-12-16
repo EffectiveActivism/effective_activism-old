@@ -120,31 +120,31 @@ class CSVParser extends EntityParser implements ParserInterface {
           break;
 
         case INVALID_DATE:
-          $this->errorMessage = t('The CSV file contains a row with an incorrect date at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+          $this->errorMessage = t('The CSV file contains a row with an incorrect date at line @line, column @column.', ['@line' => $exception->getDataLine() + 1, '@column' => $exception->getDataColumn()]);
           break;
 
         case INVALID_PARTICIPANT:
-          $this->errorMessage = t('The CSV file contains a row with an incorrect participant at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+          $this->errorMessage = t('The CSV file contains a row with an incorrect participant at line @line, column @column.', ['@line' => $exception->getDataLine() + 1, '@column' => $exception->getDataColumn()]);
           break;
 
         case INVALID_RESULT:
-          $this->errorMessage = t('The CSV file contains a row with an incorrect result at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+          $this->errorMessage = t('The CSV file contains a row with an incorrect result at line @line, column @column.', ['@line' => $exception->getDataLine() + 1, '@column' => $exception->getDataColumn()]);
           break;
 
         case INVALID_DATA:
-          $this->errorMessage = t('The CSV file contains a row with incorrect data at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+          $this->errorMessage = t('The CSV file contains a row with incorrect data at line @line, column @column.', ['@line' => $exception->getDataLine() + 1, '@column' => $exception->getDataColumn()]);
           break;
 
         case INVALID_EVENT:
-          $this->errorMessage = t('The CSV file contains a row with an incorrect event at line @line.', ['@line' => $exception->getDataLine()]);
+          $this->errorMessage = t('The CSV file contains a row with an incorrect event at line @line.', ['@line' => $exception->getDataLine() + 1]);
           break;
 
         case WRONG_ROW_COUNT:
-          $this->errorMessage = t('The CSV file contains a row with incorrect number of columns at line @line.', ['@line' => $exception->getDataLine()]);
+          $this->errorMessage = t('The CSV file contains a row with incorrect number of columns at line @line.', ['@line' => $exception->getDataLine() + 1]);
           break;
 
         case PERMISSION_DENIED:
-          $this->errorMessage = t('The CSV file contains a row with an inaccessable value at line @line, column @column.', ['@line' => $exception->getDataLine(), '@column' => $exception->getDataColumn()]);
+          $this->errorMessage = t('The CSV file contains a row with an inaccessable value at line @line, column @column.', ['@line' => $exception->getDataLine() + 1, '@column' => $exception->getDataColumn()]);
           break;
 
       }
@@ -190,7 +190,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    * @param array $row
    *   The row to validate.
    */
-  private function validateRow($row) {
+  private function validateRow(array $row) {
     foreach ($row as $column => $data) {
       $this->column = $column;
       switch (self::CSVHEADERFORMAT[$column]) {
@@ -294,7 +294,7 @@ class CSVParser extends EntityParser implements ParserInterface {
   /**
    * {@inheritdoc}
    */
-  public function importItem($values) {
+  public function importItem(array $values) {
     // Create event, if any.
     if ($this->isEvent($values)) {
       $participant = !empty($values[array_search('participants', self::CSVHEADERFORMAT)]) ? $this->importParticipant($this->getValue($values, 'participants')) : NULL;
@@ -356,7 +356,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    * @return bool
    *   Whether or not the row contains an event.
    */
-  private function isEvent($row) {
+  private function isEvent(array $row) {
     return !empty($row[array_search('start_date', self::CSVHEADERFORMAT)]);
   }
 
@@ -371,7 +371,7 @@ class CSVParser extends EntityParser implements ParserInterface {
    * @return array
    *   Return values.
    */
-  private function getValue($row, $columnName) {
+  private function getValue(array $row, $columnName) {
     return array_map('trim', explode('|', $row[array_search($columnName, self::CSVHEADERFORMAT)]));
   }
 
