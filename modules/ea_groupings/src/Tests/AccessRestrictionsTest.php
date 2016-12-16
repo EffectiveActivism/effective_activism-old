@@ -232,10 +232,6 @@ class AccessRestrictionsTest extends WebTestBase {
     $this->assertResponse(200);
     $this->assertText('Created the import.', 'Added a new import entity.');
     $this->assertText('One item imported', 'Successfully imported event');
-    $this->drupalGet('effectiveactivism/events/2');
-    $this->assertResponse(200);
-    $this->assertText(sprintf('%s - %s', self::STARTDATE, self::STARTTIME), 'Start date and time found.');
-    $this->assertText(sprintf('%s - %s', self::ENDDATE, self::ENDTIME), 'End date and time found.');
   }
 
   /**
