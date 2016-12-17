@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_imports\Tests;
 
-use Drupal\ea_permissions\Roles;
 use Drupal\ea_groupings\Entity\Grouping;
 
 /**
@@ -50,8 +49,8 @@ class ICalendarImportTest extends ImportWebTestBase {
     $systemDate->set('timezone.default', 'UTC');
     $systemDate->save(TRUE);
     // Create users.
-    $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
-    $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
+    $this->manager = $this->drupalCreateUser();
+    $this->organizer = $this->drupalCreateUser();
     // Create grouping.
     $this->grouping = Grouping::create(array(
       'user_id' => $this->manager->id(),

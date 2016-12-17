@@ -3,7 +3,6 @@
 namespace Drupal\ea_groupings\Entity;
 
 use Drupal\ea_groupings\GroupingInterface;
-use Drupal\ea_permissions\Roles;
 use Drupal\ea_people\Entity\Person;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
@@ -274,33 +273,36 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
   /**
    * {@inheritdoc}
    */
-  public static function getAllGroupingsByRole($role, AccountProxyInterface $user = NULL) {
+  public static function getAllGroupingsOrganizedByUser(AccountProxyInterface $user = NULL) {
     $result = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
     }
-    switch ($role) {
-      case Roles::ORGANIZER_ROLE:
-        $query = \Drupal::entityQuery('grouping');
-        $result = $query
-          ->condition('organizers', $user->id())
-          ->execute();
-        break;
+    $query = \Drupal::entityQuery('grouping');
+    $result = $query
+      ->condition('organizers', $user->id())
+      ->execute();
+    return Grouping::loadMultiple($result);
+  }
 
-      case Roles::MANAGER_ROLE:
-        $query = \Drupal::entityQuery('grouping');
-        $result = $query
-          ->condition('managers', $user->id())
-          ->execute();
-        // Also include groupings that are children to the managers groupings.
-        if (!empty($result)) {
-          $query = \Drupal::entityQuery('grouping');
-          $result += $query
-            ->condition('parent', $result, 'IN')
-            ->execute();
-        }
-        break;
-
+  /**
+   * {@inheritdoc}
+   */
+  public static function getAllGroupingsManagedByUser(AccountProxyInterface $user = NULL) {
+    $result = [];
+    if (empty($user)) {
+      $user = \Drupal::currentUser();
+    }
+    $query = \Drupal::entityQuery('grouping');
+    $result = $query
+      ->condition('managers', $user->id())
+      ->execute();
+    // Also include groupings that are children to the managers groupings.
+    if (!empty($result)) {
+      $query = \Drupal::entityQuery('grouping');
+      $result += $query
+        ->condition('parent', $result, 'IN')
+        ->execute();
     }
     return Grouping::loadMultiple($result);
   }
@@ -308,29 +310,32 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
   /**
    * {@inheritdoc}
    */
-  public static function getAllOrganizationsByRole($role, AccountProxyInterface $user = NULL) {
+  public static function getAllOrganizationsManagedByUser(AccountProxyInterface $user = NULL) {
     $result = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
     }
-    switch ($role) {
-      case Roles::ORGANIZER_ROLE:
-        $query = \Drupal::entityQuery('grouping');
-        $result = $query
-          ->notExists('parent')
-          ->condition('organizers', $user->id())
-          ->execute();
-        break;
+    $query = \Drupal::entityQuery('grouping');
+    $result = $query
+      ->notExists('parent')
+      ->condition('managers', $user->id())
+      ->execute();
+    return Grouping::loadMultiple($result);
+  }
 
-      case Roles::MANAGER_ROLE:
-        $query = \Drupal::entityQuery('grouping');
-        $result = $query
-          ->notExists('parent')
-          ->condition('managers', $user->id())
-          ->execute();
-        break;
-
+  /**
+   * {@inheritdoc}
+   */
+  public static function getAllOrganizationsOrganizedByUser(AccountProxyInterface $user = NULL) {
+    $result = [];
+    if (empty($user)) {
+      $user = \Drupal::currentUser();
     }
+    $query = \Drupal::entityQuery('grouping');
+    $result = $query
+      ->notExists('parent')
+      ->condition('organizers', $user->id())
+      ->execute();
     return Grouping::loadMultiple($result);
   }
 

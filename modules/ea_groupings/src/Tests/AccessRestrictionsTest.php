@@ -3,7 +3,6 @@
 namespace Drupal\ea_groupings\Tests;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_permissions\Roles;
 use Drupal\simpletest\WebTestBase;
 use Drupal\user\Entity\User;
 
@@ -73,10 +72,10 @@ class AccessRestrictionsTest extends WebTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->manager1 = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
-    $this->manager2 = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
-    $this->organizer1 = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
-    $this->organizer2 = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
+    $this->manager1 = $this->drupalCreateUser();
+    $this->manager2 = $this->drupalCreateUser();
+    $this->organizer1 = $this->drupalCreateUser();
+    $this->organizer2 = $this->drupalCreateUser();
     // Create groups and add managers and organizers.
     $this->group1 = $this->createGrouping(self::GROUPNAME1, $this->manager1, $this->organizer1);
     $this->group2 = $this->createGrouping(self::GROUPNAME2, $this->manager2, $this->organizer2);

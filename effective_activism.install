@@ -5,7 +5,6 @@
  * Install and update functions for the effective_activism module.
  */
 
-use Drupal\ea_permissions\Roles;
 use Drupal\user\Entity\Role;
 
 /**
@@ -22,20 +21,13 @@ function effective_activism_install() {
       'description' => 'Provides functions for using the Effective Activism module.',
     ])->save();
   }
-  // Create organizer and set permissions.
-  if (empty(Role::load(Roles::ORGANIZER_ROLE))) {
-    $role = Role::create(array('id' => Roles::ORGANIZER_ROLE, 'label' => 'Organizer'));
-    foreach (Roles::ORGANIZER_PERMISSIONS as $permission) {
-      $role->grantPermission($permission);
-    }
-    $role->save();
-  }
-  // Create manager and set permissions.
-  if (empty(Role::load(Roles::MANAGER_ROLE))) {
-    $role = Role::create(array('id' => Roles::MANAGER_ROLE, 'label' => 'Manager'));
-    foreach (Roles::MANAGER_PERMISSIONS as $permission) {
-      $role->grantPermission($permission);
-    }
-    $role->save();
+  $role = Role::load(DRUPAL_AUTHENTICATED_RID);
+  if (!empty($role)) {
+    $role
+      // Location field permissions.
+      ->grantPermission('use location autocomplete')
+      // Use the administration toolbar.
+      ->grantPermission('access toolbar')
+      ->save();
   }
 }

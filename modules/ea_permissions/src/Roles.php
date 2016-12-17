@@ -14,30 +14,10 @@ class Roles {
   const ORGANIZER_ROLE_ID = 2;
 
   /**
-   * Defines the organizer permissions.
-   */
-  const ORGANIZER_PERMISSIONS = array(
-    // Location field permissions.
-    'use location autocomplete',
-    // Use the administration toolbar.
-    'access toolbar',
-  );
-
-  /**
    * Defines the manager role.
    */
   const MANAGER_ROLE = 'manager';
   const MANAGER_ROLE_ID = 1;
-
-  /**
-   * Defines the manager permissions.
-   */
-  const MANAGER_PERMISSIONS = array(
-    // Location field permissions.
-    'use location autocomplete',
-    // Use the administration toolbar.
-    'access toolbar',
-  );
 
   /**
    * Returns the role name corresponding to the role id.

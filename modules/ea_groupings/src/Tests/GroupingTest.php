@@ -3,7 +3,6 @@
 namespace Drupal\ea_groupings\Tests;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_permissions\Roles;
 use Drupal\ea_results\Entity\ResultType;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\simpletest\WebTestBase;
@@ -30,8 +29,8 @@ class GroupingTest extends WebTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
-    $organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
+    $manager = $this->drupalCreateUser();
+    $organizer = $this->drupalCreateUser();
     // Create group and add manager and organizer.
     $grouping = Grouping::create([
       'user_id' => $manager->id(),

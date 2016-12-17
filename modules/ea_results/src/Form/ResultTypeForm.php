@@ -4,7 +4,6 @@ namespace Drupal\ea_results\Form;
 
 use Drupal\ea_results\Entity\ResultType;
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_permissions\Roles;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -26,7 +25,7 @@ class ResultTypeForm extends EntityForm {
       return $value !== 0;
     }) : [];
     // Get available organizations.
-    $availableOrganizations = array_reduce(Grouping::getAllOrganizationsByRole(Roles::MANAGER_ROLE), function ($result, $grouping) {
+    $availableOrganizations = array_reduce(Grouping::getAllOrganizationsManagedByUser(), function ($result, $grouping) {
       $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
       return $result;
     }, []);

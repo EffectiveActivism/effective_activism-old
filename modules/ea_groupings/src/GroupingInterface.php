@@ -124,7 +124,7 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
   public static function isAnyMember(Person $person);
 
   /**
-   * Get groupings that a user is attached to.
+   * Get all groupings that a user is attached to.
    *
    * @param \Drupal\Core\Session\AccountProxyInterface $user
    *   The user object to check relationship for.
@@ -135,29 +135,47 @@ interface GroupingInterface extends ContentEntityInterface, EntityChangedInterfa
   public static function getAllGroupingsByUser(AccountProxyInterface $user);
 
   /**
-   * Get groupings that a user and role is attached to.
+   * Get groupings that a user is manager of.
    *
-   * @param string $role
-   *   The user role to filter by.
    * @param \Drupal\Core\Session\AccountProxyInterface $user
    *   The user object to check relationship for.
    *
    * @return array
-   *   An array of groupings that the user is attached to.
+   *   An array of groupings that the user is manager of.
    */
-  public static function getAllGroupingsByRole($role, AccountProxyInterface $user);
+  public static function getAllGroupingsManagedByUser(AccountProxyInterface $user);
 
   /**
-   * Get organizations that a user and role is attached to.
+   * Get groupings that a user is organizer of.
    *
-   * @param string $role
-   *   The user role to filter by.
    * @param \Drupal\Core\Session\AccountProxyInterface $user
    *   The user object to check relationship for.
    *
    * @return array
-   *   An array of organizations that the user is attached to.
+   *   An array of groupings that the user is organizer of.
    */
-  public static function getAllOrganizationsByRole($role, AccountProxyInterface $user);
+  public static function getAllGroupingsOrganizedByUser(AccountProxyInterface $user);
+
+  /**
+   * Get organizations that a user is manager of.
+   *
+   * @param \Drupal\Core\Session\AccountProxyInterface $user
+   *   The user object to check relationship for.
+   *
+   * @return array
+   *   An array of organizations that the user is manager of.
+   */
+  public static function getAllOrganizationsManagedByUser(AccountProxyInterface $user);
+
+  /**
+   * Get organizations that a user is organizer of.
+   *
+   * @param \Drupal\Core\Session\AccountProxyInterface $user
+   *   The user object to check relationship for.
+   *
+   * @return array
+   *   An array of organizations that the user is organizer of.
+   */
+  public static function getAllOrganizationsOrganizedByUser(AccountProxyInterface $user);
 
 }

@@ -3,7 +3,6 @@
 namespace Drupal\ea_groupings\Plugin\Field\FieldWidget;
 
 use Drupal\ea_groupings\Entity\Grouping;
-use Drupal\ea_permissions\Roles;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -27,7 +26,7 @@ class ParentGroupingWidget extends WidgetBase {
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
     $currentGrouping = $form_state->getFormObject()->getEntity();
     $currentId = !empty($currentGrouping) ? (int) $currentGrouping->id() : NULL;
-    $allowed_groupings = Grouping::getAllOrganizationsByRole(Roles::MANAGER_ROLE);
+    $allowed_groupings = Grouping::getAllOrganizationsManagedByUser();
     $options = [];
     foreach ($allowed_groupings as $gid => $grouping) {
       if ($gid !== $currentId) {
