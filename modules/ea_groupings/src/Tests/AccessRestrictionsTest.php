@@ -258,8 +258,8 @@ class AccessRestrictionsTest extends WebTestBase {
   /**
    * Create grouping.
    *
-   * @param string $groupName
-   *   Name of the grouping.
+   * @param string $groupTitle
+   *   Title of the grouping.
    * @param Drupal\user\Entity\User $manager
    *   The manager of the grouping.
    * @param Drupal\user\Entity\User $organizer
