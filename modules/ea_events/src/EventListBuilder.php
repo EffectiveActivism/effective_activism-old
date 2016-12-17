@@ -34,7 +34,7 @@ class EventListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $entity) {
     if ($entity->access('view', \Drupal::currentUser())) {
       $row['grouping'] = $this->l(
-        $entity->get('grouping')->entity->get('name')->value,
+        $entity->get('grouping')->entity->getTitle(),
         new Url('entity.grouping.canonical', [
           'grouping' => $entity->get('grouping')->entity->id(),
         ])

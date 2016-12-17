@@ -44,7 +44,7 @@ use Drupal\user\UserInterface;
  *   entity_keys = {
  *     "id" = "id",
  *     "revision" = "revision_id",
- *     "label" = "name",
+ *     "label" = "title",
  *     "uuid" = "uuid",
  *     "uid" = "user_id",
  *     "langcode" = "langcode",
@@ -67,7 +67,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
 
   const WEIGHTS = [
     'user_id',
-    'name',
+    'title',
     'description',
     'parent',
     'phone_number',
@@ -93,15 +93,15 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
   /**
    * {@inheritdoc}
    */
-  public function getName() {
-    return $this->get('name')->value;
+  public function getTitle() {
+    return $this->get('title')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setName($name) {
-    $this->set('name', $name);
+  public function setTitle($title) {
+    $this->set('title', $title);
     return $this;
   }
 
@@ -367,9 +367,9 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
           'placeholder' => '',
         ),
       ));
-    $fields['name'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Name'))
-      ->setDescription(t('The name of the Grouping entity.'))
+    $fields['title'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Title'))
+      ->setDescription(t('The title of the Grouping entity.'))
       ->setRevisionable(TRUE)
       ->setRequired(TRUE)
       ->setSettings(array(
@@ -380,11 +380,11 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->setDisplayOptions('view', array(
         'label' => 'above',
         'type' => 'string',
-        'weight' => array_search('name', self::WEIGHTS),
+        'weight' => array_search('title', self::WEIGHTS),
       ))
       ->setDisplayOptions('form', array(
         'type' => 'string_textfield',
-        'weight' => array_search('name', self::WEIGHTS),
+        'weight' => array_search('title', self::WEIGHTS),
       ));
     $fields['phone_number'] = BaseFieldDefinition::create('telephone')
       ->setLabel(t('Phone number'))

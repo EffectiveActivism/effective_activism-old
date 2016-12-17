@@ -33,7 +33,7 @@ class ImportListBuilder extends EntityListBuilder {
     if ($entity->access('view', \Drupal::currentUser())) {
       $row['created'] = \DateTime::createFromFormat('U', $entity->getCreatedTime())->format('d/m Y H:i');
       $row['grouping'] = $this->l(
-        $entity->get('grouping')->entity->get('name')->value,
+        $entity->get('grouping')->entity->getTitle(),
         new Url(
           'entity.grouping.canonical', [
             'grouping' => $entity->get('grouping')->entity->id(),

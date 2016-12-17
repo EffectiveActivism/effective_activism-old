@@ -45,7 +45,7 @@ class InvitationForm extends FormBase {
     $form['form']['invitation'] = [
       '#type' => 'markup',
       '#markup' => '<p>' . $this->t('You have been invited to join <em>@grouping</em> as @role. Please accept or decline the invitation.', [
-        '@grouping' => $grouping->getName(),
+        '@grouping' => $grouping->getTitle(),
         '@role' => $role,
       ]) . '</p>',
     ];
@@ -78,7 +78,7 @@ class InvitationForm extends FormBase {
           'target' => '_blank',
         ],
       ]);
-      $link = Link::fromTextAndUrl($grouping->getName(), $url)->toString();
+      $link = Link::fromTextAndUrl($grouping->getTitle(), $url)->toString();
       // Add current user to grouping with specified role.
       switch ($roleId) {
         case Roles::MANAGER_ROLE_ID:

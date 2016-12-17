@@ -30,7 +30,7 @@ class ParentGroupingWidget extends WidgetBase {
     $options = [];
     foreach ($allowed_groupings as $gid => $grouping) {
       if ($gid !== $currentId) {
-        $options[$gid] = $grouping->getName();
+        $options[$gid] = $grouping->getTitle();
       }
     }
     // Force a default value if possible.

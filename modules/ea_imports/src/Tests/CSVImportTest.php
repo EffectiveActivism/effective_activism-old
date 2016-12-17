@@ -101,7 +101,7 @@ class CSVImportTest extends ImportWebTestBase {
   private function createGrouping() {
     $grouping = Grouping::create(array(
       'user_id' => $this->manager->id(),
-      'name' => ImportWebTestBase::GROUPNAME,
+      'title' => ImportWebTestBase::GROUPTITLE,
       'timezone' => \Drupal::config('system.date')->get('timezone.default'),
       'managers' => $this->manager->id(),
       'organizers' => $this->organizer->id(),

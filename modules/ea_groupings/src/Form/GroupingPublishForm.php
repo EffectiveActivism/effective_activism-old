@@ -36,13 +36,13 @@ class GroupingPublishForm extends ConfirmFormBase {
     else {
       $this->isPublished = $entity->isPublished();
       if ($this->isPublished === TRUE) {
-        $question = $this->t('Are you sure you want to unpublish <em>@name</em>?', [
-          '@name' => $entity->get('name')->value,
+        $question = $this->t('Are you sure you want to unpublish <em>@title</em>?', [
+          '@title' => $entity->getTitle(),
         ]);
       }
       else {
-        $question = $this->t('Are you sure you want to publish <em>@name</em>?', [
-          '@name' => $entity->get('name')->value,
+        $question = $this->t('Are you sure you want to publish <em>@title</em>?', [
+          '@title' => $entity->getTitle(),
         ]);
       }
     }
@@ -99,13 +99,13 @@ class GroupingPublishForm extends ConfirmFormBase {
     if (is_bool($this->isPublished)) {
       $this->publishGrouping($entity);
       if ($this->isPublished === TRUE) {
-        drupal_set_message(t('<em>@name</em> has been unpublished', [
-          '@name' => $entity->get('name')->value,
+        drupal_set_message(t('<em>@title</em> has been unpublished', [
+          '@title' => $entity->getTitle(),
         ]));
       }
       else {
-        drupal_set_message(t('<em>@name</em> has been published', [
-          '@name' => $entity->get('name')->value,
+        drupal_set_message(t('<em>@title</em> has been published', [
+          '@title' => $entity->getTitle(),
         ]));
       }
     }

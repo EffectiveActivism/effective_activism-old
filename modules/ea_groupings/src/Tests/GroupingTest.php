@@ -34,7 +34,7 @@ class GroupingTest extends WebTestBase {
     // Create group and add manager and organizer.
     $grouping = Grouping::create([
       'user_id' => $manager->id(),
-      'name' => 'Test group 1',
+      'title' => 'Test group 1',
       'timezone' => \Drupal::config('system.date')->get('timezone.default'),
       'managers' => $manager->id(),
       'organizers' => $organizer->id(),

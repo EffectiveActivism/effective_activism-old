@@ -11,7 +11,7 @@ class ImportWebTestBase extends WebTestBase {
 
   public static $modules = array('effective_activism');
 
-  const GROUPNAME = 'Test group';
+  const GROUPTITLE = 'Test group';
 
   const GITHUBRAWPATH = 'https://raw.githubusercontent.com/EffectiveActivism/effective_activism/development';
 

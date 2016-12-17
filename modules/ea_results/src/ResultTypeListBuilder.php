@@ -31,7 +31,7 @@ class ResultTypeListBuilder extends ConfigEntityListBuilder {
       $row['label'] = $entity->label();
       $row['import'] = $entity->importname();
       $row['organization'] = \Drupal::l(
-        $organization->get('name')->value,
+        $organization->getTitle(),
         new Url(
           'entity.grouping.canonical', [
             'grouping' => $organization->id(),

@@ -26,12 +26,12 @@ class ResultTypeForm extends EntityForm {
     }) : [];
     // Get available organizations.
     $availableOrganizations = array_reduce(Grouping::getAllOrganizationsManagedByUser(), function ($result, $grouping) {
-      $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
+      $result[$grouping->id()] = $grouping->getTitle();
       return $result;
     }, []);
     // Get available groupings.
     $availableGroupings = !empty($selectedOrganization) ? array_reduce(Grouping::load($selectedOrganization)->getRelatives(TRUE), function ($result, $grouping) {
-      $result[$grouping->id()] = $grouping->get('name')->getValue()[0]['value'];
+      $result[$grouping->id()] = $grouping->getTitle();
       return $result;
     }, []) : [];
     // Get available data types.

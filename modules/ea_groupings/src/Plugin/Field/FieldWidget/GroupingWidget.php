@@ -28,7 +28,7 @@ class GroupingWidget extends WidgetBase {
     $allowed_groupings = Grouping::getAllGroupingsManagedByUser() + Grouping::getAllGroupingsOrganizedByUser();
     $options = [];
     foreach ($allowed_groupings as $gid => $grouping) {
-      $options[$gid] = $grouping->getName();
+      $options[$gid] = $grouping->getTitle();
     }
     // Force a default value if possible.
     if (!empty($items[$delta]->target_id)) {

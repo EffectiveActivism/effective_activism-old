@@ -24,10 +24,10 @@ class OrganizationForm extends FormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $form['name'] = [
+    $form['title'] = [
       '#type' => 'textfield',
-      '#title' => $this->t('Organization name'),
-      '#description' => $this->t('The name of the organization.'),
+      '#title' => $this->t('Organization title'),
+      '#description' => $this->t('The title of the organization.'),
       '#required' => TRUE,
     ];
     $form['description'] = [
@@ -88,7 +88,7 @@ class OrganizationForm extends FormBase {
     parent::validateForm($form, $form_state);
     // Validate entity.
     $values = [
-      'name' => $form_state->getValue('name'),
+      'title' => $form_state->getValue('title'),
       'description' => $form_state->getValue('description'),
       'phone_number' => $form_state->getValue('phone_number'),
       'email_address' => $form_state->getValue('email_address'),
@@ -114,7 +114,7 @@ class OrganizationForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = [
-      'name' => $form_state->getValue('name'),
+      'title' => $form_state->getValue('title'),
       'description' => $form_state->getValue('description'),
       'phone_number' => $form_state->getValue('phone_number'),
       'email_address' => $form_state->getValue('email_address'),
@@ -126,8 +126,8 @@ class OrganizationForm extends FormBase {
     ];
     $entity = Grouping::create($values);
     $entity->save();
-    drupal_set_message($this->t('Created the organization %name', [
-      '%name' => $form_state->getValue('name'),
+    drupal_set_message($this->t('Created the organization %title', [
+      '%title' => $form_state->getValue('title'),
     ]));
     $form_state->setRedirect('entity.grouping.canonical', ['grouping' => $entity->id()]);
   }

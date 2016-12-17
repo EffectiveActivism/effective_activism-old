@@ -15,7 +15,7 @@ use Drupal\field\Entity\FieldConfig;
  */
 class ResultTest extends WebTestBase {
 
-  const GROUPNAME = 'Test group';
+  const GROUPTITLE = 'Test group';
   const RESULTTYPEIMPORTNAME = 'result_type_test';
 
   public static $modules = array('effective_activism');
@@ -85,7 +85,7 @@ class ResultTest extends WebTestBase {
     // Create organization grouping.
     $this->organization = Grouping::create(array(
       'user_id' => $this->manager->id(),
-      'name' => self::GROUPNAME,
+      'title' => self::GROUPTITLE,
       'timezone' => \Drupal::config('system.date')->get('timezone.default'),
       'managers' => $this->manager->id(),
       'organizers' => $this->organizer->id(),

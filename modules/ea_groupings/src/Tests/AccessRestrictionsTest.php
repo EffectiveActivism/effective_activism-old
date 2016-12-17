@@ -16,10 +16,10 @@ class AccessRestrictionsTest extends WebTestBase {
   public static $modules = array('effective_activism');
 
   // Test values.
-  const GROUPNAME1 = 'Test group 1';
-  const GROUPNAME1MODIFIED = 'Test group 1 (updated)';
-  const GROUPNAME2 = 'Test group 2';
-  const GROUPNAME2MODIFIED = 'Test group 2 (updated)';
+  const GROUPTITLE1 = 'Test group 1';
+  const GROUPTITLE1MODIFIED = 'Test group 1 (updated)';
+  const GROUPTITLE2 = 'Test group 2';
+  const GROUPTITLE2MODIFIED = 'Test group 2 (updated)';
   const STARTDATE = '2016-01-01';
   const STARTTIME = '11:00';
   const ENDDATE = '2016-01-01';
@@ -77,8 +77,8 @@ class AccessRestrictionsTest extends WebTestBase {
     $this->organizer1 = $this->drupalCreateUser();
     $this->organizer2 = $this->drupalCreateUser();
     // Create groups and add managers and organizers.
-    $this->group1 = $this->createGrouping(self::GROUPNAME1, $this->manager1, $this->organizer1);
-    $this->group2 = $this->createGrouping(self::GROUPNAME2, $this->manager2, $this->organizer2);
+    $this->group1 = $this->createGrouping(self::GROUPTITLE1, $this->manager1, $this->organizer1);
+    $this->group2 = $this->createGrouping(self::GROUPTITLE2, $this->manager2, $this->organizer2);
   }
 
   /**
@@ -97,7 +97,7 @@ class AccessRestrictionsTest extends WebTestBase {
     $this->performEventManagement($this->group1, $this->organizer1);
     // Verify that organizer2 cannot manage events from group 1.
     $this->drupalLogin($this->organizer2);
-    $this->failEventManagement(self::GROUPNAME1MODIFIED);
+    $this->failEventManagement(self::GROUPTITLE1MODIFIED);
     // Add manager1 to group 2.
     $this->addManagertoGrouping($this->group2, $this->manager1);
     // Verify that manager1 can manage group 2.
@@ -133,7 +133,7 @@ class AccessRestrictionsTest extends WebTestBase {
     // User may make changes to grouping.
     $this->drupalPostForm(NULL, array(
       'user_id[0][target_id]' => sprintf('%s (%d)', $user->getAccountName(), $user->id()),
-      'name[0][value]' => self::GROUPNAME1MODIFIED,
+      'title[0][value]' => self::GROUPTITLE1MODIFIED,
       'phone_number[0][value]' => '',
       'email_address[0][value]' => '',
       'location[0][address]' => '',
@@ -142,7 +142,7 @@ class AccessRestrictionsTest extends WebTestBase {
       'description[0][value]' => '',
     ), t('Save'));
     $this->assertResponse(200);
-    $this->assertText(sprintf('Saved the %s Grouping.', self::GROUPNAME1MODIFIED), 'Added a new event entity.');
+    $this->assertText(sprintf('Saved the %s Grouping.', self::GROUPTITLE1MODIFIED), 'Added a new event entity.');
   }
 
   /**
@@ -268,10 +268,10 @@ class AccessRestrictionsTest extends WebTestBase {
    * @return Grouping
    *   The created grouping.
    */
-  private function createGrouping($groupName, User $manager, User $organizer) {
+  private function createGrouping($groupTitle, User $manager, User $organizer) {
     $grouping = Grouping::create(array(
       'user_id' => $manager->id(),
-      'name' => $groupName,
+      'title' => $groupTitle,
       'timezone' => \Drupal::config('system.date')->get('timezone.default'),
       'managers' => $manager->id(),
       'organizers' => $organizer->id(),

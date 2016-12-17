@@ -16,23 +16,23 @@ use Drupal\Core\Session\AccountProxyInterface;
 interface GroupingInterface extends ContentEntityInterface, EntityChangedInterface, EntityOwnerInterface {
 
   /**
-   * Gets the Grouping name.
+   * Gets the Grouping title.
    *
    * @return string
-   *   Name of the Grouping.
+   *   Title of the Grouping.
    */
-  public function getName();
+  public function getTitle();
 
   /**
-   * Sets the Grouping name.
+   * Sets the Grouping title.
    *
-   * @param string $name
-   *   The Grouping name.
+   * @param string $title
+   *   The Grouping title.
    *
    * @return \Drupal\ea_groupings\GroupingInterface
    *   The called Grouping entity.
    */
-  public function setName($name);
+  public function setTitle($title);
 
   /**
    * Gets the Grouping creation timestamp.

@@ -15,7 +15,7 @@ class EventTest extends WebTestBase {
   public static $modules = array('effective_activism');
 
   // Test values.
-  const GROUPNAME = 'Test group';
+  const GROUPTITLE = 'Test group';
 
   const DESCRIPTION = 'Example text for an event description';
 
@@ -72,7 +72,7 @@ class EventTest extends WebTestBase {
   private function createGrouping() {
     $grouping = Grouping::create(array(
       'user_id' => $this->manager->id(),
-      'name' => self::GROUPNAME,
+      'title' => self::GROUPTITLE,
       'timezone' => \Drupal::config('system.date')->get('timezone.default'),
       'managers' => $this->manager->id(),
       'organizers' => $this->organizer->id(),
@@ -121,7 +121,7 @@ class EventTest extends WebTestBase {
     /** @var \SimpleXMLElement[] $elements */
     if ($elements = $this->xpath($xpath)) {
       foreach ($elements[0]->attributes() as $name => $value) {
-        if ($name == 'name') {
+        if ($name === 'name') {
           $retval = $value;
           break;
         }
