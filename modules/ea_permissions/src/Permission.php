@@ -111,7 +111,7 @@ class Permission {
     if ((int) $account->id() === 1) {
       return new AccessResultAllowed();
     }
-    if (!empty(Grouping::getAllGroupingsByRole(Roles::MANAGER_ROLE, $account))) {
+    if (!empty(Grouping::getAllGroupingsManagedByUser($account))) {
       return new AccessResultAllowed();
     }
     else {

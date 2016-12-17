@@ -2,7 +2,6 @@
 
 namespace Drupal\ea_results\Tests;
 
-use Drupal\ea_permissions\Roles;
 use Drupal\ea_data\Entity\DataType;
 use Drupal\ea_groupings\Entity\Grouping;
 use Drupal\simpletest\WebTestBase;
@@ -34,8 +33,8 @@ class ResultTest extends WebTestBase {
    */
   public function setUp() {
     parent::setUp();
-    $this->manager = $this->drupalCreateUser(Roles::MANAGER_PERMISSIONS);
-    $this->organizer = $this->drupalCreateUser(Roles::ORGANIZER_PERMISSIONS);
+    $this->manager = $this->drupalCreateUser();
+    $this->organizer = $this->drupalCreateUser();
     // Create data type.
     $this->dataType = DataType::create(array(
       'id' => 'data_type_test',

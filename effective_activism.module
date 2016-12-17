@@ -6,94 +6,107 @@
  */
 
 use Drupal\Core\Url;
+use Drupal\ea_permissions\Permission;
 
 /**
  * Implements hook_toolbar().
  */
 function effective_activism_toolbar() {
-  // Define tab links.
-  $organizer_links = array(
-    'ea_groupings' => array(
-      'title' => t('Groupings'),
-      'url' => Url::fromRoute('entity.grouping.collection'),
-      'attributes' => array(
-        'title' => t('Groupings'),
-      ),
-    ),
-    'ea_events' => array(
-      'title' => t('Events'),
-      'url' => Url::fromRoute('entity.event.collection'),
-      'attributes' => array(
-        'title' => t('Events'),
-      ),
-    ),
-    'ea_imports' => array(
-      'title' => t('Imports'),
-      'url' => Url::fromRoute('entity.import.collection'),
-      'attributes' => array(
-        'title' => t('Imports'),
-      ),
-    ),
-  );
-  $manager_links = array(
-    'ea_groupings' => array(
-      'title' => t('Groupings'),
-      'url' => Url::fromRoute('entity.grouping.collection'),
-      'attributes' => array(
-        'title' => t('Groupings'),
-      ),
-    ),
-    'ea_events' => array(
-      'title' => t('Events'),
-      'url' => Url::fromRoute('entity.event.collection'),
-      'attributes' => array(
-        'title' => t('Events'),
-      ),
-    ),
-    'ea_imports' => array(
-      'title' => t('Imports'),
-      'url' => Url::fromRoute('entity.import.collection'),
-      'attributes' => array(
-        'title' => t('Imports'),
-      ),
-    ),
-    'ea_results_types' => array(
-      'title' => t('Result types'),
-      'url' => Url::fromRoute('entity.result_type.collection'),
-      'attributes' => array(
-        'title' => t('Result types'),
-      ),
-    ),
-    'organization' => array(
+  $current_user = \Drupal::currentUser();
+  // Define first time toolbar.
+  $first_time_links = [
+    'organization' => [
       'title' => t('Add organization'),
       'url' => Url::fromRoute('ea_groupings.add_organization'),
-      'attributes' => array(
+      'attributes' => [
         'title' => t('Add organization'),
-      ),
-    ),
-  );
+      ],
+    ],
+  ];
+  // Define organizer toolbar.
+  $organizer_links = [
+    'ea_groupings' => [
+      'title' => t('Groupings'),
+      'url' => Url::fromRoute('entity.grouping.collection'),
+      'attributes' => [
+        'title' => t('Groupings'),
+      ],
+    ],
+    'ea_events' => [
+      'title' => t('Events'),
+      'url' => Url::fromRoute('entity.event.collection'),
+      'attributes' => [
+        'title' => t('Events'),
+      ],
+    ],
+    'ea_imports' => [
+      'title' => t('Imports'),
+      'url' => Url::fromRoute('entity.import.collection'),
+      'attributes' => [
+        'title' => t('Imports'),
+      ],
+    ],
+  ];
+  // Define manager toolbar.
+  $manager_links = [
+    'ea_groupings' => [
+      'title' => t('Groupings'),
+      'url' => Url::fromRoute('entity.grouping.collection'),
+      'attributes' => [
+        'title' => t('Groupings'),
+      ],
+    ],
+    'ea_events' => [
+      'title' => t('Events'),
+      'url' => Url::fromRoute('entity.event.collection'),
+      'attributes' => [
+        'title' => t('Events'),
+      ],
+    ],
+    'ea_imports' => [
+      'title' => t('Imports'),
+      'url' => Url::fromRoute('entity.import.collection'),
+      'attributes' => [
+        'title' => t('Imports'),
+      ],
+    ],
+    'ea_results_types' => [
+      'title' => t('Result types'),
+      'url' => Url::fromRoute('entity.result_type.collection'),
+      'attributes' => [
+        'title' => t('Result types'),
+      ],
+    ],
+    'organization' => [
+      'title' => t('Add organization'),
+      'url' => Url::fromRoute('ea_groupings.add_organization'),
+      'attributes' => [
+        'title' => t('Add organization'),
+      ],
+    ],
+  ];
   // Construct toolbar link and tab.
-  $items = array();
-  $items['effective_activism'] = array(
+  $items = [];
+  $items['effective_activism'] = [
     '#type' => 'toolbar_item',
-    'tab' => array(
+    'tab' => [
       '#type' => 'link',
       '#title' => t('Effective Activism'),
       '#url' => Url::fromRoute('effective_activism.overview'),
-      '#options' => array(
-        'attributes' => array(
+      '#options' => [
+        'attributes' => [
           'title' => t('Effective Activism'),
-        ),
-      ),
-    ),
+        ],
+      ],
+    ],
     '#weight' => 1,
-    'tray' => array(
+    'tray' => [
       '#heading' => t('Overview'),
-      'effective_activism_links' => array(
+      'effective_activism_links' => [
         '#theme' => 'links__toolbar_user',
-        '#links' => $manager_links,
-      ),
-    ),
-  );
+        '#links' => Permission::allowedIfIsManagerInAnyGroupings($current_user) ? $manager_links : Permission::allowedIfInAnyGroupings($current_user) ? $organizer_links : $first_time_links,
+      ],
+    ],
+  ];
   return $items;
 }
