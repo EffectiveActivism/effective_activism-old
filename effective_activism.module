@@ -6,7 +6,7 @@
  */
 
 use Drupal\Core\Url;
-use Drupal\ea_permissions\Permission;
+use Drupal\ea_groupings\Entity\Grouping;
 
 /**
  * Implements hook_toolbar().
@@ -77,13 +77,6 @@ function effective_activism_toolbar() {
         'title' => t('Result types'),
       ],
     ],
-    'organization' => [
-      'title' => t('Add organization'),
-      'url' => Url::fromRoute('ea_groupings.add_organization'),
-      'attributes' => [
-        'title' => t('Add organization'),
-      ],
-    ],
   ];
   // Construct toolbar link and tab.
   $items = [];
@@ -102,9 +95,12 @@ function effective_activism_toolbar() {
     '#weight' => 1,
     'tray' => [
       '#heading' => t('Overview'),
+      '#cache' => [
+        'max-age' => 0,
+      ],
       'effective_activism_links' => [
         '#theme' => 'links__toolbar_user',
-        '#links' => Permission::allowedIfIsManagerInAnyGroupings($current_user) ? $manager_links : Permission::allowedIfInAnyGroupings($current_user) ? $organizer_links : $first_time_links,
+        '#links' => !empty(Grouping::getAllGroupingsManagedByUser($current_user)) ? $manager_links : (!empty(Grouping::getAllGroupingsByUser($current_user)) ? $organizer_links : $first_time_links),
       ],
     ],
   ];
