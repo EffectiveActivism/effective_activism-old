@@ -197,10 +197,9 @@ function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id)
       '#type' => 'item',
       '#title' => t('How to import a CSV file'),
       '#description' => t('A CSV file must adhere to the following format.') . '<p>' .
-      t('The first row must contain the following column names: ') . '<em>' . implode(', ', CSVParser::CSVHEADERFORMAT) . '</em></br>' .
+      t('The first row must contain the following column names:') . '<em>' . implode(', ', CSVParser::CSVHEADERFORMAT) . '</em></br>' .
       t('The rows after the first row contain the events to be imported.') . '</br>' .
-      t('Example:') . '</br>' .
-      '<table><tr><td>' . implode('</td><td>', CSVParser::CSVHEADERFORMAT) . '</td></tr><tr><td>2016-12-13 11:00</td><td>2016-12-13 13:00</td><td>Kultorvet, Copenhagen, Denmark</td><td>By the fountain</td><td>My custom title</td><td>My custom description</td><td>John Doe | 123456789 | johndoe@example.com</td><td>leafleting | 4 | 0 | 1 | 0 | 1000 | Flyer design B</td></tr></table>' .
+      t('Example:') . '</br><table><tr><td>' . implode('</td><td>', CSVParser::CSVHEADERFORMAT) . '</td></tr><tr><td>2016-12-13 11:00</td><td>2016-12-13 13:00</td><td>Kultorvet, Copenhagen, Denmark</td><td>By the fountain</td><td>My custom title</td><td>My custom description</td><td>John Doe | 123456789 | johndoe@example.com</td><td>leafleting | 4 | 0 | 1 | 0 | 1000 | Flyer design B</td></tr></table>' .
       t('<strong>Start date and end date</strong>') . '</br>' .
       t('<em>Required</em>') . '</br>' .
       t('Dates are required for each event and must match the <a href="https://en.wikipedia.org/wiki/ISO_8601" target="_blank">ISO 8601</a> format: YYYY-MM-DD HH:MM') . '</br>' .
@@ -210,7 +209,7 @@ function ea_imports_form_alter(&$form, FormStateInterface $form_state, $form_id)
       t('Example: Grenzacherstrasse 10, Basel, Switzerland') . '</p><p>' .
       t('<strong>Participants</strong>') . '</br>' .
       t('Participants consist of three values: name, phone number and e-mail. Values are separated by the "pipe" character ( | ). Each row can contain another participant for the same event.') . '</br>' .
-      t('Example: John Doe | +45 12345678 | j.doe@activeforanimals.com') . '</p><p>' . 
+      t('Example: John Doe | +45 12345678 | j.doe@activeforanimals.com') . '</p><p>' .
       t('<strong>Results</strong>') . '</br>' .
       t('Results consist of six values: name of result, participant count, duration in minutes, hours, days, and quantifiable value. Values are separated by the "pipe" character ( | ). Each row can contain another result for the same event.') . '</br>' .
       t('Example: leafleting | 9 | 30 | 2 | 0 | 4000') . '</br>' .
