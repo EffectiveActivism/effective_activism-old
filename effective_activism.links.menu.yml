@@ -2,78 +2,137 @@
 effective_activism.overview:
   title: 'Effective Activism'
   route_name: effective_activism.overview
-  description: 'An overview of features available to the Effective Activism module.'
+  description: 'An overview of features available to the Effective Activism module'
   menu_name: effective_activism
-  weight: 100
+  weight: 1
 
-# Result type menu items definition
-entity.result_type.collection:
-  title: 'Result type'
-  route_name: entity.result_type.collection
-  description: 'List Result type (bundles)'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 99
-
-# Data menu items definition
-entity.data.collection:
-  title: 'Data list'
-  route_name: entity.data.collection
-  description: 'List Data entities'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 100
-
-# Data type menu items definition
-entity.data_type.collection:
-  title: 'Data type'
-  route_name: entity.data_type.collection
-  description: 'List Data type (bundles)'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 99
-
-# Event menu items definition
-entity.event.collection:
-  title: 'Event list'
-  route_name: entity.event.collection
-  description: 'List Event entities'
-  menu_name: effective_activism
-  parent: effective_activism.overview
-  weight: 100
-
+#
 # Grouping menu items definition
+#
 entity.grouping.collection:
-  title: 'Grouping list'
+  title: 'Groups'
   route_name: entity.grouping.collection
-  description: 'List Grouping entities'
+  description: 'Group overview'
   menu_name: effective_activism
   parent: effective_activism.overview
-  weight: 100
+  weight: 1
 
-# Import menu items definition
-entity.import.collection:
-  title: 'Import list'
-  route_name: entity.import.collection
-  description: 'List Import entities'
+entity.grouping.overview:
+  title: 'Overview'
+  route_name: entity.grouping.collection
+  description: 'Overview of groups belonging to your organization'
+  menu_name: effective_activism
+  parent: entity.grouping.collection
+  weight: 1
+
+entity.grouping.add_form:
+  title: 'Add group'
+  route_name: entity.grouping.collection
+  description: 'Add a new group'
+  menu_name: effective_activism
+  parent: entity.grouping.collection
+  weight: 2
+
+#
+# Event menu items definition
+#
+entity.event.collection:
+  title: 'Events'
+  route_name: entity.event.collection
+  description: 'Event overview'
   menu_name: effective_activism
   parent: effective_activism.overview
-  weight: 100
+  weight: 2
 
+entity.event.overview:
+  title: 'Events'
+  route_name: entity.event.collection
+  description: 'Overview of events belonging to your organization'
+  menu_name: effective_activism
+  parent: entity.event.collection
+  weight: 1
+
+entity.event.add_form:
+  title: 'Add event'
+  route_name: entity.event.add_form
+  description: 'Add a new event'
+  menu_name: effective_activism
+  parent: entity.event.collection
+  weight: 2
+
+#
 # Import type menu items definition
+#
 entity.import_type.collection:
-  title: 'Import type'
-  route_name: entity.import_type.collection
-  description: 'List Import type (bundles)'
+  title: 'Import'
+  route_name: entity.import.collection
+  description: 'Import events and results'
   menu_name: effective_activism
   parent: effective_activism.overview
-  weight: 99
+  weight: 3
 
-# Location settings menu items definition
-ea_locations.settings:
-  title: 'Location settings'
-  route_name: ea_locations.settings
-  description: 'Configure location settings'
+entity.import_type.overview:
+  title: 'Overview'
+  route_name: entity.import.collection
+  description: 'An overview of imports'
+  menu_name: effective_activism
+  parent: entity.import_type.collection
+  weight: 1
+
+entity.import_type.add_csv:
+  title: 'Import from a CSV file'
+  route_name: entity.import.add_form
+  route_parameters:
+    import_type: 'csv'
+  description: 'Import events and results from a CSV file'
+  menu_name: effective_activism
+  parent: entity.import_type.collection
+  weight: 2
+
+entity.import_type.add_icalendar:
+  title: 'Import from an ICalendar file'
+  route_name: entity.import.add_form
+  route_parameters:
+    import_type: 'icalendar'
+  description: 'Import events from Facebook, Google Calendar and other ICalendar-compatible sources'
+  menu_name: effective_activism
+  parent: entity.import_type.collection
+  weight: 3
+
+#
+# Result type menu items definition
+#
+entity.result_type.collection:
+  title: 'Result types'
+  route_name: entity.result_type.collection
+  description: 'Use Result types to control what kind of event results are available to organizers'
   menu_name: effective_activism
   parent: effective_activism.overview
-  weight: 99
+  weight: 4
+
+entity.result_type.overview:
+  title: 'Overview'
+  route_name: entity.result_type.collection
+  description: 'An overview of the result types that you manage'
+  menu_name: effective_activism
+  parent: entity.result_type.collection
+  weight: 1
+
+entity.result_type.add_form:
+  title: 'Add result type'
+  route_name: entity.result_type.add_form
+  description: 'Create a new type of result'
+  menu_name: effective_activism
+  parent: entity.result_type.collection
+  weight: 2
+
+#
+# Create organization link.
+#
+ea_groupings.add_organization:
+  title: 'Create organization'
+  route_name: ea_groupings.add_organization
+  description: 'Create a new organization'
+  menu_name: effective_activism
+  parent: effective_activism.overview
+  weight: 5
