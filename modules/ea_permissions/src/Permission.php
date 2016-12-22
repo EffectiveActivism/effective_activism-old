@@ -99,6 +99,27 @@ class Permission {
   }
 
   /**
+   * Determines access based on if the user is not in any groupings.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The account for which to check a permission.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Returns an access result.
+   */
+  public static function allowedIfNotInAnyGroupings(AccountInterface $account) {
+    if ((int) $account->id() === 1) {
+      return new AccessResultAllowed();
+    }
+    if (empty(Grouping::getAllGroupingsByUser($account))) {
+      return new AccessResultAllowed();
+    }
+    else {
+      return new AccessResultForbidden();
+    }
+  }
+
+  /**
    * Determines access based on if the user is manager in any groupings.
    *
    * @param \Drupal\Core\Session\AccountInterface $account

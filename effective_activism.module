@@ -5,104 +5,82 @@
  * Contains effective_activism.module.
  */
 
+use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Core\Url;
-use Drupal\ea_groupings\Entity\Grouping;
 
 /**
  * Implements hook_toolbar().
  */
 function effective_activism_toolbar() {
-  $current_user = \Drupal::currentUser();
-  // Define first time toolbar.
-  $first_time_links = [
-    'organization' => [
-      'title' => t('Add organization'),
-      'url' => Url::fromRoute('ea_groupings.add_organization'),
-      'attributes' => [
-        'title' => t('Add organization'),
-      ],
-    ],
-  ];
-  // Define organizer toolbar.
-  $organizer_links = [
-    'ea_groupings' => [
-      'title' => t('Groupings'),
-      'url' => Url::fromRoute('entity.grouping.collection'),
-      'attributes' => [
-        'title' => t('Groupings'),
-      ],
-    ],
-    'ea_events' => [
-      'title' => t('Events'),
-      'url' => Url::fromRoute('entity.event.collection'),
-      'attributes' => [
-        'title' => t('Events'),
-      ],
-    ],
-    'ea_imports' => [
-      'title' => t('Imports'),
-      'url' => Url::fromRoute('entity.import.collection'),
-      'attributes' => [
-        'title' => t('Imports'),
-      ],
-    ],
-  ];
-  // Define manager toolbar.
-  $manager_links = [
-    'ea_groupings' => [
-      'title' => t('Groupings'),
-      'url' => Url::fromRoute('entity.grouping.collection'),
-      'attributes' => [
-        'title' => t('Groupings'),
-      ],
-    ],
-    'ea_events' => [
-      'title' => t('Events'),
-      'url' => Url::fromRoute('entity.event.collection'),
-      'attributes' => [
-        'title' => t('Events'),
-      ],
-    ],
-    'ea_imports' => [
-      'title' => t('Imports'),
-      'url' => Url::fromRoute('entity.import.collection'),
-      'attributes' => [
-        'title' => t('Imports'),
-      ],
-    ],
-    'ea_results_types' => [
-      'title' => t('Result types'),
-      'url' => Url::fromRoute('entity.result_type.collection'),
-      'attributes' => [
-        'title' => t('Result types'),
-      ],
-    ],
-  ];
-  // Construct toolbar link and tab.
+  // Define effective_activism toolbar.
   $items = [];
-  $items['effective_activism'] = [
+  $items['manage'] = [
     '#type' => 'toolbar_item',
     'tab' => [
       '#type' => 'link',
-      '#title' => t('Effective Activism'),
+      '#title' => t('Manage'),
       '#url' => Url::fromRoute('effective_activism.overview'),
       '#options' => [
         'attributes' => [
-          'title' => t('Effective Activism'),
+          'title' => t('Manage groups, events, imports and results'),
+        ],
+      ],
+      '#attributes' => [
+        'title' => t('Manage'),
+        'class' => [
+          'toolbar-icon',
+          'toolbar-icon-menu',
         ],
       ],
     ],
     '#weight' => 1,
     'tray' => [
-      '#heading' => t('Overview'),
-      '#cache' => [
-        'max-age' => 0,
-      ],
-      'effective_activism_links' => [
-        '#theme' => 'links__toolbar_user',
-        '#links' => !empty(Grouping::getAllGroupingsManagedByUser($current_user)) ? $manager_links : (!empty(Grouping::getAllGroupingsByUser($current_user)) ? $organizer_links : $first_time_links),
+      '#heading' => t('Manage'),
+      'effective-activism' => [
+        '#pre_render' => ['_effective_activism_prerender_toolbar_tray'],
+        '#type' => 'container',
+        '#attributes' => [
+          'class' => ['toolbar-menu-administration'],
+        ],
       ],
     ],
   ];
   return $items;
+}
+
+/**
+ * Renders the toolbar's effective_activism tray.
+ *
+ * @param array $element
+ *   A renderable array.
+ *
+ * @return array
+ *   The updated renderable array.
+ *
+ * @see drupal_render()
+ */
+function _effective_activism_prerender_toolbar_tray(array $element) {
+  $menu_tree = \Drupal::service('toolbar.menu_tree');
+  $parameters = new MenuTreeParameters();
+  $parameters->setMinDepth(2)->setMaxDepth(3)->onlyEnabledLinks();
+  $tree = $menu_tree->load('effective_activism', $parameters);
+  $manipulators = [
+    ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+    ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+  ];
+  $tree = $menu_tree->transform($tree, $manipulators);
+  $element['effectiveactivism_menu'] = $menu_tree->build($tree);
+  // Disable caching.
+  $element['effectiveactivism_menu']['#cache']['max-age'] = 0;
+  return $element;
+}
+
+/**
+ * Implements hook_toolbar_alter().
+ */
+function effective_activism_toolbar_alter(&$items) {
+  // Disable the default admin menu for non-admin users.
+  if (\Drupal::currentUser()->id() !== '1') {
+    unset($items['administration']);
+  }
 }

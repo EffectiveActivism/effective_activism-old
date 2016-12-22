@@ -4,4 +4,4 @@ ea_groupings.add_organization:
     _title: 'Create organization'
     _form: '\Drupal\ea_groupings\Form\OrganizationForm'
   requirements:
-    _permission: 'access content'
+    _custom_access: '\Drupal\ea_permissions\Permission::allowedIfNotInAnyGroupings'
