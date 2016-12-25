@@ -249,7 +249,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
   /**
    * {@inheritdoc}
    */
-  public static function getAllGroupingsByUser(AccountProxyInterface $user) {
+  public static function getAllGroupingsByUser(AccountProxyInterface $user, $loadGroupings = TRUE) {
     // Add all groupings that the user is manager of.
     $query = \Drupal::entityQuery('grouping');
     $result = $query
@@ -267,13 +267,13 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
     $result += $query
       ->condition('organizers', $user->id())
       ->execute();
-    return Grouping::loadMultiple($result);
+    return $loadGroupings ? Grouping::loadMultiple($result) : $result;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getAllGroupingsOrganizedByUser(AccountProxyInterface $user = NULL) {
+  public static function getAllGroupingsOrganizedByUser(AccountProxyInterface $user = NULL, $loadGroupings = TRUE) {
     $result = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
@@ -282,13 +282,13 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
     $result = $query
       ->condition('organizers', $user->id())
       ->execute();
-    return Grouping::loadMultiple($result);
+    return $loadGroupings ? Grouping::loadMultiple($result) : $result;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getAllGroupingsManagedByUser(AccountProxyInterface $user = NULL) {
+  public static function getAllGroupingsManagedByUser(AccountProxyInterface $user = NULL, $loadGroupings = TRUE) {
     $result = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
@@ -304,13 +304,13 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
         ->condition('parent', $result, 'IN')
         ->execute();
     }
-    return Grouping::loadMultiple($result);
+    return $loadGroupings ? Grouping::loadMultiple($result) : $result;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getAllOrganizationsManagedByUser(AccountProxyInterface $user = NULL) {
+  public static function getAllOrganizationsManagedByUser(AccountProxyInterface $user = NULL, $loadGroupings = TRUE) {
     $result = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
@@ -320,13 +320,13 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->notExists('parent')
       ->condition('managers', $user->id())
       ->execute();
-    return Grouping::loadMultiple($result);
+    return $loadGroupings ? Grouping::loadMultiple($result) : $result;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getAllOrganizationsOrganizedByUser(AccountProxyInterface $user = NULL) {
+  public static function getAllOrganizationsOrganizedByUser(AccountProxyInterface $user = NULL, $loadGroupings = TRUE) {
     $result = [];
     if (empty($user)) {
       $user = \Drupal::currentUser();
@@ -336,7 +336,7 @@ class Grouping extends RevisionableContentEntityBase implements GroupingInterfac
       ->notExists('parent')
       ->condition('organizers', $user->id())
       ->execute();
-    return Grouping::loadMultiple($result);
+    return $loadGroupings ? Grouping::loadMultiple($result) : $result;
   }
 
   /**
